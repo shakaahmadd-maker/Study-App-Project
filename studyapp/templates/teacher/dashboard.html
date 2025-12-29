@@ -1,0 +1,71 @@
+{% extends "teacher/teacher_base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="content-section active" id="dashboardSection">
+    <!-- Header -->
+    <div class="home-header">
+        <h1 class="home-title">Home Page</h1>
+        <p class="welcome-message">Welcome back, {{ first_name|default:"Teacher" }}!</p>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="summary-cards">
+        <button class="summary-card summary-card-clickable" type="button"
+            onclick="if(typeof showTeacherSection==='function') showTeacherSection('student_management');">
+            <h3 class="card-title">Students Assigned</h3>
+            <div class="card-value">{{ assigned_students_count|default:"0" }}</div>
+            <div class="card-change positive">Open Student Management</div>
+        </button>
+        <button class="summary-card summary-card-clickable" type="button"
+            onclick="if(typeof showTeacherSection==='function') showTeacherSection('my_assignments');">
+            <h3 class="card-title">Pending Assignments (New)</h3>
+            <div class="card-value">{{ pending_assigned_count|default:"0" }}</div>
+            <div class="card-change negative">Open My Assignments</div>
+        </button>
+        <button class="summary-card summary-card-clickable" type="button"
+            onclick="if(typeof showTeacherSection==='function') showTeacherSection('my_assignments');">
+            <h3 class="card-title">In-Process Assignments</h3>
+            <div class="card-value">{{ in_process_assignments_count|default:"0" }}</div>
+            <div class="card-change positive">Open My Assignments</div>
+        </button>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="main-grid dashboard-grid">
+        <!-- To-Do List Section -->
+        <div class="todo-section">
+            <div class="todo-header">
+                <h2 class="section-title">
+                    <i class="fas fa-tasks"></i>
+                    To-Do List
+                </h2>
+                <button class="todo-add-btn" id="addTodoBtn" title="Add New Todo" type="button">
+                    <i class="fas fa-plus"></i>
+                    Add Todo
+                </button>
+            </div>
+
+            <!-- To-Do List Container -->
+            <div class="todo-list-container" id="todoListContainer">
+                <div class="todo-list" id="todoList">
+                    <!-- Todos will be dynamically added here -->
+                </div>
+
+                <!-- Empty State -->
+                <div class="todo-empty-state" id="todoEmptyState">
+                    <div class="empty-state-content">
+                        <i class="fas fa-clipboard-list"></i>
+                        <h3>No Todos Yet</h3>
+                        <p>Click "Add Todo" to create your first task.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Todo Modal is now in teacher_base.html for global availability -->
+
+<script src="{% static 'java/todo_manager.js' %}"></script>
+{% endblock %}

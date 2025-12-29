@@ -1,0 +1,93 @@
+{% extends "admin/admin_base.html" %}
+{% load static %}
+
+{% block content %}
+<section class="content-section active" id="visitorsSection" aria-labelledby="visitorsHeading">
+    <h1 class="section-title" id="visitorsHeading">Visitors</h1>
+    <p class="section-subtitle">Manage visitor form submissions from the home page.</p>
+
+    <!-- Visitors Table -->
+    <div class="visitors-table-container">
+        <table class="visitors-table">
+            <thead>
+                <tr>
+                    <th>NAME</th>
+                    <th>EMAIL</th>
+                    <th>DETAILS</th>
+                    <th>SUBMITTED</th>
+                    <th>ACTIONS</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for visitor in visitors %}
+                <tr class="visitor-row" data-visitor-id="{{ visitor.id }}">
+                    <td class="visitor-name-cell">
+                        <div class="visitor-name">{{ visitor.first_name }} {{ visitor.last_name }}</div>
+                    </td>
+                    <td class="visitor-email-cell">
+                        <div class="visitor-email">{{ visitor.email }}</div>
+                    </td>
+                    <td class="visitor-details-cell">
+                        <div class="visitor-details">{{ visitor.details|truncatewords:30 }}</div>
+                    </td>
+                    <td class="visitor-date-cell">
+                        <div class="visitor-date">{{ visitor.created_at|date:"M d, Y H:i" }}</div>
+                    </td>
+                    <td class="visitor-actions-cell">
+                        <button class="action-btn delete-btn" onclick="deleteVisitor('{{ visitor.id }}')" title="Delete Visitor">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="text-align: center; padding: 2rem;">No visitors found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<style>
+    .visitor-actions-cell {
+        text-align: center;
+        padding: 0.75rem;
+    }
+
+    .action-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0.5rem;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+    }
+
+    .action-btn.delete-btn {
+        color: #dc3545;
+    }
+
+    .action-btn.delete-btn:hover {
+        background-color: #fee;
+        color: #c82333;
+    }
+
+    .action-btn.delete-btn:active {
+        transform: scale(0.95);
+    }
+
+    .action-btn i {
+        pointer-events: none;
+    }
+
+    .visitor-row {
+        transition: opacity 0.3s ease;
+    }
+</style>
+{% endblock %}
+

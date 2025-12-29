@@ -1,0 +1,205 @@
+{% extends "teacher/teacher_base.html" %}
+{% load masking_tags %}
+
+{% block content %}
+<section class="content-section" id="meetingsSection" aria-labelledby="meetingsHeading">
+    <div class="meetings-header">
+        <h1 class="meeting-title" id="meetingsHeading">Meetings</h1>
+        <div class="meeting-actions">
+            <button class="schedule-btn" onclick="openScheduleMeetingModal()"><i class="fas fa-plus"></i>
+                SCHEDULE MEETING</button>
+        </div>
+    </div>
+
+    <div class="meeting-filters" role="tablist" aria-label="Meeting filters">
+        <button class="meeting-pill active" onclick="filterMeetings('upcoming', this)" role="tab" aria-selected="true">Upcoming</button>
+        <button class="meeting-pill" onclick="filterMeetings('past', this)" role="tab" aria-selected="false">Past</button>
+        <button class="meeting-pill" onclick="filterMeetings('all', this)" role="tab" aria-selected="false">All</button>
+    </div>
+    
+    <div class="meetings-list" id="meetingsList" aria-live="polite">
+        {% if meetings %}
+            {% for meeting in meetings %}
+            <div class="meeting-item" data-meeting-id="{{ meeting.id }}" data-status="{{ meeting.status }}" data-date="{{ meeting.scheduled_at|date:'c' }}">
+                <div class="meeting-main">
+                    <div class="meeting-name">{{ meeting.title }}</div>
+                    <div class="meeting-meta">
+                        <span class="priority standard"><i class="fas fa-circle"></i> With: {{ meeting.student.get_full_name }} ({{ meeting.student.student_profile.student_id|stringformat:"04d" }})</span>
+                        <span class="status"><i class="fas fa-calendar-check"></i> {{ meeting.get_status_display }}</span>
+                    </div>
+                    {% if meeting.agenda %}
+                    <div class="meeting-agenda" style="margin-top: 0.5rem; font-size: 0.9rem; color: #64748b;">
+                        {{ meeting.agenda }}
+                    </div>
+                    {% endif %}
+                    {% if meeting.status == 'completed' %}
+                    <div class="meeting-stats" style="margin-top: 0.5rem; font-size: 0.85rem; color: #059669;">
+                        <i class="fas fa-clock"></i> Duration: {{ meeting.duration_minutes }} minutes
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="meeting-right" style="flex-direction: column; align-items: flex-end;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-clock time-dot"></i>
+                        <span>{{ meeting.scheduled_at|date:"M d, Y at H:i" }}</span>
+                    </div>
+                    <div style="margin-top: 0.5rem; display: flex; gap: 0.5rem;">
+                        {% if meeting.status == 'scheduled' or meeting.status == 'in_progress' %}
+                        <a href="{% mask_link '/meeting/prejoin/?meeting_id='|add:meeting.id 'meeting' %}" class="schedule-btn meeting-join-link"
+                            target="_blank" rel="noopener"
+                            style="text-decoration: none; padding: 0.5rem 1rem; font-size: 0.875rem;">
+                            <i class="fas fa-video"></i> Join
+                        </a>
+                        {% elif meeting.status == 'completed' and meeting.recording %}
+                        <button onclick="handleRecordingDownload('{{ meeting.id }}', '{% mask_link meeting.recording.url 'recording' %}')" class="btn-secondary"
+                            style="padding: 0.5rem 1rem; font-size: 0.875rem; border: 1px solid #e2e8f0; background: white; border-radius: 6px; cursor: pointer;">
+                            <i class="fas fa-download"></i> Recording
+                        </button>
+                        {% else %}
+                        <span style="color: #94a3b8;">{{ meeting.get_status_display }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state" style="text-align: center; padding: 3rem; color: #64748b;">
+                <i class="fas fa-calendar-alt" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                <p>No meetings scheduled yet.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Schedule Meeting Modal -->
+    <div id="scheduleMeetingModal" class="modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+        <div class="modal-content" style="background: white; padding: 2rem; border-radius: 12px; width: 100%; max-width: 500px; position: relative;">
+            <button onclick="closeScheduleMeetingModal()" style="position: absolute; top: 1rem; right: 1rem; border: none; background: none; cursor: pointer; font-size: 1.25rem;"><i class="fas fa-times"></i></button>
+            <h2 style="margin-bottom: 1.5rem; color: #1e293b;">Schedule New Meeting</h2>
+            <form id="scheduleMeetingForm">
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: #475569;">Select Student</label>
+                    <select id="meetingStudentSelect" name="student" class="form-select" required style="width: 100%; padding: 0.5rem; border: 1px solid #e2e8f0; border-radius: 6px;">
+                        <option value="">Select Student</option>
+                        {% for student in students %}
+                        <option value="{{ student.user.id }}">{{ student.user.get_full_name }} ({{ student.student_id|stringformat:"04d" }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: #475569;">Meeting Title</label>
+                    <input type="text" name="title" required class="form-input" placeholder="e.g., Assignment Discussion" style="width: 100%; padding: 0.5rem; border: 1px solid #e2e8f0; border-radius: 6px;">
+                </div>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: #475569;">Date & Time</label>
+                    <input type="datetime-local" name="scheduled_at" required class="form-input" style="width: 100%; padding: 0.5rem; border: 1px solid #e2e8f0; border-radius: 6px;">
+                </div>
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: #475569;">Agenda</label>
+                    <textarea name="agenda" class="form-textarea" rows="4" placeholder="What will you discuss in this meeting?" style="width: 100%; padding: 0.5rem; border: 1px solid #e2e8f0; border-radius: 6px;"></textarea>
+                </div>
+                <div class="form-actions" style="display: flex; gap: 1rem; justify-content: flex-end;">
+                    <button type="button" class="btn-secondary" onclick="closeScheduleMeetingModal()" style="padding: 0.5rem 1rem; border: 1px solid #e2e8f0; background: white; border-radius: 6px; cursor: pointer;">Cancel</button>
+                    <button type="submit" class="btn-primary" style="padding: 0.5rem 1rem; background: #2563eb; color: white; border: none; border-radius: 6px; cursor: pointer;">Schedule Meeting</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<script>
+    (function() {
+        const bc = (typeof BroadcastChannel !== 'undefined') ? new BroadcastChannel('meeting-status') : null;
+
+        window.openScheduleMeetingModal = function() {
+            document.getElementById('scheduleMeetingModal').style.display = 'flex';
+        };
+
+        window.closeScheduleMeetingModal = function() {
+            document.getElementById('scheduleMeetingModal').style.display = 'none';
+        };
+
+        window.filterMeetings = function(filter, btn) {
+            document.querySelectorAll('.meeting-pill').forEach(p => {
+                p.classList.remove('active');
+                p.setAttribute('aria-selected', 'false');
+            });
+            if (btn) {
+                btn.classList.add('active');
+                btn.setAttribute('aria-selected', 'true');
+            }
+
+            const now = new Date();
+            const items = document.querySelectorAll('.meeting-item');
+            
+            items.forEach(item => {
+                const status = item.dataset.status;
+                const dateStr = item.dataset.date;
+                const date = new Date(dateStr);
+                
+                if (filter === 'all') {
+                    item.style.display = 'flex';
+                } else if (filter === 'upcoming') {
+                    item.style.display = (date >= now || status === 'in_progress' || status === 'scheduled') ? 'flex' : 'none';
+                } else if (filter === 'past') {
+                    item.style.display = (date < now && status !== 'in_progress' && status !== 'scheduled') ? 'flex' : 'none';
+                }
+            });
+        };
+
+        const form = document.getElementById('scheduleMeetingForm');
+        if (form) {
+            form.onsubmit = async (e) => {
+                e.preventDefault();
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
+                
+                try {
+                    const response = await apiClient.createMeeting(data);
+                    if (response) {
+                        showToast('Meeting scheduled successfully!', 'success');
+                        closeScheduleMeetingModal();
+                        if (window.showSection) window.showSection('meetings');
+                    }
+                } catch (error) {
+                    console.error('Failed to schedule meeting:', error);
+                    showToast(error.message || 'Failed to schedule meeting', 'error');
+                }
+            };
+        }
+
+        window.handleRecordingDownload = function(meetingId, maskedUrl) {
+            if (maskedUrl && maskedUrl !== '' && maskedUrl.startsWith('/account/m/')) {
+                window.open(maskedUrl, '_blank');
+            } else {
+                apiClient.downloadMeetingRecording(meetingId);
+            }
+        };
+
+        if (bc) {
+            bc.onmessage = (event) => {
+                const msg = event.data || {};
+                if (!msg.meetingId) return;
+                if (msg.type === 'meeting_joined' || msg.type === 'meeting_ended') {
+                    if (window.showSection) window.showSection('meetings');
+                }
+            };
+        }
+
+        document.getElementById('meetingsSection')?.addEventListener('click', (e) => {
+            const link = e.target.closest?.('a.meeting-join-link');
+            if (!link) return;
+            const item = link.closest('.meeting-item');
+            const meetingId = item?.dataset?.meetingId;
+            if (meetingId && bc) bc.postMessage({ type: 'meeting_joined', meetingId });
+            if (item) item.dataset.status = 'in_progress';
+        });
+        
+        setTimeout(() => {
+            const activeFilter = document.querySelector('.meeting-pill.active');
+            if (activeFilter) {
+                filterMeetings('upcoming', activeFilter);
+            }
+        }, 100);
+    })();
+</script>
+{% endblock %}

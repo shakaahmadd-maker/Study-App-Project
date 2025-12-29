@@ -1,0 +1,820 @@
+{% extends "teacher/teacher_base.html" %}
+
+{% block content %}
+            <div class="content-section" id="writingsSection" style="display: none;">
+                <div class="assignment-header">
+                    <div class="assignment-title-section">
+                        <h1 class="assignment-title">Writing Requests</h1>
+                        <p class="assignment-subtitle">Review and respond to student writing assignments. Provide
+                            feedback and deliver completed work.</p>
+                    </div>
+                    <div class="chip" id="teacherWritingTotalCount" aria-live="polite"></div>
+                </div>
+
+                <div class="filter-row" id="teacherWritingFilters">
+                    <button class="filter-pill active" data-filter="all">All</button>
+                    <button class="filter-pill" data-filter="submitted">Submitted</button>
+                    <button class="filter-pill" data-filter="reviewing">In Review</button>
+                    <button class="filter-pill" data-filter="revision">Revision</button>
+                    <button class="filter-pill" data-filter="completed">Completed</button>
+                </div>
+
+                <div class="table-wrapper" style="width: 100%; overflow-x: auto;">
+                    <table id="teacherWritingTable" style="width: 100%; table-layout: auto;">
+                        <thead>
+                            <tr>
+                                <th>Assignment ID</th>
+                                <th>Student</th>
+                                <th>Assignment</th>
+                                <th>Status</th>
+                                <th>Due Date</th>
+                                <th>Updated</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody data-use-static="true">
+                            <!-- Submitted Status -->
+                            <tr data-static-row="true" data-status="submitted" data-writing-id="WR-2025-010"
+                                data-record='{
+                                    "writing_id":"WR-2025-010",
+                                    "assignment_code":"ASG-2025-090",
+                                    "assignment_id":90,
+                                    "title":"Opinion Essay - Renewable Energy",
+                                    "status":"submitted",
+                                    "student_excerpt":"Short opinion essay comparing solar and wind adoption in 2024.",
+                                    "assignment_details":{
+                                        "title":"Opinion Essay - Renewable Energy",
+                                        "type":"Opinion Essay",
+                                        "academicLevel":"Undergraduate",
+                                        "pages":"3-4",
+                                        "dueDate":"2025-02-20",
+                                        "studentName":"Jordan Lee",
+                                        "teacher":"Ms. Olivia Carter"
+                                    },
+                                    "messages":[
+                                        {
+                                            "id":1,
+                                            "role":"student",
+                                            "sender":"Jordan Lee",
+                                            "content":"Draft attached. Please focus on tone and clarity for a public audience.",
+                                            "attachments":["renewable_opinion_draft.docx"],
+                                            "timestamp":"2025-02-10T09:30:00Z"
+                                        }
+                                    ],
+                                    "final_file_url":null,
+                                    "updated_at":"2025-02-10T09:30:00Z",
+                                    "created_at":"2025-02-10T09:30:00Z",
+                                    "student_feedback":null,
+                                    "is_locked":false
+                                }'>
+                                <td><code>WR-2025-010</code></td>
+                                <td>Jordan Lee</td>
+                                <td>Opinion Essay - Renewable Energy</td>
+                                <td>
+                                    <span class="writing-status-badge submitted">
+                                        <i class="fas fa-circle"></i> Submitted
+                                    </span>
+                                </td>
+                                <td>Feb 20, 2025</td>
+                                <td>Feb 10, 2025, 9:30 AM</td>
+                                <td>
+                                    <button class="action-btn view-btn" type="button" title="View Details"
+                                        onclick="viewTeacherWritingDetail('WR-2025-010')">
+                                        <i class="fas fa-arrow-right"></i>
+                                    </button>
+                                </td>
+                            </tr>
+
+                            <!-- Reviewing Status -->
+                            <tr data-static-row="true" data-status="reviewing" data-writing-id="WR-2025-001"
+                                data-record='{
+                                    "writing_id":"WR-2025-001",
+                                    "assignment_code":"ASG-2025-001",
+                                    "assignment_id":1,
+                                    "title":"Literature Review - Climate Policy",
+                                    "status":"reviewing",
+                                    "student_excerpt":"Need a concise literature review covering climate policy shifts since 2018.",
+                                    "assignment_details":{
+                                        "title":"Literature Review - Climate Policy",
+                                        "type":"Analytical Essay",
+                                        "academicLevel":"Graduate",
+                                        "pages":"8-10",
+                                        "dueDate":"2025-02-15",
+                                        "studentName":"Alex Johnson",
+                                        "teacher":"Dr. Sarah Chen"
+                                    },
+                                    "messages":[
+                                        {
+                                            "id":1,
+                                            "role":"student",
+                                            "sender":"Alex Johnson",
+                                            "content":"I need help with a literature review on climate policy. Here is my initial draft and requirements.",
+                                            "attachments":["draft_v1.pdf"],
+                                            "timestamp":"2025-01-28T10:00:00Z"
+                                        },
+                                        {
+                                            "id":2,
+                                            "role":"teacher",
+                                            "sender":"You",
+                                            "content":"Thank you for the draft. I have reviewed it and here are my initial thoughts:\n\n1. The introduction needs a stronger thesis statement\n2. Add 3-5 more recent references (2020-2024)\n3. Consider organizing by policy themes rather than chronologically\n\nI will work on the revision and send it back within 24 hours.",
+                                            "attachments":["review_notes.pdf"],
+                                            "timestamp":"2025-01-28T16:15:00Z"
+                                        },
+                                        {
+                                            "id":3,
+                                            "role":"student",
+                                            "sender":"Alex Johnson",
+                                            "content":"Thanks for the feedback! Could you also focus more on the economic impacts section?",
+                                            "timestamp":"2025-01-28T18:00:00Z"
+                                        }
+                                    ],
+                                    "final_file_url":null,
+                                    "updated_at":"2025-01-28T18:00:00Z",
+                                    "created_at":"2025-01-28T10:00:00Z",
+                                    "student_feedback":null,
+                                    "is_locked":false
+                                }'>
+                                <td><code>WR-2025-001</code></td>
+                                <td>Alex Johnson</td>
+                                <td>Literature Review - Climate Policy</td>
+                                <td>
+                                    <span class="writing-status-badge reviewing">
+                                        <i class="fas fa-circle"></i> In Review
+                                    </span>
+                                </td>
+                                <td>Feb 15, 2025</td>
+                                <td>Jan 28, 2025, 6:00 PM</td>
+                                <td>
+                                    <button class="action-btn view-btn" type="button" title="View Details"
+                                        onclick="viewTeacherWritingDetail('WR-2025-001')">
+                                        <i class="fas fa-arrow-right"></i>
+                                    </button>
+                                </td>
+                            </tr>
+
+                            <!-- Revision Status -->
+                            <tr data-static-row="true" data-status="revision" data-writing-id="WR-2025-030"
+                                data-record='{
+                                    "writing_id":"WR-2025-030",
+                                    "assignment_code":"ASG-2025-030",
+                                    "assignment_id":30,
+                                    "title":"Essay on Shakespeare\'s Hamlet",
+                                    "status":"revision",
+                                    "student_excerpt":"Literary analysis essay focusing on themes of madness and revenge in Hamlet.",
+                                    "assignment_details":{
+                                        "title":"Essay on Shakespeare\'s Hamlet",
+                                        "type":"Literary Analysis",
+                                        "academicLevel":"High School",
+                                        "pages":"5-7",
+                                        "dueDate":"2025-02-10",
+                                        "studentName":"Sarah Davis",
+                                        "teacher":"Ms. Olivia Carter"
+                                    },
+                                    "messages":[
+                                        {
+                                            "id":1,
+                                            "role":"student",
+                                            "sender":"Sarah Davis",
+                                            "content":"Here is my first draft of the Hamlet essay. Please review and provide feedback.",
+                                            "attachments":["hamlet_essay_draft.pdf"],
+                                            "timestamp":"2025-01-20T14:00:00Z"
+                                        },
+                                        {
+                                            "id":2,
+                                            "role":"teacher",
+                                            "sender":"You",
+                                            "content":"Good start! However, I noticed a few areas that need improvement:\n\n1. Strengthen the thesis statement - be more specific about your argument\n2. Add more textual evidence from the play\n3. Expand the analysis of Ophelia\'s character\n4. Fix citation format (use MLA style)\n\nI have attached a revised version with comments. Please review and let me know if you have questions.",
+                                            "attachments":["hamlet_essay_reviewed.pdf", "citation_guide.pdf"],
+                                            "timestamp":"2025-01-25T16:30:00Z"
+                                        },
+                                        {
+                                            "id":3,
+                                            "role":"student",
+                                            "sender":"Sarah Davis",
+                                            "content":"Thank you for the detailed feedback! I am working on the revisions now. Should I focus more on the psychological aspects of Hamlet\'s madness?",
+                                            "timestamp":"2025-01-25T18:00:00Z"
+                                        }
+                                    ],
+                                    "final_file_url":null,
+                                    "updated_at":"2025-01-25T18:00:00Z",
+                                    "created_at":"2025-01-20T14:00:00Z",
+                                    "student_feedback":null,
+                                    "is_locked":false
+                                }'>
+                                <td><code>WR-2025-030</code></td>
+                                <td>Sarah Davis</td>
+                                <td>Essay on Shakespeare's Hamlet</td>
+                                <td>
+                                    <span class="writing-status-badge revision">
+                                        <i class="fas fa-circle"></i> Revision
+                                    </span>
+                                </td>
+                                <td>Feb 10, 2025</td>
+                                <td>Jan 25, 2025, 6:00 PM</td>
+                                <td>
+                                    <button class="action-btn view-btn" type="button" title="View Details"
+                                        onclick="viewTeacherWritingDetail('WR-2025-030')">
+                                        <i class="fas fa-arrow-right"></i>
+                                    </button>
+                                </td>
+                            </tr>
+
+                            <!-- Completed Status -->
+                            <tr data-static-row="true" data-status="completed" data-writing-id="WR-2025-014"
+                                data-record='{
+                                    "writing_id":"WR-2025-014",
+                                    "assignment_code":"ASG-2025-014",
+                                    "assignment_id":14,
+                                    "title":"Personal Statement Editing",
+                                    "status":"completed",
+                                    "student_excerpt":"Personal statement for MSCS application with focus on AI safety.",
+                                    "assignment_details":{
+                                        "title":"Personal Statement Editing",
+                                        "type":"Personal Statement",
+                                        "academicLevel":"Graduate",
+                                        "pages":"2",
+                                        "dueDate":"2025-01-20",
+                                        "studentName":"Emma Wilson",
+                                        "teacher":"Ms. Olivia Carter"
+                                    },
+                                    "messages":[
+                                        {
+                                            "id":1,
+                                            "role":"student",
+                                            "sender":"Emma Wilson",
+                                            "content":"I have attached my personal statement draft. Please help me refine it for my MSCS application.",
+                                            "attachments":["personal_statement_draft.docx"],
+                                            "timestamp":"2025-01-15T09:30:00Z"
+                                        },
+                                        {
+                                            "id":2,
+                                            "role":"teacher",
+                                            "sender":"You",
+                                            "content":"I have reviewed your statement. Here is the polished version with:\n- Grammar and style improvements\n- Stronger narrative flow\n- Better emphasis on your AI safety research\n- Highlighted your internship outcomes\n\nPlease review and let me know if you would like any adjustments.",
+                                            "attachments":["personal_statement_revised.pdf"],
+                                            "timestamp":"2025-01-17T14:45:00Z"
+                                        },
+                                        {
+                                            "id":3,
+                                            "role":"student",
+                                            "sender":"Emma Wilson",
+                                            "content":"This looks perfect! Thank you so much. I am ready to submit.",
+                                            "timestamp":"2025-01-18T10:00:00Z"
+                                        }
+                                    ],
+                                    "final_file_url":"https://example.com/final-personal-statement.pdf",
+                                    "updated_at":"2025-01-18T10:00:00Z",
+                                    "created_at":"2025-01-15T09:30:00Z",
+                                    "student_feedback":"Looks great, thanks!",
+                                    "is_locked":false
+                                }'>
+                                <td><code>WR-2025-014</code></td>
+                                <td>Emma Wilson</td>
+                                <td>Personal Statement Editing</td>
+                                <td>
+                                    <span class="writing-status-badge completed">
+                                        <i class="fas fa-circle"></i> Completed
+                                    </span>
+                                </td>
+                                <td>Jan 20, 2025</td>
+                                <td>Jan 18, 2025, 10:00 AM</td>
+                                <td>
+                                    <button class="action-btn view-btn" type="button" title="View Details"
+                                        onclick="viewTeacherWritingDetail('WR-2025-014')">
+                                        <i class="fas fa-arrow-right"></i>
+                                    </button>
+                                </td>
+                            </tr>
+
+                            <!-- Another Reviewing Status -->
+                            <tr data-static-row="true" data-status="reviewing" data-writing-id="WR-2025-042"
+                                data-record='{
+                                    "writing_id":"WR-2025-042",
+                                    "assignment_code":"ASG-2025-042",
+                                    "assignment_id":42,
+                                    "title":"Case Study Analysis - Business Strategy",
+                                    "status":"reviewing",
+                                    "student_excerpt":"Case study analysis of a tech startup\'s business strategy and market positioning.",
+                                    "assignment_details":{
+                                        "title":"Case Study Analysis - Business Strategy",
+                                        "type":"Case Study",
+                                        "academicLevel":"Graduate",
+                                        "pages":"10-12",
+                                        "dueDate":"2025-03-05",
+                                        "studentName":"Jessica Martinez",
+                                        "teacher":"Dr. Sarah Chen"
+                                    },
+                                    "messages":[
+                                        {
+                                            "id":1,
+                                            "role":"student",
+                                            "sender":"Jessica Martinez",
+                                            "content":"I have completed the case study analysis. Could you review it for clarity and depth?",
+                                            "attachments":["case_study_analysis.pdf"],
+                                            "timestamp":"2025-01-27T09:00:00Z"
+                                        },
+                                        {
+                                            "id":2,
+                                            "role":"teacher",
+                                            "sender":"You",
+                                            "content":"I have reviewed your case study. Overall, it is well-structured. Here are my suggestions:\n\n1. Add more quantitative data to support your analysis\n2. Include a SWOT analysis section\n3. Expand the competitive analysis\n4. Strengthen the recommendations section\n\nI will work on enhancing these sections and send you an updated version.",
+                                            "attachments":["case_study_feedback.pdf"],
+                                            "timestamp":"2025-01-27T15:20:00Z"
+                                        }
+                                    ],
+                                    "final_file_url":null,
+                                    "updated_at":"2025-01-27T15:20:00Z",
+                                    "created_at":"2025-01-27T09:00:00Z",
+                                    "student_feedback":null,
+                                    "is_locked":false
+                                }'>
+                                <td><code>WR-2025-042</code></td>
+                                <td>Jessica Martinez</td>
+                                <td>Case Study Analysis - Business Strategy</td>
+                                <td>
+                                    <span class="writing-status-badge reviewing">
+                                        <i class="fas fa-circle"></i> In Review
+                                    </span>
+                                </td>
+                                <td>Mar 5, 2025</td>
+                                <td>Jan 27, 2025, 3:20 PM</td>
+                                <td>
+                                    <button class="action-btn view-btn" type="button" title="View Details"
+                                        onclick="viewTeacherWritingDetail('WR-2025-042')">
+                                        <i class="fas fa-arrow-right"></i>
+                                    </button>
+                                </td>
+                            </tr>
+
+                            <!-- Another Submitted Status -->
+                            <tr data-static-row="true" data-status="submitted" data-writing-id="WR-2025-025"
+                                data-record='{
+                                    "writing_id":"WR-2025-025",
+                                    "assignment_code":"ASG-2025-025",
+                                    "assignment_id":25,
+                                    "title":"Research Paper - Machine Learning Ethics",
+                                    "status":"submitted",
+                                    "student_excerpt":"Need help writing a research paper on ethical considerations in machine learning applications.",
+                                    "assignment_details":{
+                                        "title":"Research Paper - Machine Learning Ethics",
+                                        "type":"Research Paper",
+                                        "academicLevel":"Undergraduate",
+                                        "pages":"12-15",
+                                        "dueDate":"2025-02-28",
+                                        "studentName":"Michael Brown",
+                                        "teacher":"Dr. Sarah Chen"
+                                    },
+                                    "messages":[
+                                        {
+                                            "id":1,
+                                            "role":"student",
+                                            "sender":"Michael Brown",
+                                            "content":"I have submitted my research paper topic and initial outline. Could you help me develop the arguments and structure?",
+                                            "attachments":["research_outline.docx"],
+                                            "timestamp":"2025-01-22T11:00:00Z"
+                                        }
+                                    ],
+                                    "final_file_url":null,
+                                    "updated_at":"2025-01-22T11:00:00Z",
+                                    "created_at":"2025-01-22T11:00:00Z",
+                                    "student_feedback":null,
+                                    "is_locked":false
+                                }'>
+                                <td><code>WR-2025-025</code></td>
+                                <td>Michael Brown</td>
+                                <td>Research Paper - Machine Learning Ethics</td>
+                                <td>
+                                    <span class="writing-status-badge submitted">
+                                        <i class="fas fa-circle"></i> Submitted
+                                    </span>
+                                </td>
+                                <td>Feb 28, 2025</td>
+                                <td>Jan 22, 2025, 11:00 AM</td>
+                                <td>
+                                    <button class="action-btn view-btn" type="button" title="View Details"
+                                        onclick="viewTeacherWritingDetail('WR-2025-025')">
+                                        <i class="fas fa-arrow-right"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="teacherWritingEmptyState"
+                    style="display:none; text-align:center; padding:2rem; color: var(--muted);">
+                    <p>No writing requests assigned to you yet.</p>
+                </div>
+
+                <!-- Writing Detail View (inline, similar to student view) -->
+                <div class="writing-detail-view" id="teacherWritingDetailView" style="display:none;">
+                    <div class="writing-detail-header">
+                        <div>
+                            <button class="ghost-button" id="teacherWritingBackButton"
+                                onclick="showTeacherWritingList()">
+                                <i class="fas fa-arrow-left"></i> Back to Writings
+                            </button>
+                            <h2 class="writing-detail-title" id="teacherWritingViewTitle">Writing Assignment</h2>
+                            <div class="writing-view-meta">
+                                <span class="writing-status-badge" id="teacherWritingViewStatus">Submitted</span>
+                                <span class="writing-link"><i class="fas fa-link"></i> Assignment: <span
+                                        id="teacherWritingViewAssignmentCode"></span></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Assignment Details Section -->
+                    <div class="writing-assignment-info" id="teacherWritingAssignmentInfo">
+                        <h3><i class="fas fa-info-circle"></i> Assignment Details</h3>
+                        <div class="assignment-info-grid">
+                            <div class="info-item">
+                                <span class="info-label">Title:</span>
+                                <span class="info-value" id="teacherWritingAssignmentTitle">—</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Type:</span>
+                                <span class="info-value" id="teacherWritingAssignmentType">—</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Academic Level:</span>
+                                <span class="info-value" id="teacherWritingAcademicLevel">—</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Pages:</span>
+                                <span class="info-value" id="teacherWritingPages">—</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Due Date:</span>
+                                <span class="info-value" id="teacherWritingDueDate">—</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Student:</span>
+                                <span class="info-value" id="teacherWritingStudentName">—</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Conversation Thread -->
+                    <div class="writing-view-body">
+                        <div id="teacherWritingMessagesContainer" class="writing-messages-container">
+                            <!-- Messages populated by JS -->
+                        </div>
+                        <div class="writing-composer" id="teacherWritingComposer">
+                            <!-- Drag & Drop Overlay -->
+                            <div id="teacherWritingDragOverlay" class="drag-drop-overlay" style="display: none;">
+                                <div class="drag-drop-content">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p>Drop files here to attach</p>
+                                </div>
+                            </div>
+
+                            <!-- Attachment Preview Area -->
+                            <div id="teacherWritingAttachmentsPreview" class="attachment-preview-container" style="display: none;">
+                                <div class="attachment-preview-header">
+                                    <span class="attachment-preview-title">
+                                        <i class="fas fa-paperclip"></i> Attached Files (<span id="teacherAttachmentCount">0</span>)
+                                    </span>
+                                </div>
+                                <div class="attachment-preview-list" id="teacherWritingAttachmentsList"></div>
+                            </div>
+
+                            <div class="composer-note" id="teacherWritingComposerNote" style="display:none;">
+                                <i class="fas fa-lock"></i> This writing is completed. Discussion is locked, but students can still provide feedback.
+                            </div>
+                            <div class="composer-large">
+                                <input type="text" id="teacherWritingReplyInput" name="teacherWritingReplyInput"
+                                    autocomplete="off"
+                                    placeholder="Type your response, attach files, or provide feedback..." />
+                                <input type="file" id="teacherWritingFileInput" name="teacherWritingFileInput"
+                                    style="display: none;" multiple
+                                    accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt,.zip,.rar,.xls,.xlsx,.ppt,.pptx">
+                                <button class="icon-btn" id="teacherWritingMicrophoneBtn" title="Voice message"><i
+                                        class="fas fa-microphone"></i></button>
+                                <button class="icon-btn" id="teacherWritingAttachBtn" title="Attach file"><i
+                                        class="fas fa-paperclip"></i></button>
+                                <button class="send-cta" id="teacherWritingSendBtn"
+                                    onclick="sendTeacherWritingMessage()" title="Send"><i
+                                        class="fas fa-paper-plane"></i></button>
+                            </div>
+                            <div class="teacher-actions-row"
+                                style="margin-top: 12px; display: flex; gap: 10px; flex-wrap: wrap;">
+                                <button class="primary-button" id="teacherMarkCompleteBtn"
+                                    onclick="markWritingComplete()" style="display:none;">
+                                    <i class="fas fa-check-circle"></i> Mark as Completed
+                                </button>
+                                <button class="ghost-button" id="teacherUpdateStatusBtn"
+                                    onclick="updateWritingStatus()">
+                                    <i class="fas fa-edit"></i> Update Status
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+<style>
+    /* Ensure writing-view-body uses flexbox properly for scrolling */
+    .writing-view-body {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        min-height: 600px;
+        max-height: calc(100vh - 400px);
+    }
+
+    .writing-messages-container {
+        flex: 1;
+        min-height: 0;
+        max-height: 500px;
+        height: 500px;
+        overflow-y: auto;
+        padding: 16px;
+        background: #f9fafb;
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .writing-composer {
+        flex-shrink: 0;
+        position: relative;
+    }
+
+    #teacherWritingAttachmentsPreview {
+        flex-shrink: 0;
+    }
+
+    /* Attachment Preview Container */
+    .attachment-preview-container {
+        padding: 16px;
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        margin-bottom: 12px;
+        animation: slideDown 0.2s ease-out;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .attachment-preview-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .attachment-preview-title {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #374151;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .attachment-preview-title i {
+        color: #6b7280;
+    }
+
+    #teacherAttachmentCount {
+        color: #1158e5;
+        font-weight: 700;
+    }
+
+    .attachment-preview-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .attachment-preview-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        min-width: 200px;
+        max-width: 350px;
+        transition: all 0.2s ease;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .attachment-preview-item .file-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .attachment-preview-item .file-name {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #111827;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-bottom: 4px;
+    }
+
+    .attachment-preview-item .file-size {
+        font-size: 0.75rem;
+        color: #6b7280;
+    }
+
+    .attachment-remove-btn {
+        background: none;
+        border: none;
+        color: #ef4444;
+        cursor: pointer;
+        padding: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+    }
+
+    .attachment-remove-btn:hover {
+        color: #dc2626 !important;
+        transform: scale(1.1);
+        background: rgba(239, 68, 68, 0.1);
+    }
+
+    /* Smooth scrolling for messages container */
+    .writing-messages-container {
+        scroll-behavior: smooth;
+    }
+
+    /* Custom scrollbar for messages container */
+    .writing-messages-container::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .writing-messages-container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+    }
+
+    .writing-messages-container::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+    }
+
+    .writing-messages-container::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+    }
+
+    /* Attachment items in messages - clickable links */
+    .writing-message-attachments {
+        margin-top: 8px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .writing-message .attachment-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+
+    .writing-message.student .attachment-item {
+        background: rgba(255, 255, 255, 0.2);
+        color: #fff;
+    }
+
+    .writing-message.student .attachment-item:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-1px);
+    }
+
+    .writing-message.teacher .attachment-item {
+        background: #f3f4f6;
+        color: #111827;
+        border: 1px solid #e5e7eb;
+    }
+
+    .writing-message.teacher .attachment-item:hover {
+        background: #e5e7eb;
+        border-color: #cbd5e1;
+        transform: translateY(-1px);
+    }
+
+    .attachment-preview-item:hover {
+        border-color: #cbd5e1;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Drag & Drop Overlay */
+    .drag-drop-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(17, 88, 229, 0.95);
+        border: 3px dashed #ffffff;
+        border-radius: 12px;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        pointer-events: none !important;
+    }
+
+    .drag-drop-content {
+        text-align: center;
+        color: #ffffff;
+    }
+
+    .drag-drop-content i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        display: block;
+    }
+
+    .drag-drop-content p {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    /* Image Preview in Attachment List */
+    .attachment-image-preview {
+        width: 60px;
+        height: 60px;
+        border-radius: 8px;
+        overflow: hidden;
+        flex-shrink: 0;
+        background: #f3f4f6;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .attachment-image-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* PDF Preview Icon */
+    .pdf-preview-icon {
+        font-size: 2rem;
+        color: #dc2626;
+        flex-shrink: 0;
+    }
+
+    /* Generic File Preview Icon */
+    .file-preview-icon {
+        font-size: 2rem;
+        color: #64748b;
+        flex-shrink: 0;
+    }
+
+    /* Ensure composer input and buttons are accessible */
+    .writing-composer .composer-large {
+        position: relative;
+        z-index: 1001 !important;
+        pointer-events: auto !important;
+    }
+
+    .writing-composer .icon-btn,
+    .writing-composer .send-cta {
+        pointer-events: auto !important;
+        cursor: pointer !important;
+        position: relative;
+        z-index: 1002 !important;
+    }
+
+    #teacherWritingReplyInput {
+        pointer-events: auto !important;
+        z-index: 1001 !important;
+        position: relative;
+    }
+
+    #teacherWritingFileInput {
+        pointer-events: auto !important;
+        z-index: 1003 !important;
+    }
+</style>
+{% endblock %}

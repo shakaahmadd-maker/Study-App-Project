@@ -1,0 +1,427 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Login</title>
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'lato', sans-serif;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 450px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .login-title {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .login-subtitle {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            background-color: #fee;
+            border: 1px solid #e74c3c;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            display: none;
+            font-size: 14px;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .success-message {
+            color: #27ae60;
+            background-color: #efe;
+            border: 1px solid #27ae60;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            display: none;
+            font-size: 14px;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            font-family: 'lato', sans-serif;
+            background-color: #fff;
+            color: #333;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23333' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            padding-right: 40px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: #667eea;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 700;
+            font-family: 'lato', sans-serif;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            background: #5568d3;
+        }
+
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .loading .submit-btn {
+            position: relative;
+        }
+
+        .loading .submit-btn::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            top: 50%;
+            left: 50%;
+            margin-left: -8px;
+            margin-top: -8px;
+            border: 2px solid #ffffff;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .forgot-password {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .forgot-password a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+
+        #identifierHint {
+            display: block;
+            color: #666;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-container">
+        <h2 class="login-title">Login</h2>
+        <p class="login-subtitle">Sign in to your account</p>
+
+        <div class="error-message" id="errorMessage"></div>
+        <div class="success-message" id="successMessage"></div>
+
+        <form id="loginForm" novalidate>
+            <div class="form-group">
+                <label for="roleSelect">Role</label>
+                <select name="role" id="roleSelect" required>
+                    <option value="">Select Role</option>
+                    <option value="cs_rep">CS-Rep</option>
+                    <option value="teacher">Teacher</option>
+                    <option value="admin">Admin</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="identifier">User ID</label>
+                <input type="text" name="identifier" id="identifier" placeholder="Enter your User ID" required
+                    autocomplete="username">
+                <small id="identifierHint" style="display: none;"></small>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" name="password" id="password" placeholder="Enter your password" required
+                    autocomplete="current-password">
+            </div>
+
+            <button class="submit-btn" type="submit" id="submitBtn">Sign In</button>
+
+            <div class="forgot-password">
+                <a href="forgot_pass.html">Forgot your password?</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        (function () {
+            const loginForm = document.getElementById('loginForm');
+            const errorMessage = document.getElementById('errorMessage');
+            const successMessage = document.getElementById('successMessage');
+            const submitBtn = document.getElementById('submitBtn');
+            const roleSelect = document.getElementById('roleSelect');
+            const identifierInput = document.getElementById('identifier');
+            const identifierHint = document.getElementById('identifierHint');
+            const passwordInput = document.getElementById('password');
+
+            function showError(message) {
+                errorMessage.textContent = message;
+                errorMessage.classList.add('show');
+                successMessage.classList.remove('show');
+            }
+
+            function showSuccess(message) {
+                successMessage.textContent = message;
+                successMessage.classList.add('show');
+                errorMessage.classList.remove('show');
+            }
+
+            function hideMessages() {
+                errorMessage.classList.remove('show');
+                successMessage.classList.remove('show');
+            }
+
+            function setLoading(loading) {
+                if (loading) {
+                    loginForm.classList.add('loading');
+                    submitBtn.disabled = true;
+                } else {
+                    loginForm.classList.remove('loading');
+                    submitBtn.disabled = false;
+                }
+            }
+
+            // Update input placeholder based on role selection
+            roleSelect.addEventListener('change', function () {
+                const role = roleSelect.value;
+                if (role === 'cs_rep' || role === 'teacher' || role === 'admin') {
+                    identifierInput.placeholder = 'Enter your User ID';
+                    identifierHint.style.display = 'block';
+                    identifierHint.textContent = `Enter your User ID for ${role === 'cs_rep' ? 'CS-Rep' : role.charAt(0).toUpperCase() + role.slice(1)} login`;
+                } else {
+                    identifierInput.placeholder = 'Enter your User ID';
+                    identifierHint.style.display = 'none';
+                }
+                hideMessages();
+            });
+
+            loginForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                hideMessages();
+
+                const role = roleSelect.value.trim();
+                const identifier = identifierInput.value.trim();
+                const password = passwordInput.value;
+
+                // Validation
+                if (!role) {
+                    showError('Please select a role.');
+                    roleSelect.focus();
+                    return;
+                }
+
+                if (!identifier) {
+                    showError('Please enter your User ID.');
+                    identifierInput.focus();
+                    return;
+                }
+
+                if (!password) {
+                    showError('Please enter your password.');
+                    passwordInput.focus();
+                    return;
+                }
+
+                setLoading(true);
+
+                try {
+                    // Prepare request body
+                    let requestBody = {
+                        role: role,
+                        password: password,
+                        user_id: identifier
+                    };
+
+                    const response = await fetch('/account/api/accounts/login/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(requestBody)
+                    });
+
+                    // Check if response is JSON
+                    let data;
+                    const contentType = response.headers.get('content-type');
+                    if (contentType && contentType.includes('application/json')) {
+                        data = await response.json();
+                    } else {
+                        const text = await response.text();
+                        throw new Error(`Server returned non-JSON response: ${text.substring(0, 100)}`);
+                    }
+
+                    if (response.ok && data.success) {
+                        // Store tokens in localStorage
+                        if (data.tokens) {
+                            localStorage.setItem('access_token', data.tokens.access);
+                            localStorage.setItem('refresh_token', data.tokens.refresh);
+                        }
+
+                        // Store user info
+                        if (data.role) {
+                            localStorage.setItem('user_role', data.role);
+                        }
+                        if (data.user_id) {
+                            localStorage.setItem('user_id', data.user_id);
+                        }
+                        if (data.email) {
+                            localStorage.setItem('user_email', data.email);
+                        }
+
+                        showSuccess('Login successful! Redirecting...');
+
+                        // Redirect based on role
+                        setTimeout(() => {
+                            const userRole = data.role || '';
+                            let redirectUrl = '/account/admin-dashboard/';
+
+                            // Normalize role for comparison
+                            const normalizedRole = userRole.toUpperCase().replace('-', '_');
+
+                            switch (normalizedRole) {
+                                case 'TEACHER':
+                                    localStorage.removeItem('teacher_last_section');
+                                    redirectUrl = '/account/teacher-dashboard/';
+                                    break;
+                                case 'CS_REP':
+                                    redirectUrl = '/account/cs-rep-dashboard/';
+                                    break;
+                                case 'ADMIN':
+                                    redirectUrl = '/account/admin-dashboard/';
+                                    break;
+                                default:
+                                    // Fallback to admin dashboard if role is unknown
+                                    redirectUrl = '/account/admin-dashboard/';
+                                    console.warn('Unknown role:', userRole, 'redirecting to admin dashboard');
+                            }
+
+                            window.location.href = redirectUrl;
+                        }, 1000);
+                    } else {
+                        // Handle error response
+                        const errorMsg = data.error || data.detail || data.message || 'Invalid credentials. Please check your role, User ID, and password.';
+                        showError(errorMsg);
+                        setLoading(false);
+                        
+                        // Clear password on error
+                        passwordInput.value = '';
+                        passwordInput.focus();
+                    }
+                } catch (error) {
+                    console.error('Login error:', error);
+                    
+                    // Handle network errors
+                    if (error instanceof TypeError && error.message.includes('fetch')) {
+                        showError('Network error. Please check your internet connection and try again.');
+                    } else {
+                        showError(error.message || 'An error occurred. Please try again later.');
+                    }
+                    
+                    setLoading(false);
+                    passwordInput.value = '';
+                }
+            });
+
+            // Clear any existing error messages on input
+            identifierInput.addEventListener('input', hideMessages);
+            passwordInput.addEventListener('input', hideMessages);
+            roleSelect.addEventListener('change', hideMessages);
+
+            // Auto-focus on role select when page loads
+            window.addEventListener('load', function() {
+                roleSelect.focus();
+            });
+        })();
+    </script>
+</body>
+
+</html>

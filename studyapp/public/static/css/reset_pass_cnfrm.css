@@ -1,0 +1,257 @@
+:root {
+    --primary-color: #137fec;
+    --gray-50: #f9fafb;
+    --gray-600: #4b5563;
+    --gray-700: #374151;
+    --gray-800: #1f2937;
+    --gray-900: #111827;
+    --blue-50: #eff6ff;
+    --blue-200: #bfdbfe;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Inter, "Noto Sans", sans-serif;
+    background-color: var(--gray-50);
+}
+
+.page-wrapper {
+    position: relative;
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+    flex-direction: column;
+}
+
+.page-container {
+    display: flex;
+    height: 100%;
+    flex-grow: 1;
+    flex-direction: column;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--gray-200);
+    padding: 17px 45px;
+}
+
+.logo-section {
+    display: flex;
+    align-items: center;
+    gap: 21px;
+    color: var(--gray-800);
+}
+
+.logo-icon {
+    height: 37px;
+    width: 37px;
+    color: var(--primary-color);
+}
+
+.logo-text {
+    color: var(--gray-900);
+    font-size: 25px;
+    font-weight: bold;
+    line-height: 1.25;
+    letter-spacing: -0.015em;
+}
+
+.navigation {
+    display: flex;
+    align-items: center;
+    gap: 29px;
+}
+
+.nav-link {
+    color: var(--gray-600);
+    text-decoration: none;
+    font-size: 19px;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.nav-link:hover {
+    color: var(--gray-900);
+}
+
+.login-button {
+    display: flex;
+    min-width: 89px;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 11px;
+    height: 45px;
+    padding: 0 29px;
+    background-color: var(--primary-color);
+    color: white;
+    font-size: 19px;
+    font-weight: bold;
+    line-height: 1.5;
+    letter-spacing: -0.015em;
+    border: none;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.login-button:hover {
+    background-color: rgba(19, 127, 236, 0.9);
+}
+
+.button-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.main-content {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    padding: 69px 21px;
+}
+
+.content-container {
+    width: 100%;
+    max-width: 453px;
+    text-align: center;
+}
+
+.fade-in {
+    animation: fadeIn 1s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.icon-section {
+    margin-bottom: 37px;
+}
+
+.email-icon {
+    font-size: 77px;
+    color: var(--primary-color);
+    display: inline-block;
+}
+
+.icon-bounce {
+    animation: iconBounce 1.5s infinite;
+}
+
+@keyframes iconBounce {
+
+    0%,
+    20%,
+    50%,
+    80%,
+    100% {
+        transform: translateY(0);
+    }
+
+    40% {
+        transform: translateY(-15px);
+    }
+
+    60% {
+        transform: translateY(0px);
+    }
+}
+
+.main-title {
+    color: var(--gray-900);
+    font-size: 41px;
+    font-weight: bold;
+    letter-spacing: -0.025em;
+    margin-bottom: 21px;
+}
+
+.description {
+    color: var(--gray-600);
+    font-size: 23px;
+    margin-bottom: 37px;
+}
+
+.info-box {
+    border-radius: 11px;
+    background-color: var(--blue-50);
+    border: 1px solid var(--blue-200);
+    padding: 21px;
+    text-align: left;
+    font-size: 19px;
+    color: var(--gray-700);
+}
+
+.info-text {
+    font-weight: 500;
+}
+
+.info-bold {
+    font-weight: bold;
+    color: var(--gray-800);
+}
+
+.support-link {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.support-link:hover {
+    text-decoration: underline;
+}
+
+.button-section {
+    margin-top: 45px;
+}
+
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 11px;
+    height: 53px;
+    padding: 0 37px;
+    background-color: transparent;
+    border: 1px solid var(--gray-300);
+    color: var(--gray-700);
+    font-size: 21px;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    text-decoration: none;
+    transition: all 0.3s ease-in-out;
+}
+
+.back-button:hover {
+    background-color: var(--gray-100);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.button-icon {
+    margin-right: 13px;
+    margin-left: 1px;
+    transition: transform 0.3s ease;
+}
+
+.back-button:hover .button-icon {
+    transform: translateX(1px);
+}

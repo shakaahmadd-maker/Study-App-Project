@@ -1,0 +1,274 @@
+{% extends "student/student_base.html" %}
+
+{% block content %}
+{% csrf_token %}
+            <div class="content-section" id="settingsSection" style="display: none;">
+                <!-- Header -->
+                <div class="content-header">
+                    <div class="header-left">
+                        <h1 class="page-title">Settings</h1>
+                        <p class="page-subtitle">Manage your notification preferences and appearance settings.</p>
+                    </div>
+                </div>
+
+                <!-- Settings Tabs -->
+                <div class="settings-tabs">
+                    <button class="settings-tab-btn active" data-tab="notifications">
+                        <i class="fas fa-bell"></i>
+                        <span>Notifications</span>
+                    </button>
+                    <button class="settings-tab-btn" data-tab="reminders">
+                        <i class="fas fa-clock"></i>
+                        <span>Reminders</span>
+                    </button>
+                </div>
+
+                <!-- Settings Content -->
+                <div class="settings-content">
+                    <!-- Notifications Tab -->
+                    <div class="settings-tab-content active" id="notificationsTab">
+                        <div class="notification-settings-section">
+                            <h3 class="section-title">Notification Settings</h3>
+                            <div class="notification-options">
+                                <div class="notification-option">
+                                    <div class="notification-info">
+                                        <h4 class="notification-title">New Teacher Messages</h4>
+                                        <p class="notification-description">Get notified when a teacher sends you a
+                                            message.</p>
+                                    </div>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="teacherMessages" class="toggle-input" checked>
+                                        <label for="teacherMessages" class="toggle-label">
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="notification-option">
+                                    <div class="notification-info">
+                                        <h4 class="notification-title">New Announcements</h4>
+                                        <p class="notification-description">Get notified for new school-wide
+                                            announcements.</p>
+                                    </div>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="announcements" class="toggle-input">
+                                        <label for="announcements" class="toggle-label">
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="notification-option">
+                                    <div class="notification-info">
+                                        <h4 class="notification-title">Assignment Updates</h4>
+                                        <p class="notification-description">Get notified when your assignments are
+                                            updated or graded.</p>
+                                    </div>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="assignmentUpdates" class="toggle-input" checked>
+                                        <label for="assignmentUpdates" class="toggle-label">
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="notification-option">
+                                    <div class="notification-info">
+                                        <h4 class="notification-title">Meeting Reminders</h4>
+                                        <p class="notification-description">Get notified before scheduled meetings.</p>
+                                    </div>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="meetingReminders" class="toggle-input" checked>
+                                        <label for="meetingReminders" class="toggle-label">
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="notification-option">
+                                    <div class="notification-info">
+                                        <h4 class="notification-title">Grade Notifications</h4>
+                                        <p class="notification-description">Get notified when new grades are posted.</p>
+                                    </div>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="gradeNotifications" class="toggle-input" checked>
+                                        <label for="gradeNotifications" class="toggle-label">
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reminders Tab -->
+                    <div class="settings-tab-content" id="remindersTab">
+                        <div class="reminder-settings-section">
+                            <h3 class="section-title">Reminder Settings</h3>
+                            <div class="reminder-options">
+                                <div class="reminder-option">
+                                    <div class="reminder-info">
+                                        <h4 class="reminder-title">Assignment Due Date Reminders</h4>
+                                        <p class="reminder-description">Receive reminders for upcoming assignment due
+                                            dates.</p>
+                                    </div>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="assignmentDueReminders" class="toggle-input" checked>
+                                        <label for="assignmentDueReminders" class="toggle-label">
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="reminder-option">
+                                    <div class="reminder-info">
+                                        <h4 class="reminder-title">Meeting Reminders</h4>
+                                        <p class="reminder-description">Receive reminders before scheduled meetings.</p>
+                                    </div>
+                                    <div class="reminder-options-sub">
+                                        <div class="reminder-time-option">
+                                            <label class="reminder-time-label">Remind me</label>
+                                            <select class="reminder-time-select" id="meetingReminderTime">
+                                                <option value="15">15 minutes before</option>
+                                                <option value="30" selected>30 minutes before</option>
+                                                <option value="60">1 hour before</option>
+                                                <option value="1440">1 day before</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="reminder-option">
+                                    <div class="reminder-info">
+                                        <h4 class="reminder-title">Exam Reminders</h4>
+                                        <p class="reminder-description">Receive reminders for upcoming exams.</p>
+                                    </div>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="examReminders" class="toggle-input"
+                                            checked>
+                                        <label for="examReminders" class="toggle-label">
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                // Student Settings JavaScript
+                let studentSettings = {};
+
+                // Load settings on page load
+                document.addEventListener('DOMContentLoaded', function() {
+                    loadStudentSettings();
+                });
+
+                async function loadStudentSettings() {
+                    try {
+                        const response = await fetch('/account/api/accounts/settings/', {
+                            method: 'GET',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value
+                            }
+                        });
+
+                        if (response.ok) {
+                            const data = await response.json();
+                            if (data.success) {
+                                studentSettings = data.settings;
+                                // Update UI with loaded settings
+                                updateStudentUI();
+                            }
+                        } else {
+                            console.error('Failed to load settings');
+                        }
+                    } catch (error) {
+                        console.error('Error loading settings:', error);
+                    }
+                }
+
+                function updateStudentUI() {
+                    // Notifications tab
+                    document.getElementById('teacherMessages').checked = studentSettings.student_messages || false;
+                    document.getElementById('announcements').checked = studentSettings.announcements || false;
+                    document.getElementById('assignmentUpdates').checked = studentSettings.assignment_updates || false;
+                    document.getElementById('meetingReminders').checked = studentSettings.meeting_reminders || false;
+                    document.getElementById('gradeNotifications').checked = studentSettings.grade_notifications || false;
+
+                    // Reminders tab
+                    document.getElementById('assignmentDueReminders').checked = studentSettings.assignment_due_reminders || false;
+                    document.getElementById('meetingReminderTime').value = studentSettings.meeting_reminder_time || 30;
+                    document.getElementById('examReminders').checked = studentSettings.exam_reminders || false;
+                }
+
+                async function saveStudentSettings() {
+                    const settings = {
+                        // Notifications
+                        student_messages: document.getElementById('teacherMessages').checked,
+                        announcements: document.getElementById('announcements').checked,
+                        assignment_updates: document.getElementById('assignmentUpdates').checked,
+                        meeting_reminders: document.getElementById('meetingReminders').checked,
+                        grade_notifications: document.getElementById('gradeNotifications').checked,
+                        // Reminders
+                        assignment_due_reminders: document.getElementById('assignmentDueReminders').checked,
+                        meeting_reminders_enabled: document.getElementById('assignmentDueReminders').checked, // Reuse for meeting reminders
+                        meeting_reminder_time: parseInt(document.getElementById('meetingReminderTime').value),
+                        exam_reminders: document.getElementById('examReminders').checked,
+                    };
+
+                    try {
+                        const response = await fetch('/account/api/accounts/settings/', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value
+                            },
+                            body: JSON.stringify(settings)
+                        });
+
+                        const data = await response.json();
+
+                        if (data.success) {
+                            // Show success message
+                            if (typeof showToast === 'function') {
+                                showToast('Settings saved successfully!', 'success');
+                            } else {
+                                alert('Settings saved successfully!');
+                            }
+                        } else {
+                            throw new Error(data.error || 'Failed to save settings');
+                        }
+                    } catch (error) {
+                        console.error('Error saving settings:', error);
+                        if (typeof showToast === 'function') {
+                            showToast('Failed to save settings: ' + error.message, 'error');
+                        } else {
+                            alert('Failed to save settings: ' + error.message);
+                        }
+                    }
+                }
+
+                function resetStudentSettings() {
+                    if (confirm('Are you sure you want to reset settings to default?')) {
+                        // Reset to defaults
+                        document.getElementById('teacherMessages').checked = true;
+                        document.getElementById('announcements').checked = true;
+                        document.getElementById('assignmentUpdates').checked = true;
+                        document.getElementById('meetingReminders').checked = true;
+                        document.getElementById('gradeNotifications').checked = true;
+                        document.getElementById('assignmentDueReminders').checked = true;
+                        document.getElementById('meetingReminderTime').value = 30;
+                        document.getElementById('examReminders').checked = true;
+                        saveStudentSettings();
+                    }
+                }
+
+                // Make functions globally available
+                window.saveStudentSettings = saveStudentSettings;
+                window.resetStudentSettings = resetStudentSettings;
+            </script>
+{% endblock %}

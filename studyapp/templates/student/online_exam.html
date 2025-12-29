@@ -1,0 +1,240 @@
+{% extends "student/student_base.html" %}
+
+{% block content %}
+<section class="content-section" id="onlineExamsSection" aria-labelledby="examsHeading">
+    <h1 class="section-title" id="examsHeading">Available Exams</h1>
+
+    <!-- Exam Statistics Bar -->
+    <div class="modern-exam-stats">
+        <div class="stat-item">
+            <i class="fas fa-clipboard stat-icon" style="color: white;"></i>
+            <div class="stat-content">
+                <div class="stat-value">{{ total_exams }}</div>
+                <div class="stat-label">Total Exams</div>
+            </div>
+        </div>
+        <div class="stat-item">
+            <i class="fas fa-check-circle stat-icon" style="color: white;"></i>
+            <div class="stat-content">
+                <div class="stat-value">{{ completed_exams }}</div>
+                <div class="stat-label">Completed</div>
+            </div>
+        </div>
+        <div class="stat-item">
+            <i class="fas fa-clock stat-icon" style="color: white;"></i>
+            <div class="stat-content">
+                <div class="stat-value">{{ pending_exams }}</div>
+                <div class="stat-label">Pending</div>
+            </div>
+        </div>
+        <div class="stat-item">
+            <i class="fas fa-star stat-icon" style="color: white;"></i>
+            <div class="stat-content">
+                <div class="stat-value">{{ avg_score }}%</div>
+                <div class="stat-label">Average Score</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modern Exam List -->
+    <div class="modern-exam-list" id="examsList">
+        {% if exams_list %}
+        {% for exam in exams_list %}
+        <div class="modern-exam-item" data-exam-id="{{ exam.id }}" data-exam-type="{{ exam.exam_type }}">
+            <div class="exam-main">
+                <div class="exam-title-row">
+                    <h3 class="exam-title">{{ exam.title }}</h3>
+                    <span class="exam-type-badge {{ exam.exam_type }}">{{ exam.get_exam_type_display }}</span>
+                </div>
+                <div class="exam-meta-row">
+                    <span class="exam-meta"><i class="fas fa-user"></i> {{ exam.teacher.user.get_full_name }}</span>
+                    <span class="exam-meta"><i class="fas fa-clipboard"></i> {{ exam.assignment.title }}</span>
+                    {% if exam.status == 'completed' %}
+                    <span class="exam-meta"><i class="fas fa-check-circle"></i> Completed: {{ exam.updated_at|date:"M
+                        d,Y" }}</span> <!-- if exam.updated_at is not None -->
+                    {% else %}
+                    <span class="exam-meta"><i class="fas fa-calendar"></i> Due: {{ exam.deadline|date:"M d, Y, h:i
+                        A"|default:"-"}}</span> <!-- if exam.deadline is not None -->
+                    {% endif %}
+                </div>
+            </div>
+            <div class="exam-side">
+                {% if exam.status == 'completed' %}
+                <span class="exam-status-badge completed">Completed</span>
+                {% if exam.attempts.first %}
+                <div class="exam-score">Score:
+                    <strong>{% if exam.attempts.first.score %}{{ exam.attempts.first.score|floatformat:0 }}{% else %}{{
+                        exam.attempts.first.total_grade|default:0|floatformat:0 }}{% endif %}%</strong>
+                </div>
+                <button class="modern-exam-btn secondary" onclick="viewResults('{{ exam.attempts.first.id }}')">
+                    <i class="fas fa-chart-bar"></i> View Results
+                </button>
+                {% endif %}
+                {% elif exam.attempts.first and exam.attempts.first.status == 'submitted' %}
+                <span class="exam-status-badge review"
+                    style="background: rgba(245, 158, 11, 0.1); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.2);">
+                    <i class="fas fa-clock"></i> Waiting for Review
+                </span>
+                <button class="modern-exam-btn secondary" onclick="viewResults('{{ exam.attempts.first.id }}')">
+                    <i class="fas fa-eye"></i> View Attempt
+                </button>
+                {% else %}
+                <span class="exam-status-badge pending">Pending</span>
+                <button class="modern-exam-btn" onclick="startExam('{{ exam.id }}', '{{ exam.exam_type }}')">
+                    <i class="fas fa-play"></i> Start Exam
+                </button>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="modern-exam-empty">
+            <i class="fas fa-clipboard-list"></i>
+            <h3>No Exams Available</h3>
+            <p>There are no exams available at this time.</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<script>
+    // Student Online Exams Logic
+    window.startExam = async function (examId, type) {
+        try {
+            // Get CSRF token - try multiple methods
+            let csrftoken = getCookie('csrftoken');
+
+            // Direct fallback to window.csrfToken if getCookie fails
+            if (!csrftoken && window.csrfToken) {
+                csrftoken = window.csrfToken;
+            }
+
+            // Fallback to meta tag
+            if (!csrftoken) {
+                const metaTag = document.querySelector('meta[name="csrf-token"]');
+                if (metaTag) {
+                    csrftoken = metaTag.getAttribute('content');
+                }
+            }
+
+            // Final fallback to hidden input
+            if (!csrftoken) {
+                const csrfInput = document.querySelector('input[name="csrfmiddlewaretoken"]');
+                if (csrfInput && csrfInput.value) {
+                    csrftoken = csrfInput.value;
+                }
+            }
+
+            if (!csrftoken) {
+                // Debug information
+                console.error('CSRF token not found. Debug info:');
+                console.error('- Global window.csrfToken:', window.csrfToken || 'not set');
+                console.error('- Meta tag:', document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 'empty');
+                console.error('- Hidden inputs:', document.querySelectorAll('input[name="csrfmiddlewaretoken"]').length);
+                const inputs = document.querySelectorAll('input[name="csrfmiddlewaretoken"]');
+                inputs.forEach((input, idx) => {
+                    console.error(`  Input ${idx}:`, input.value ? input.value.substring(0, 10) + '...' : 'empty');
+                });
+                console.error('- Cookies:', document.cookie.includes('csrftoken') ? 'present' : 'not found');
+                console.error('- getCookie result:', getCookie('csrftoken'));
+                alert('Error: CSRF token not found. Please refresh the page and try again.');
+                return;
+            }
+
+            const response = await fetch(`/exam/student/start/${examId}/`, {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            // Check if response is ok before parsing JSON
+            if (!response.ok) {
+                let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+                try {
+                    const errorData = await response.json();
+                    errorMessage = errorData.error || errorMessage;
+                } catch (e) {
+                    // If response is not JSON, use status text
+                }
+                throw new Error(errorMessage);
+            }
+
+            const data = await response.json();
+            if (data.success) {
+                const attemptId = data.attempt_id;
+                // Redirect to the attempt page using the correct URL
+                window.location.href = `/exam/student/attempt/${attemptId}/`;
+            } else {
+                alert(data.error || "Failed to start exam");
+            }
+        } catch (e) {
+            console.error('Error starting exam:', e);
+            alert('Error: ' + (e.message || 'An error occurred. Please try again.'));
+        }
+    }
+
+    window.viewResults = function (attemptId) {
+        // Show results view
+        // In our current SPA structure, we might want to load a results section
+        // Or redirect to a results page
+        window.location.href = `/exam/student/results-view/${attemptId}/`;
+    }
+
+    function getCookie(name) {
+        // For CSRF token, check multiple sources in order
+        if (name === 'csrftoken') {
+            // 1. Check global variable (set by base template) - fastest
+            if (window.csrfToken) {
+                return window.csrfToken;
+            }
+
+            // 2. Check meta tag
+            const metaTag = document.querySelector('meta[name="csrf-token"]');
+            if (metaTag) {
+                const metaValue = metaTag.getAttribute('content');
+                if (metaValue && metaValue.trim()) {
+                    return metaValue;
+                }
+            }
+
+            // 3. Check hidden input fields
+            const csrfInputs = document.querySelectorAll('input[name="csrfmiddlewaretoken"]');
+            for (let input of csrfInputs) {
+                if (input && input.value && input.value.trim()) {
+                    return input.value;
+                }
+            }
+
+            // 4. Try to get from cookie (usually HttpOnly, so may not work)
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        return decodeURIComponent(cookie.substring(name.length + 1));
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        // For other cookies, use standard cookie parsing
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
+{% endblock %}

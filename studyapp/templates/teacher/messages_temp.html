@@ -1,0 +1,3756 @@
+﻿{% extends "teacher/teacher_base.html" %}
+
+{% block content %}
+<section class="content-section" id="messagesSection" aria-labelledby="messagesHeading">
+    <h2 class="section-title" id="messagesHeading" style="font-size: 36px;">Messages</h2>
+    <div class="messages-wrapper">
+        <div class="chat-column">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+                <input class="search-box" type="search" placeholder="Search" id="messagesSearch" name="messagesSearch"
+                    autocomplete="off" style="flex: 1;" />
+                <div class="dropdown" style="position: relative;">
+                    <button id="newChatDropdownBtn" class="icon-btn" title="Create new chat" style="width: 40px; height: 40px; border-radius: 10px; border: 0; background: #eef2ff; color: var(--primary); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease;">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                    <div id="newChatDropdown" class="dropdown-menu" style="display: none; position: absolute; top: 100%; right: 0; margin-top: 8px; background: var(--surface); border: 1px solid var(--divider); border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 1000; min-width: 200px; padding: 8px;">
+                        <button class="dropdown-item" data-chat-type="admin" style="width: 100%; padding: 12px; text-align: left; background: transparent; border: none; cursor: pointer; border-radius: 8px; display: flex; align-items: center; gap: 12px; transition: background 0.2s;">
+                            <i class="fas fa-user-shield" style="color: var(--primary);"></i>
+                            <span>Chat with Admin</span>
+                        </button>
+                        <button class="dropdown-item" data-chat-type="csrep" style="width: 100%; padding: 12px; text-align: left; background: transparent; border: none; cursor: pointer; border-radius: 8px; display: flex; align-items: center; gap: 12px; transition: background 0.2s;">
+                            <i class="fas fa-headset" style="color: var(--primary);"></i>
+                            <span>Chat with CS Rep</span>
+                        </button>
+                        <button class="dropdown-item" data-chat-type="student" style="width: 100%; padding: 12px; text-align: left; background: transparent; border: none; cursor: pointer; border-radius: 8px; display: flex; align-items: center; gap: 12px; transition: background 0.2s;">
+                            <i class="fas fa-user-graduate" style="color: var(--primary);"></i>
+                            <span>Chat with Student</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div id="messagesContactList">
+                <div class="thread-item active" data-contact="alex-johnson" data-name="Alex Johnson"
+                    data-role="Student - Computer Science"
+                    data-avatar="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop&crop=faces">
+                    <div class="avatar">
+                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop&crop=faces"
+                            alt="Alex Johnson"
+                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                        <div class="avatar-fallback" style="display: none;"><i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                    <div class="meta"><span class="name">Alex Johnson</span><span class="role">Student -
+                            Computer Science</span></div>
+                    <span class="pill">S</span>
+                </div>
+                <div class="thread-item" data-contact="emma-wilson-student" data-name="Emma Wilson" data-role="Student - Physics"
+                    data-avatar="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=80&h=80&fit=crop&crop=faces">
+                    <div class="avatar">
+                        <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=80&h=80&fit=crop&crop=faces"
+                            alt="Emma Wilson"
+                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                        <div class="avatar-fallback" style="display: none;"><i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                    <div class="meta"><span class="name">Emma Wilson</span><span class="role">Student -
+                            Physics</span></div>
+                    <span class="pill">S</span>
+                </div>
+                <div class="thread-item" data-contact="admin" data-name="Admin" data-role="Administrator"
+                    data-avatar="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=80&h=80&fit=crop&crop=faces">
+                    <div class="avatar">
+                        <img src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=80&h=80&fit=crop&crop=faces"
+                            alt="Admin"
+                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                        <div class="avatar-fallback" style="display: none;"><i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                    <div class="meta"><span class="name">Admin</span><span class="role">Administrator</span>
+                    </div>
+                    <span class="pill admin">A</span>
+                </div>
+                <div class="thread-item" data-contact="cs-rep" data-name="CS Representative" data-role="Customer Service"
+                    data-avatar="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=80&h=80&fit=crop&crop=faces">
+                    <div class="avatar">
+                        <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=80&h=80&fit=crop&crop=faces"
+                            alt="CS Representative"
+                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                        <div class="avatar-fallback" style="display: none;"><i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                    <div class="meta"><span class="name">CS Representative</span><span class="role">Customer
+                            Service</span></div>
+                    <span class="pill cs-rep">CS</span>
+                </div>
+            </div>
+            <div id="noMessagesMessage"
+                style="display: none; text-align: center; padding: 2rem; color: var(--muted-text);">
+                <p>No messages yet.</p>
+            </div>
+        </div>
+        <div class="messages-area">
+            <div class="thread-header"><span id="threadHeaderName">Alex Johnson</span></div>
+            <div class="messages-container" id="messagesContainer">
+                <div class="msg-row">
+                    <div class="avatar">
+                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop&crop=faces"
+                            alt="Alex Johnson"
+                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                        <div class="avatar-fallback" style="display: none;"><i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                    <div class="bubble admin">Hello Dr. Harper! I'm working on the calculus problems. Can
+                        you help me with integration?</div>
+                </div>
+                <div class="msg-row right">
+                    <div class="bubble user">Absolutely! Integration is a key concept. Let's start with the
+                        basics.</div>
+                    <div class="avatar">
+                        <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=80&h=80&fit=crop&crop=faces"
+                            alt="You"
+                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                        <div class="avatar-fallback" style="display: none;"><i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="msg-row">
+                    <div class="avatar">
+                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop&crop=faces"
+                            alt="Alex Johnson"
+                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                        <div class="avatar-fallback" style="display: none;"><i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                    <div class="bubble admin">That would be great! I'm struggling with u-substitution.</div>
+                </div>
+            </div>
+            <div id="noActiveConversationMessage" style="display: none;">
+            </div>
+            <div class="composer-large" id="composerLarge">
+                <!-- Normal Input Mode -->
+                <div id="composerNormalMode" style="display: flex; align-items: center; gap: 12px; width: 100%;">
+                    <input type="text" id="messageInput" name="messageInput" autocomplete="off"
+                        placeholder="Type a message..." style="flex: 1;" />
+                    <input type="file" id="fileInput" name="fileInput" style="display: none;" multiple
+                        accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt,.zip,.rar">
+                    <button class="icon-btn" id="microphoneBtn" title="Record voice message"><i
+                            class="fas fa-microphone"></i></button>
+                    <button class="icon-btn" id="attachmentBtn" title="Attach file"><i
+                            class="fas fa-paperclip"></i></button>
+                    <button class="send-cta" id="sendMessageBtn" title="Send"><i
+                            class="fas fa-paper-plane"></i></button>
+                </div>
+
+                <!-- Recording Mode (shown when recording) -->
+                <div id="composerRecordingMode" style="display: none; align-items: center; gap: 12px; width: 100%;">
+                    <!-- Cancel Button -->
+                    <button id="cancelRecordingBtn" class="icon-btn" title="Cancel recording" style="color: #ef4444;"
+                        type="button">
+                        <i class="fas fa-times"></i>
+                    </button>
+
+                    <!-- Recording Indicator and Timer -->
+                    <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
+                        <i class="fas fa-circle"
+                            style="color: #ef4444; font-size: 8px; animation: pulse 1s infinite;"></i>
+                        <span id="recordingTime"
+                            style="font-size: 0.9rem; color: var(--text); font-weight: 500; min-width: 40px;">0:00</span>
+                    </div>
+
+                    <!-- Waveform Container -->
+                    <div id="waveformContainer"
+                        style="flex: 1; display: flex; align-items: center; gap: 2px; height: 32px; overflow-x: auto; overflow-y: hidden; min-width: 0;">
+                        <!-- Waveform bars will be generated here -->
+                    </div>
+
+                    <!-- Pause/Resume Button -->
+                    <button id="pauseResumeBtn" class="icon-btn" title="Pause/Resume recording" type="button">
+                        <i class="fas fa-pause" id="pauseResumeIcon"></i>
+                    </button>
+
+                    <!-- Send Button (reuse existing send button) -->
+                    <button class="send-cta" id="sendRecordingBtn" title="Send voice message" type="button">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+            <div id="attachmentPreview"
+                style="display: none; padding: 8px 16px; border-top: 1px solid var(--divider); background: var(--surface);">
+                <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
+                    <span style="font-size: 0.85rem; color: var(--muted);">Attachments:</span>
+                    <div id="attachmentList" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    // ============================================
+    // FULLY FUNCTIONAL MESSAGING SYSTEM WITH MOCK DATA
+    // Features: Audio recording, Drag & Drop, Simulated receiving, Badge counter
+    // ============================================
+
+    console.log('=== MESSAGES SCRIPT LOADING ===');
+    console.log('Document ready state:', document.readyState);
+    console.log('Messages section exists:', !!document.getElementById('messagesSection'));
+
+    // Global attachment state for messages
+    window.messagesAttachments = window.messagesAttachments || [];
+
+    // Store messages per conversation (contactId -> messages array)
+    window.messagesData = window.messagesData || {};
+
+    // Store unread counts per conversation
+    window.messagesUnreadCounts = window.messagesUnreadCounts || {};
+
+    // Current active conversation
+    window.currentActiveContact = window.currentActiveContact || null;
+
+    // ============================================
+    // VOICE RECORDING SYSTEM - CLEAN IMPLEMENTATION
+    // ============================================
+    const VoiceRecorder = {
+        recorder: null,
+        mediaStream: null,
+        audioChunks: [],
+        isRecording: false,
+        isPaused: false,
+        startTime: null,
+        pausedTime: 0,
+        pauseStartTime: null,
+        timer: null,
+        waveformAnimation: null,
+        audioContext: null,
+        analyser: null,
+        dataArray: null,
+        isProcessing: false, // Flag to prevent multiple rapid clicks
+        actualMimeType: 'audio/webm' // Store the actual MIME type used by MediaRecorder
+    };
+
+    // Flag to prevent duplicate initialization
+    let messagesComposerInitialized = false;
+
+    // Store handler references for cleanup
+    let messagesComposerHandlers = {
+        fileInputChange: null,
+        attachmentBtnClick: null,
+        sendBtnClick: null,
+        messageInputKeypress: null,
+        contactItemClick: null,
+        microphoneBtnClick: null,
+        microphoneBtnMouseDown: null,
+        microphoneBtnMouseUp: null,
+        dragOver: null,
+        dragLeave: null,
+        drop: null
+    };
+
+    // Simulated response messages pool
+    const mockResponses = {
+        'alex-johnson': [
+            "Thank you for the help! I understand integration better now.",
+            "Can you explain more about definite integrals?",
+            "I've completed the assignment. Should I submit it?",
+            "The examples you provided were very helpful.",
+            "I have a question about the next topic."
+        ],
+        'emma-wilson-student': [
+            "I'm working on the physics problems you assigned.",
+            "Can we schedule a meeting to discuss my progress?",
+            "I've reviewed the material and have some questions.",
+            "Thank you for your guidance!",
+            "I submitted my assignment yesterday."
+        ],
+        'admin': [
+            "I've reviewed your request. Let me get back to you shortly.",
+            "Your account has been updated successfully.",
+            "I'll forward this to the appropriate department.",
+            "Is there anything else I can help you with?",
+            "Thank you for contacting us. We'll process this request."
+        ],
+        'cs-rep': [
+            "I can help you with that question right away.",
+            "Your request has been processed successfully.",
+            "I've forwarded your message to the appropriate team.",
+            "Is there anything else I can assist you with today?",
+            "Thank you for contacting us. We'll get back to you soon."
+        ]
+    };
+
+    // Initialize mock data
+    function initializeMockData() {
+        // Initialize messages for each contact with existing HTML messages
+        const contacts = ['alex-johnson', 'emma-wilson-student', 'admin', 'cs-rep'];
+
+        contacts.forEach(contactId => {
+            if (!window.messagesData[contactId]) {
+                window.messagesData[contactId] = [];
+            }
+            if (!window.messagesUnreadCounts[contactId]) {
+                window.messagesUnreadCounts[contactId] = 0;
+            }
+        });
+
+        // Add initial messages for alex-johnson (from HTML)
+        if (window.messagesData['alex-johnson'].length === 0) {
+            const initialMessages = [
+                {
+                    html: `<div class="msg-row">
+                        <div class="avatar">
+                            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop&crop=faces" alt="Alex Johnson"
+                                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                            <div class="avatar-fallback" style="display: none;"><i class="fas fa-user"></i></div>
+                        </div>
+                        <div class="bubble admin">Hello Dr. Harper! I'm working on the calculus problems. Can you help me with integration?</div>
+                    </div>`,
+                    text: "Hello Dr. Harper! I'm working on the calculus problems. Can you help me with integration?",
+                    sender: 'admin',
+                    timestamp: new Date(Date.now() - 3600000).toISOString()
+                },
+                {
+                    html: `<div class="msg-row right">
+                        <div class="bubble user">Absolutely! Integration is a key concept. Let's start with the basics.</div>
+                        <div class="avatar">
+                            <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=80&h=80&fit=crop&crop=faces" alt="You"
+                                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                            <div class="avatar-fallback" style="display: none;"><i class="fas fa-user"></i></div>
+                        </div>
+                    </div>`,
+                    text: "Absolutely! Integration is a key concept. Let's start with the basics.",
+                    sender: 'user',
+                    timestamp: new Date(Date.now() - 3300000).toISOString()
+                },
+                {
+                    html: `<div class="msg-row">
+                        <div class="avatar">
+                            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop&crop=faces" alt="Alex Johnson"
+                                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                            <div class="avatar-fallback" style="display: none;"><i class="fas fa-user"></i></div>
+                        </div>
+                        <div class="bubble admin">That would be great! I'm struggling with u-substitution.</div>
+                    </div>`,
+                    text: "That would be great! I'm struggling with u-substitution.",
+                    sender: 'admin',
+                    timestamp: new Date(Date.now() - 3000000).toISOString()
+                }
+            ];
+
+            window.messagesData['alex-johnson'] = initialMessages;
+        }
+
+        updateBadgeCount();
+    }
+
+    /**
+     * Update badge count in sidebar
+     */
+    function updateBadgeCount() {
+        const totalUnread = Object.values(window.messagesUnreadCounts || {}).reduce((sum, count) => sum + count, 0);
+        const messagesNavLink = document.querySelector('a[data-section="messages"]');
+
+        if (messagesNavLink) {
+            // Remove existing badge
+            const existingBadge = messagesNavLink.querySelector('.message-badge');
+            if (existingBadge) {
+                existingBadge.remove();
+            }
+
+            // Add badge if there are unread messages
+            if (totalUnread > 0) {
+                const badge = document.createElement('span');
+                badge.className = 'message-badge';
+                badge.textContent = totalUnread > 99 ? '99+' : totalUnread.toString();
+                badge.style.cssText = 'position: absolute; top: 8px; right: 8px; background: #ef4444; color: white; border-radius: 10px; padding: 2px 6px; font-size: 10px; font-weight: 700; min-width: 18px; text-align: center;';
+                messagesNavLink.style.position = 'relative';
+                messagesNavLink.appendChild(badge);
+            }
+        }
+    }
+
+    /**
+     * Mark conversation as read
+     */
+    function markConversationAsRead(contactId) {
+        if (window.messagesUnreadCounts[contactId]) {
+            window.messagesUnreadCounts[contactId] = 0;
+            updateBadgeCount();
+
+            // Remove dot indicator
+            const contactItem = document.querySelector(`[data-contact="${contactId}"]`);
+            if (contactItem) {
+                const dot = contactItem.querySelector('.dot');
+                if (dot) dot.style.display = 'none';
+            }
+        }
+    }
+
+    /**
+     * Simulate receiving a message
+     */
+    function simulateReceivedMessage(contactId, contactName, contactAvatar) {
+        if (!window.messagesData[contactId]) {
+            window.messagesData[contactId] = [];
+        }
+
+        const responses = mockResponses[contactId] || mockResponses['emma-wilson'];
+        const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+
+        const messageHtml = `<div class="msg-row">
+            <div class="avatar">
+                <img src="${contactAvatar}" alt="${contactName}"
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                <div class="avatar-fallback" style="display: none;"><i class="fas fa-user"></i></div>
+            </div>
+            <div class="bubble admin">${escapeHtml(randomResponse)}</div>
+        </div>`;
+
+        const messageData = {
+            html: messageHtml,
+            text: randomResponse,
+            sender: 'admin',
+            timestamp: new Date().toISOString(),
+            files: []
+        };
+
+        window.messagesData[contactId].push(messageData);
+
+        // If this conversation is active, show the message immediately
+        if (window.currentActiveContact === contactId) {
+            const messagesContainer = document.getElementById('messagesContainer');
+            if (messagesContainer) {
+                messagesContainer.insertAdjacentHTML('beforeend', messageHtml);
+                setTimeout(() => {
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                }, 100);
+            }
+        } else {
+            // Increment unread count
+            if (!window.messagesUnreadCounts[contactId]) {
+                window.messagesUnreadCounts[contactId] = 0;
+            }
+            window.messagesUnreadCounts[contactId]++;
+            updateBadgeCount();
+
+            // Show dot indicator
+            const contactItem = document.querySelector(`[data-contact="${contactId}"]`);
+            if (contactItem) {
+                let dot = contactItem.querySelector('.dot');
+                if (!dot) {
+                    dot = document.createElement('span');
+                    dot.className = 'dot';
+                    contactItem.appendChild(dot);
+                }
+                dot.style.display = 'block';
+            }
+        }
+    }
+
+    // Global references to DOM elements (will be set during initialization)
+    let composer, fileInput, attachmentBtn, sendBtn, messageInput, messagesContainer;
+
+    /**
+     * Handle contact item clicks - using event delegation for dynamic content
+     */
+    function handleContactClick(e) {
+        console.log('ðŸŸ¡ Contact click event triggered', e.target);
+
+        // Find the closest contact item (thread-item or chat-item)
+        const contactItem = e.target.closest('.thread-item, .chat-item');
+        if (!contactItem) {
+            console.log('No contact item found for click');
+            return;
+        }
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        const contactId = contactItem.dataset.contact;
+        const contactName = contactItem.dataset.name;
+        const contactRole = contactItem.dataset.role;
+
+        console.log('âœ… Contact clicked:', contactId, contactName);
+
+        if (contactId) {
+            switchConversation(contactId, contactName, contactRole);
+        } else {
+            console.error('No contact ID found!');
+        }
+    }
+
+    /**
+     * ============================================
+     * VOICE RECORDING FUNCTIONS - CLEAN IMPLEMENTATION
+     * ============================================
+     */
+
+    /**
+     * Start voice recording
+     */
+    async function startVoiceRecording() {
+        try {
+            if (VoiceRecorder.isRecording) {
+                console.warn('Already recording');
+                return;
+            }
+
+            // Request microphone access
+            VoiceRecorder.mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+            // Determine supported MIME type
+            let mimeType = 'audio/webm';
+            const supportedTypes = [
+                'audio/webm;codecs=opus',
+                'audio/webm',
+                'audio/ogg;codecs=opus',
+                'audio/mp4',
+                'audio/mpeg'
+            ];
+
+            // Check which MIME type is supported
+            for (const type of supportedTypes) {
+                if (MediaRecorder.isTypeSupported(type)) {
+                    mimeType = type;
+                    console.log('âœ… Using MIME type:', mimeType);
+                    break;
+                }
+            }
+
+            if (!MediaRecorder.isTypeSupported(mimeType)) {
+                console.warn('âš ï¸ Preferred MIME type not supported, using default');
+                mimeType = ''; // Let browser choose
+            }
+
+            // Create MediaRecorder with optimal settings
+            const options = mimeType ? { mimeType: mimeType } : {};
+            VoiceRecorder.recorder = new MediaRecorder(VoiceRecorder.mediaStream, options);
+
+            // Store the actual MIME type used
+            VoiceRecorder.actualMimeType = VoiceRecorder.recorder.mimeType || mimeType || 'audio/webm';
+            console.log('âœ… MediaRecorder created with MIME type:', VoiceRecorder.actualMimeType);
+            VoiceRecorder.audioChunks = [];
+            VoiceRecorder.isPaused = false;
+            VoiceRecorder.pausedTime = 0;
+            VoiceRecorder.pauseStartTime = null;
+            VoiceRecorder.startTime = Date.now();
+
+            // Collect audio data chunks silently - we'll get all data when stopping
+            // No need to log every chunk, just collect them for final blob creation
+            VoiceRecorder.recorder.ondataavailable = (event) => {
+                // Collect valid chunks silently (no logging)
+                if (event.data && event.data.size > 0) {
+                    // Only skip if we're explicitly paused AND recorder is still recording (not stopping)
+                    if (VoiceRecorder.recorder && VoiceRecorder.isPaused && VoiceRecorder.recorder.state === 'recording') {
+                        return; // Skip paused chunks
+                    }
+                    // Collect the chunk silently
+                    VoiceRecorder.audioChunks.push(event.data);
+                }
+            };
+
+            // Handle errors
+            VoiceRecorder.recorder.onerror = (event) => {
+                console.error('Recording error:', event.error);
+                alert('Error during recording: ' + (event.error?.message || 'Unknown error'));
+                VoiceRecorder.cleanup();
+            };
+
+            // Start recording without timeslice - we'll get all data when stopping
+            // This records continuously as a single stream
+            VoiceRecorder.recorder.start();
+            VoiceRecorder.isRecording = true;
+
+            // Set up audio visualization
+            VoiceRecorder.setupAudioVisualization();
+
+            // Update UI
+            VoiceRecorder.showRecordingUI();
+            VoiceRecorder.startTimer();
+            VoiceRecorder.startWaveformAnimation();
+
+            console.log('âœ… Voice recording started');
+        } catch (error) {
+            console.error('âŒ Error starting recording:', error);
+            alert('Could not access microphone. Please check permissions.');
+            VoiceRecorder.cleanup();
+        }
+    }
+
+    /**
+     * Pause voice recording
+     */
+    function pauseVoiceRecording() {
+        // Prevent multiple rapid clicks
+        if (VoiceRecorder.isProcessing) {
+            console.warn('Already processing pause/resume, please wait...');
+            return;
+        }
+
+        if (!VoiceRecorder.isRecording || VoiceRecorder.isPaused) {
+            console.warn('Cannot pause: not recording or already paused');
+            return;
+        }
+
+        if (!VoiceRecorder.recorder || VoiceRecorder.recorder.state !== 'recording') {
+            console.warn('Recorder not in recording state');
+            return;
+        }
+
+        VoiceRecorder.isProcessing = true;
+
+        try {
+            // Request data before stopping to capture current chunk
+            try {
+                if (VoiceRecorder.recorder.state === 'recording') {
+                    VoiceRecorder.recorder.requestData();
+                }
+            } catch (e) {
+                console.warn('Could not request data before pause:', e);
+            }
+
+            // Set paused state FIRST to prevent ondataavailable from collecting chunks
+            VoiceRecorder.isPaused = true;
+            VoiceRecorder.pauseStartTime = Date.now();
+
+            // Stop the recorder (since we're stopping tracks, we can't resume the same recorder anyway)
+            // We'll create a new one on resume
+            if (VoiceRecorder.recorder && (VoiceRecorder.recorder.state === 'recording' || VoiceRecorder.recorder.state === 'paused')) {
+                try {
+                    VoiceRecorder.recorder.stop();
+                } catch (e) {
+                    console.warn('Error stopping recorder:', e);
+                }
+            }
+
+            // STOP MEDIA STREAM TRACKS IMMEDIATELY to stop using microphone
+            if (VoiceRecorder.mediaStream) {
+                VoiceRecorder.mediaStream.getTracks().forEach(track => {
+                    if (track.readyState !== 'ended') {
+                        track.stop();
+                        console.log('âœ… Stopped media track on pause');
+                    }
+                });
+                VoiceRecorder.mediaStream = null; // Clear reference
+            }
+
+            // Stop audio visualization
+            if (VoiceRecorder.audioContext) {
+                try {
+                    VoiceRecorder.audioContext.close();
+                } catch (e) {
+                    console.warn('Error closing audio context:', e);
+                }
+                VoiceRecorder.audioContext = null;
+                VoiceRecorder.analyser = null;
+                VoiceRecorder.dataArray = null;
+            }
+
+            // Update UI
+            const icon = document.getElementById('pauseResumeIcon');
+            if (icon) {
+                icon.className = 'fas fa-play';
+            }
+
+            // Stop waveform animation
+            VoiceRecorder.stopWaveformAnimation();
+
+            console.log('âœ… Recording paused - microphone stopped');
+        } catch (error) {
+            console.error('âŒ Error pausing recording:', error);
+            alert('Error pausing recording: ' + (error.message || 'Unknown error'));
+        } finally {
+            // Reset processing flag after a short delay to allow UI to update
+            setTimeout(() => {
+                VoiceRecorder.isProcessing = false;
+            }, 300);
+        }
+    }
+
+    /**
+     * Resume voice recording
+     */
+    async function resumeVoiceRecording() {
+        // Prevent multiple rapid clicks
+        if (VoiceRecorder.isProcessing) {
+            console.warn('Already processing pause/resume, please wait...');
+            return;
+        }
+
+        if (!VoiceRecorder.isRecording || !VoiceRecorder.isPaused) {
+            console.warn('Cannot resume: not recording or not paused');
+            return;
+        }
+
+        VoiceRecorder.isProcessing = true;
+
+        try {
+            // Since we stopped the media stream on pause, we need to get a new one
+            try {
+                VoiceRecorder.mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                console.log('âœ… Got new media stream for resume');
+
+                // Create a new MediaRecorder with the same MIME type
+                const mimeType = VoiceRecorder.actualMimeType || 'audio/webm';
+                const options = mimeType ? { mimeType: mimeType } : {};
+                VoiceRecorder.recorder = new MediaRecorder(VoiceRecorder.mediaStream, options);
+
+                // Update the actual MIME type
+                VoiceRecorder.actualMimeType = VoiceRecorder.recorder.mimeType || mimeType || 'audio/webm';
+                console.log('âœ… MediaRecorder resumed with MIME type:', VoiceRecorder.actualMimeType);
+
+                // Re-setup data collection - continue appending to existing chunks
+                VoiceRecorder.recorder.ondataavailable = (event) => {
+                    // Collect valid chunks silently (no logging)
+                    if (event.data && event.data.size > 0) {
+                        // Only skip if explicitly paused and not stopping
+                        if (VoiceRecorder.recorder && VoiceRecorder.isPaused && VoiceRecorder.recorder.state === 'recording') {
+                            return; // Skip paused chunks
+                        }
+                        // Collect the chunk silently
+                        VoiceRecorder.audioChunks.push(event.data);
+                    }
+                };
+
+                VoiceRecorder.recorder.onerror = (event) => {
+                    console.error('Recording error:', event.error);
+                    alert('Error during recording: ' + (event.error?.message || 'Unknown error'));
+                    VoiceRecorder.cleanup();
+                };
+
+                // Start the new recorder without timeslice - continuous recording
+                VoiceRecorder.recorder.start();
+
+                // Set up audio visualization with new stream
+                VoiceRecorder.setupAudioVisualization();
+            } catch (error) {
+                console.error('âŒ Error getting new media stream:', error);
+                alert('Could not access microphone. Please check permissions.');
+                VoiceRecorder.cleanup();
+                return;
+            }
+
+            VoiceRecorder.isPaused = false;
+
+            // Add paused duration
+            if (VoiceRecorder.pauseStartTime) {
+                VoiceRecorder.pausedTime += Date.now() - VoiceRecorder.pauseStartTime;
+                VoiceRecorder.pauseStartTime = null;
+            }
+
+            // Update UI
+            const icon = document.getElementById('pauseResumeIcon');
+            if (icon) {
+                icon.className = 'fas fa-pause';
+            }
+
+            // Resume waveform animation
+            VoiceRecorder.startWaveformAnimation();
+
+            console.log('âœ… Recording resumed with new stream');
+        } catch (error) {
+            console.error('âŒ Error resuming recording:', error);
+            alert('Error resuming recording: ' + (error.message || 'Unknown error'));
+            VoiceRecorder.cleanup();
+        } finally {
+            // Reset processing flag after a short delay to allow UI to update
+            setTimeout(() => {
+                VoiceRecorder.isProcessing = false;
+            }, 300);
+        }
+    }
+
+    /**
+     * Stop and send voice recording
+     */
+    function sendVoiceRecording() {
+        console.log('ðŸŽ¤ Stopping voice recording and preparing single file...', {
+            isRecording: VoiceRecorder.isRecording,
+            recorderState: VoiceRecorder.recorder?.state
+        });
+
+        if (!VoiceRecorder.isRecording) {
+            console.error('Not recording, nothing to send');
+            VoiceRecorder.cleanup();
+            return;
+        }
+
+        // Stop recording - the onstop handler will create a single file from all data
+        VoiceRecorder.isPaused = false;
+        VoiceRecorder.isProcessing = false;
+
+        // STOP MEDIA STREAM TRACKS IMMEDIATELY to prevent further recording
+        if (VoiceRecorder.mediaStream) {
+            VoiceRecorder.mediaStream.getTracks().forEach(track => {
+                if (track.readyState !== 'ended') {
+                    track.stop();
+                    console.log('âœ… Stopped media track immediately');
+                }
+            });
+            VoiceRecorder.mediaStream = null; // Clear reference
+        }
+
+        // Stop audio visualization
+        if (VoiceRecorder.audioContext) {
+            try {
+                VoiceRecorder.audioContext.close();
+            } catch (e) {
+                console.warn('Error closing audio context:', e);
+            }
+            VoiceRecorder.audioContext = null;
+            VoiceRecorder.analyser = null;
+            VoiceRecorder.dataArray = null;
+        }
+
+        // Calculate actual recording duration
+        let duration = Date.now() - VoiceRecorder.startTime - VoiceRecorder.pausedTime;
+        if (VoiceRecorder.pauseStartTime) {
+            duration -= (Date.now() - VoiceRecorder.pauseStartTime);
+        }
+
+        // Ensure duration is at least 100ms
+        duration = Math.max(duration, 100);
+
+        console.log('Calculated duration:', duration, 'ms');
+
+        // Recording will be processed as a single file in the onstop handler
+
+        // Set up handler to process and send audio as a single file
+        if (VoiceRecorder.recorder) {
+            VoiceRecorder.recorder.onstop = () => {
+                // Set isRecording to false after recorder has stopped
+                VoiceRecorder.isRecording = false;
+
+                // Request any remaining data before processing
+                if (VoiceRecorder.recorder && VoiceRecorder.recorder.state === 'inactive') {
+                    try {
+                        VoiceRecorder.recorder.requestData();
+                    } catch (e) {
+                        console.warn('Could not request final data:', e);
+                    }
+                }
+
+                // Process the complete recording as a single file
+                setTimeout(() => {
+                    const totalSize = VoiceRecorder.audioChunks.reduce((sum, chunk) => sum + (chunk?.size || 0), 0);
+
+                    console.log('ðŸ“¦ Processing complete voice recording:', {
+                        totalSize: totalSize + ' bytes',
+                        duration: Math.floor(duration / 1000) + 's'
+                    });
+
+                    if (VoiceRecorder.audioChunks.length > 0 && totalSize > 0) {
+                        // Filter out any empty chunks
+                        const validChunks = VoiceRecorder.audioChunks.filter(chunk => chunk && chunk.size > 0);
+
+                        if (validChunks.length === 0) {
+                            console.error('âŒ No valid audio data recorded!');
+                            alert('No valid audio data recorded. Please try again.');
+                            VoiceRecorder.cleanup();
+                            return;
+                        }
+
+                        // Use the actual MIME type from the recorder
+                        const actualMimeType = VoiceRecorder.actualMimeType || 'audio/webm';
+                        const fileExtension = actualMimeType.includes('ogg') ? 'ogg' :
+                            actualMimeType.includes('mp4') ? 'm4a' :
+                                actualMimeType.includes('mpeg') ? 'mp3' : 'webm';
+
+                        // Create single audio blob from all chunks - this is the complete voice message
+                        const audioBlob = new Blob(validChunks, { type: actualMimeType });
+
+                        // Validate blob size
+                        if (audioBlob.size === 0) {
+                            console.error('âŒ Created blob is empty!');
+                            alert('Audio recording is empty. Please try again.');
+                            VoiceRecorder.cleanup();
+                            return;
+                        }
+
+                        if (audioBlob.size < 100) {
+                            console.warn('âš ï¸ Audio blob is very small:', audioBlob.size, 'bytes');
+                        }
+
+                        // Create the audio file - this is the single complete voice message
+                        const audioFile = new File([audioBlob], `voice-message-${Date.now()}.${fileExtension}`, {
+                            type: actualMimeType
+                        });
+
+                        // Store duration
+                        audioFile.recordedDuration = duration;
+
+                        console.log('âœ… Single voice message file created:', {
+                            name: audioFile.name,
+                            size: (audioFile.size / 1024).toFixed(2) + ' KB',
+                            type: audioFile.type,
+                            duration: Math.floor(audioFile.recordedDuration / 1000) + 's'
+                        });
+
+                        // Send the complete voice message as a single file
+                        sendVoiceMessage(audioFile);
+                    } else {
+                        console.error('âŒ No audio data recorded!');
+                        alert('No audio recorded. Please try again.');
+                    }
+
+                    VoiceRecorder.cleanup();
+                }, 100); // Small delay to ensure final data is available
+            };
+        }
+
+        // Stop the recorder
+        try {
+            // If paused, resume first to get final data
+            if (VoiceRecorder.isPaused && VoiceRecorder.recorder.state === 'paused') {
+                if (typeof VoiceRecorder.recorder.resume === 'function') {
+                    VoiceRecorder.recorder.resume();
+                    VoiceRecorder.isPaused = false;
+                    if (VoiceRecorder.pauseStartTime) {
+                        VoiceRecorder.pausedTime += Date.now() - VoiceRecorder.pauseStartTime;
+                        VoiceRecorder.pauseStartTime = null;
+                    }
+                    // Wait a moment for resume to take effect
+                    setTimeout(() => {
+                        stopRecorder();
+                    }, 50);
+                } else {
+                    stopRecorder();
+                }
+            } else {
+                stopRecorder();
+            }
+
+            function stopRecorder() {
+                // Request final data before stopping
+                try {
+                    if (VoiceRecorder.recorder && (VoiceRecorder.recorder.state === 'recording' || VoiceRecorder.recorder.state === 'paused')) {
+                        VoiceRecorder.recorder.requestData();
+                        console.log('Requested final data');
+                    }
+                } catch (e) {
+                    console.warn('Could not request data:', e);
+                }
+
+                // Stop recorder first, then stop tracks
+                setTimeout(() => {
+                    if (VoiceRecorder.recorder && VoiceRecorder.recorder.state !== 'inactive') {
+                        try {
+                            // Request one more time before stopping
+                            if (VoiceRecorder.recorder.state === 'recording' || VoiceRecorder.recorder.state === 'paused') {
+                                VoiceRecorder.recorder.requestData();
+                            }
+                        } catch (e) {
+                            console.warn('Could not request final data:', e);
+                        }
+
+                        // Stop the recorder
+                        try {
+                            if (VoiceRecorder.recorder.state !== 'inactive') {
+                                VoiceRecorder.recorder.stop();
+                                console.log('âœ… Recorder stop() called');
+                            }
+                        } catch (e) {
+                            console.warn('Error stopping recorder:', e);
+                        }
+                    }
+
+                    // Stop media stream tracks AFTER recorder is stopped to prevent further data collection
+                    if (VoiceRecorder.mediaStream) {
+                        VoiceRecorder.mediaStream.getTracks().forEach(track => {
+                            if (track.readyState !== 'ended') {
+                                track.stop();
+                                console.log('Stopped media track in stopRecorder');
+                            }
+                        });
+                        VoiceRecorder.mediaStream = null; // Clear reference
+                    }
+                }, 100);
+            }
+        } catch (error) {
+            console.error('âŒ Error stopping recorder:', error);
+            // Try to create single file from collected data if available
+            const totalSize = VoiceRecorder.audioChunks.reduce((sum, chunk) => sum + (chunk?.size || 0), 0);
+            if (VoiceRecorder.audioChunks.length > 0 && totalSize > 0) {
+                const validChunks = VoiceRecorder.audioChunks.filter(chunk => chunk && chunk.size > 0);
+                if (validChunks.length > 0) {
+                    const actualMimeType = VoiceRecorder.actualMimeType || 'audio/webm';
+                    const fileExtension = actualMimeType.includes('ogg') ? 'ogg' :
+                        actualMimeType.includes('mp4') ? 'm4a' :
+                            actualMimeType.includes('mpeg') ? 'mp3' : 'webm';
+
+                    const audioBlob = new Blob(validChunks, { type: actualMimeType });
+                    if (audioBlob.size > 0) {
+                        const audioFile = new File([audioBlob], `voice-message-${Date.now()}.${fileExtension}`, { type: actualMimeType });
+                        audioFile.recordedDuration = Math.max(duration, 100);
+                        console.log('âœ… Created single voice file from error recovery');
+                        sendVoiceMessage(audioFile);
+                        VoiceRecorder.cleanup();
+                        return;
+                    }
+                }
+            }
+            alert('Error recording voice message. Please try again.');
+            VoiceRecorder.cleanup();
+        }
+    }
+
+    /**
+     * Cancel voice recording
+     */
+    function cancelVoiceRecording() {
+        console.log('Canceling voice recording...');
+
+        if (!VoiceRecorder.isRecording) {
+            console.warn('Not recording, nothing to cancel');
+            VoiceRecorder.cleanup();
+            return;
+        }
+
+        // Stop recording immediately to prevent ondataavailable from collecting chunks
+        VoiceRecorder.isRecording = false;
+        VoiceRecorder.isPaused = false;
+        VoiceRecorder.isProcessing = false;
+
+        // Stop media stream tracks immediately to prevent further data collection
+        if (VoiceRecorder.mediaStream) {
+            VoiceRecorder.mediaStream.getTracks().forEach(track => {
+                if (track.readyState !== 'ended') {
+                    track.stop();
+                    console.log('Stopped media track for cancel');
+                }
+            });
+            VoiceRecorder.mediaStream = null; // Clear reference
+        }
+
+        // Stop audio visualization
+        if (VoiceRecorder.audioContext) {
+            try {
+                VoiceRecorder.audioContext.close();
+            } catch (e) {
+                console.warn('Error closing audio context:', e);
+            }
+            VoiceRecorder.audioContext = null;
+            VoiceRecorder.analyser = null;
+            VoiceRecorder.dataArray = null;
+        }
+
+        // Set up handler to cleanup without sending
+        if (VoiceRecorder.recorder) {
+            VoiceRecorder.recorder.onstop = () => {
+                console.log('âœ… Recording canceled');
+                // Clear chunks since we're canceling
+                VoiceRecorder.audioChunks = [];
+                VoiceRecorder.cleanup();
+            };
+
+            try {
+                // Stop recorder first
+                if (VoiceRecorder.recorder.state !== 'inactive') {
+                    try {
+                        if (VoiceRecorder.recorder.state === 'recording' || VoiceRecorder.recorder.state === 'paused') {
+                            VoiceRecorder.recorder.requestData();
+                        }
+                    } catch (e) {
+                        console.warn('Could not request data on cancel:', e);
+                    }
+
+                    VoiceRecorder.recorder.stop();
+                } else {
+                    // Already stopped, just cleanup
+                    VoiceRecorder.audioChunks = [];
+                    VoiceRecorder.cleanup();
+                }
+            } catch (error) {
+                console.error('âŒ Error canceling recording:', error);
+                VoiceRecorder.audioChunks = [];
+                VoiceRecorder.cleanup();
+            }
+        } else {
+            // No recorder, just cleanup
+            VoiceRecorder.audioChunks = [];
+            VoiceRecorder.cleanup();
+        }
+    }
+
+    /**
+     * VoiceRecorder helper methods
+     */
+    VoiceRecorder.setupAudioVisualization = function () {
+        try {
+            this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            this.analyser = this.audioContext.createAnalyser();
+            const source = this.audioContext.createMediaStreamSource(this.mediaStream);
+            source.connect(this.analyser);
+            this.analyser.fftSize = 256;
+            const bufferLength = this.analyser.frequencyBinCount;
+            this.dataArray = new Uint8Array(bufferLength);
+        } catch (error) {
+            console.warn('Could not set up audio visualization:', error);
+        }
+    };
+
+    VoiceRecorder.showRecordingUI = function () {
+        const normalMode = document.getElementById('composerNormalMode');
+        const recordingMode = document.getElementById('composerRecordingMode');
+        if (normalMode && recordingMode) {
+            normalMode.style.display = 'none';
+            recordingMode.style.display = 'flex';
+        }
+
+        const micBtn = document.getElementById('microphoneBtn');
+        if (micBtn) {
+            micBtn.classList.add('recording');
+        }
+
+        // Initialize waveform
+        this.initializeWaveform();
+    };
+
+    VoiceRecorder.initializeWaveform = function () {
+        const container = document.getElementById('waveformContainer');
+        if (!container) return;
+
+        container.innerHTML = '';
+        for (let i = 0; i < 100; i++) {
+            const bar = document.createElement('div');
+            bar.className = 'waveform-bar';
+            bar.style.cssText = 'width: 3px; background: white; border-radius: 1.5px; transition: height 0.05s ease; height: 4px; min-height: 4px;';
+            container.appendChild(bar);
+        }
+    };
+
+    VoiceRecorder.startTimer = function () {
+        const timeDisplay = document.getElementById('recordingTime');
+        if (!timeDisplay) return;
+
+        this.timer = setInterval(() => {
+            if (!this.isRecording) {
+                clearInterval(this.timer);
+                return;
+            }
+
+            let elapsed = Date.now() - this.startTime - this.pausedTime;
+            if (this.isPaused && this.pauseStartTime) {
+                elapsed -= (Date.now() - this.pauseStartTime);
+            }
+
+            const totalSeconds = Math.floor(elapsed / 1000);
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            timeDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }, 100);
+    };
+
+    VoiceRecorder.startWaveformAnimation = function () {
+        if (!this.analyser || !this.dataArray || this.isPaused) return;
+
+        let waveformPosition = 0;
+
+        const updateWaveform = () => {
+            if (!this.isRecording || !this.analyser || this.isPaused) {
+                this.waveformAnimation = null;
+                return;
+            }
+
+            this.analyser.getByteFrequencyData(this.dataArray);
+            const bars = document.querySelectorAll('#waveformContainer .waveform-bar');
+
+            if (bars.length === 0) return;
+
+            const sampleSize = Math.floor(this.dataArray.length / bars.length);
+            waveformPosition = (waveformPosition + 1) % bars.length;
+
+            bars.forEach((bar, index) => {
+                const relativeIndex = (index - waveformPosition + bars.length) % bars.length;
+                const dataIndex = Math.min(Math.floor(relativeIndex * sampleSize), this.dataArray.length - 1);
+                const value = this.dataArray[dataIndex] || 0;
+                const normalizedValue = value / 255;
+                const height = 4 + (normalizedValue * 28);
+                bar.style.height = `${height}px`;
+                bar.style.opacity = Math.max(0.4, normalizedValue);
+            });
+
+            this.waveformAnimation = requestAnimationFrame(updateWaveform);
+        };
+
+        updateWaveform();
+    };
+
+    VoiceRecorder.stopWaveformAnimation = function () {
+        if (this.waveformAnimation) {
+            cancelAnimationFrame(this.waveformAnimation);
+            this.waveformAnimation = null;
+        }
+    };
+
+    VoiceRecorder.cleanup = function () {
+        console.log('Cleaning up recording...');
+
+        this.isRecording = false;
+        this.isPaused = false;
+        this.isProcessing = false;
+
+        // Stop media tracks FIRST - this stops the microphone immediately
+        if (this.mediaStream) {
+            console.log('ðŸ›‘ Stopping all media stream tracks...');
+            this.mediaStream.getTracks().forEach(track => {
+                if (track.readyState !== 'ended') {
+                    track.stop();
+                    console.log('âœ… Stopped track:', track.kind, 'State:', track.readyState);
+                } else {
+                    console.log('Track already ended:', track.kind);
+                }
+            });
+            this.mediaStream = null;
+            console.log('âœ… All media tracks stopped');
+        }
+
+        // Stop recorder if it exists
+        if (this.recorder && this.recorder.state !== 'inactive') {
+            try {
+                if (this.recorder.state === 'recording' || this.recorder.state === 'paused') {
+                    this.recorder.stop();
+                    console.log('âœ… Recorder stopped');
+                }
+            } catch (e) {
+                console.warn('Error stopping recorder:', e);
+            }
+        }
+
+        // Close audio context
+        if (this.audioContext) {
+            try {
+                this.audioContext.close();
+                console.log('âœ… Audio context closed');
+            } catch (e) {
+                console.warn('Error closing audio context:', e);
+            }
+            this.audioContext = null;
+            this.analyser = null;
+            this.dataArray = null;
+        }
+
+        // Stop timer
+        if (this.timer) {
+            clearInterval(this.timer);
+            this.timer = null;
+        }
+
+        // Stop waveform animation
+        this.stopWaveformAnimation();
+
+        // Hide recording UI
+        const normalMode = document.getElementById('composerNormalMode');
+        const recordingMode = document.getElementById('composerRecordingMode');
+        if (normalMode && recordingMode) {
+            normalMode.style.display = 'flex';
+            recordingMode.style.display = 'none';
+        }
+
+        // Reset state
+        this.recorder = null;
+        // Don't clear audioChunks here - they might still be needed for processing
+        this.startTime = null;
+        this.pausedTime = 0;
+        this.pauseStartTime = null;
+
+        // Remove recording class
+        const micBtn = document.getElementById('microphoneBtn');
+        if (micBtn) {
+            micBtn.classList.remove('recording');
+        }
+
+        console.log('âœ… Recording cleaned up - microphone should be stopped');
+    };
+
+    /**
+     * Update attachment preview
+     */
+    function updateAttachmentPreview() {
+        const preview = document.getElementById('attachmentPreview');
+        const list = document.getElementById('attachmentList');
+
+        if (!preview || !list) return;
+
+        if (window.messagesAttachments.length === 0) {
+            preview.style.display = 'none';
+            list.innerHTML = '';
+            return;
+        }
+
+        preview.style.display = 'block';
+        list.innerHTML = '';
+
+        window.messagesAttachments.forEach((file, index) => {
+            const icon = getFileIcon(file);
+            const item = document.createElement('div');
+            item.style.cssText = 'display: flex; align-items: center; gap: 6px; padding: 4px 8px; background: var(--surface); border: 1px solid var(--divider); border-radius: 6px; font-size: 0.8rem;';
+            item.innerHTML = `
+                <i class="fas ${icon}" style="color: var(--primary);"></i>
+                <span style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escapeHtml(file.name)}</span>
+                <button type="button" class="remove-attachment" data-index="${index}" style="background: none; border: none; color: var(--muted); cursor: pointer; padding: 0; margin-left: 4px;">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            list.appendChild(item);
+        });
+
+        // Add remove handlers
+        list.querySelectorAll('.remove-attachment').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const index = parseInt(this.dataset.index);
+                window.messagesAttachments.splice(index, 1);
+                updateAttachmentPreview();
+            });
+        });
+    }
+
+    /**
+     * Get file icon class based on file type
+     */
+    function getFileIcon(file) {
+        const type = (file.type || '').toLowerCase();
+        const name = (file.name || '').toLowerCase();
+
+        if (type.startsWith('image/')) return 'fa-image';
+        if (type.startsWith('video/')) return 'fa-video';
+        if (type.startsWith('audio/')) return 'fa-file-audio';
+        if (type === 'application/pdf' || name.endsWith('.pdf')) return 'fa-file-pdf';
+        if (type.includes('word') || type.includes('document') || name.endsWith('.doc') || name.endsWith('.docx')) return 'fa-file-word';
+        if (type.includes('excel') || type.includes('spreadsheet') || name.endsWith('.xls') || name.endsWith('.xlsx')) return 'fa-file-excel';
+        if (type.includes('powerpoint') || type.includes('presentation') || name.endsWith('.ppt') || name.endsWith('.pptx')) return 'fa-file-powerpoint';
+        if (type.includes('zip') || type.includes('rar') || type.includes('archive') || name.endsWith('.zip') || name.endsWith('.rar')) return 'fa-file-archive';
+        if (name.endsWith('.txt') || type.includes('text')) return 'fa-file-alt';
+
+        return 'fa-file';
+    }
+
+    /**
+     * Escape HTML to prevent XSS
+     */
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    /**
+     * Add files to attachment list (append, don't replace)
+     */
+    function addAttachments(newFiles) {
+        if (!newFiles || newFiles.length === 0) return;
+
+        const filesArray = Array.from(newFiles);
+        filesArray.forEach(file => {
+            // Check if file already exists
+            const exists = window.messagesAttachments.some(f => f.name === file.name && f.size === file.size);
+            if (!exists) {
+                window.messagesAttachments.push(file);
+            }
+        });
+
+        updateAttachmentPreview();
+        console.log('Messages: Added attachments, total:', window.messagesAttachments.length);
+    }
+
+    /**
+     * Load messages for a conversation
+     */
+    function loadConversationMessages(contactId) {
+        const container = document.getElementById('messagesContainer');
+        if (!container) {
+            console.error('Messages container not found!');
+            return;
+        }
+
+        // Initialize messages array if it doesn't exist
+        if (!window.messagesData[contactId]) {
+            window.messagesData[contactId] = [];
+        }
+
+        const messages = window.messagesData[contactId];
+
+        // Clear container
+        container.innerHTML = '';
+
+        // If no messages, show empty state
+        if (messages.length === 0) {
+            container.innerHTML = '<p style="text-align:center;color:var(--muted);padding:2rem;">No messages yet. Start the conversation!</p>';
+            return;
+        }
+
+        // Render all messages
+        messages.forEach(msg => {
+            container.insertAdjacentHTML('beforeend', msg.html);
+        });
+
+        // Scroll to bottom
+        setTimeout(() => {
+            container.scrollTop = container.scrollHeight;
+        }, 100);
+    }
+
+    /**
+     * Switch to a conversation
+     */
+    function switchConversation(contactId, contactName, contactRole) {
+        console.log('Switching conversation:', contactId, contactName);
+
+        // Update active state
+        document.querySelectorAll('.thread-item, .chat-item').forEach(item => {
+            item.classList.remove('active');
+        });
+
+        const activeItem = document.querySelector(`[data-contact="${contactId}"]`);
+        if (activeItem) {
+            activeItem.classList.add('active');
+        }
+
+        // Update current active contact
+        window.currentActiveContact = contactId;
+
+        // Mark as read
+        markConversationAsRead(contactId);
+
+        // Update thread header
+        const threadHeader = document.getElementById('threadHeaderName');
+        if (threadHeader) {
+            threadHeader.textContent = contactName || 'Select a conversation';
+        }
+
+        // Load messages for this conversation
+        loadConversationMessages(contactId);
+
+        // Enable composer
+        const msgInput = document.getElementById('messageInput');
+        const sendBtnEl = document.getElementById('sendMessageBtn');
+        const attachBtnEl = document.getElementById('attachmentBtn');
+        const composerEl = document.querySelector('.composer-large');
+
+        if (msgInput) msgInput.disabled = false;
+        if (sendBtnEl) sendBtnEl.disabled = false;
+        if (attachBtnEl) attachBtnEl.disabled = false;
+        if (composerEl) composerEl.style.opacity = '1';
+
+        // Hide "no active conversation" message
+        const noActiveMsg = document.getElementById('noActiveConversationMessage');
+        if (noActiveMsg) noActiveMsg.style.display = 'none';
+
+        // Show messages container
+        const container = document.getElementById('messagesContainer');
+        if (container) container.style.display = 'flex';
+
+        console.log('Messages: Switched to conversation:', contactId);
+    }
+
+    /**
+     * Send voice message immediately (auto-send after recording stops)
+     */
+    function sendVoiceMessage(audioFile) {
+        console.log('sendVoiceMessage called with audio file:', audioFile.name);
+
+        // Check if a conversation is active
+        if (!window.currentActiveContact) {
+            alert('Please select a conversation first');
+            return;
+        }
+
+        // Get active contact info
+        const activeContact = document.querySelector('.thread-item.active, .chat-item.active');
+        const contactName = activeContact ? (activeContact.dataset.name || 'Unknown') : 'Unknown';
+        const contactId = window.currentActiveContact;
+        const contactAvatar = activeContact ? activeContact.querySelector('.avatar img')?.src : '';
+
+        // Validate audio file before creating URL
+        if (!audioFile || audioFile.size === 0) {
+            console.error('âŒ Invalid audio file:', audioFile);
+            alert('Invalid audio file. Please try recording again.');
+            return;
+        }
+
+        // Create audio player URL
+        const audioUrl = URL.createObjectURL(audioFile);
+
+        // Validate the blob URL
+        console.log('ðŸ” Creating audio URL:', {
+            url: audioUrl,
+            fileSize: audioFile.size,
+            fileType: audioFile.type,
+            fileName: audioFile.name
+        });
+
+        // Create message HTML for voice message (WhatsApp style)
+        const messageId = `voice-msg-${Date.now()}`;
+        const currentTime = new Date();
+        const timeString = currentTime.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase();
+
+        const messageHtml = `<div class="msg-row right">
+            <div class="bubble user" style="background: #f1f5f9; padding: 12px 14px; border-radius: 16px; max-width: 60%;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <!-- Play Button -->
+                    <button class="play-pause-btn" data-audio-id="${messageId}" style="background: var(--primary, #1158e5); color: white; border: none; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(17, 88, 229, 0.2);" onmouseover="this.style.background='#0d4bc4'; this.style.transform='scale(1.05)'; this.style.boxShadow='0 4px 8px rgba(17, 88, 229, 0.3)';" onmouseout="this.style.background='var(--primary, #1158e5)'; this.style.transform='scale(1)'; this.style.boxShadow='0 2px 4px rgba(17, 88, 229, 0.2)';">
+                        <i class="fas fa-play" style="font-size: 14px; margin-left: 2px;"></i>
+                    </button>
+                    
+                    <!-- Waveform and Time -->
+                    <div style="flex: 1; min-width: 0;">
+                        <div class="waveform-playback-container" style="position: relative; height: 28px; margin-bottom: 6px;">
+                            <div class="waveform-playback" style="height: 28px; display: flex; align-items: center; gap: 2px;">
+                                <!-- Waveform bars will be generated here -->
+                            </div>
+                            <div class="waveform-progress" style="position: absolute; top: 0; left: 0; height: 100%; background: rgba(17, 88, 229, 0.15); width: 0%; pointer-events: none; border-radius: 14px; transition: width 0.1s ease;"></div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: var(--muted, #6c7a89);">
+                            <span class="audio-time" style="font-weight: 500; color: var(--text, #1f2933);">0:00</span>
+                            <span style="margin: 0 2px; color: var(--muted, #6c7a89);">â€¢</span>
+                            <span style="color: var(--muted, #6c7a89); font-size: 0.75rem;">${timeString}</span>
+                            <div style="margin-left: auto; display: flex; align-items: center; gap: 4px;">
+                                <button class="speed-btn active" data-speed="0.5" data-audio-id="${messageId}" style="background: transparent; border: 1px solid var(--divider, rgba(15, 23, 42, 0.08)); border-radius: 6px; padding: 3px 8px; font-size: 0.7rem; cursor: pointer; color: var(--muted, #6c7a89); transition: all 0.2s ease;">0.5x</button>
+                                <button class="speed-btn" data-speed="1" data-audio-id="${messageId}" style="background: rgba(17, 88, 229, 0.1); border: 1px solid rgba(17, 88, 229, 0.3); border-radius: 6px; padding: 3px 8px; font-size: 0.7rem; cursor: pointer; color: var(--primary, #1158e5); font-weight: 600; transition: all 0.2s ease;">1x</button>
+                                <button class="speed-btn" data-speed="1.5" data-audio-id="${messageId}" style="background: transparent; border: 1px solid var(--divider, rgba(15, 23, 42, 0.08)); border-radius: 6px; padding: 3px 8px; font-size: 0.7rem; cursor: pointer; color: var(--muted, #6c7a89); transition: all 0.2s ease;">1.5x</button>
+                                <button class="speed-btn" data-speed="2" data-audio-id="${messageId}" style="background: transparent; border: 1px solid var(--divider, rgba(15, 23, 42, 0.08)); border-radius: 6px; padding: 3px 8px; font-size: 0.7rem; cursor: pointer; color: var(--muted, #6c7a89); transition: all 0.2s ease;">2x</button>
+                                <i class="fas fa-check-double" style="color: var(--primary, #1158e5); font-size: 12px; margin-left: 6px; opacity: 0.7;"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Audio Element (hidden) -->
+                    <audio id="${messageId}" preload="none" controls style="display: none;" data-audio-url="${audioUrl}" data-audio-type="${audioFile.type || 'audio/webm'}">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+            </div>
+            <div class="avatar">
+                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop&crop=face" alt="You" 
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                <div class="avatar-fallback" style="display: none;"><i class="fas fa-user"></i></div>
+            </div>
+        </div>`;
+
+        // Store message data
+        const messageData = {
+            html: messageHtml,
+            text: '[Voice message]',
+            files: [{ name: audioFile.name, type: audioFile.type, size: audioFile.size }],
+            timestamp: new Date().toISOString(),
+            sender: 'user'
+        };
+
+        // Initialize messages array if it doesn't exist
+        if (!window.messagesData[contactId]) {
+            window.messagesData[contactId] = [];
+        }
+
+        // Add to stored messages
+        window.messagesData[contactId].push(messageData);
+
+        // Add message to container
+        const container = document.getElementById('messagesContainer');
+        if (container) {
+            container.insertAdjacentHTML('beforeend', messageHtml);
+
+            // Initialize audio controls and waveform for the new message
+            setTimeout(() => {
+                const audio = document.getElementById(messageId);
+                const bubble = audio ? audio.closest('.bubble') : null;
+                if (!audio || !bubble) {
+                    console.error('âŒ Audio element or bubble not found for message:', messageId);
+                    return;
+                }
+
+                // Ensure audio is properly loaded and responsive
+                audio.addEventListener('error', (e) => {
+                    console.error('âŒ Audio error:', e);
+                    console.error('Audio source:', audio.src);
+                    console.error('Audio readyState:', audio.readyState);
+                    const timeDisplay = bubble.querySelector('.audio-time');
+                    if (timeDisplay) {
+                        timeDisplay.textContent = 'Error';
+                        timeDisplay.style.color = '#ef4444';
+                    }
+                });
+
+                audio.addEventListener('loadstart', () => {
+                    console.log('ðŸ”„ Audio loading started for:', messageId);
+                });
+
+                audio.addEventListener('loadeddata', () => {
+                    console.log('âœ… Audio data loaded for:', messageId, 'Duration:', audio.duration);
+                });
+
+                // Verify audio source is set correctly
+                console.log('ðŸ” Audio Debug Info:', {
+                    messageId: messageId,
+                    audioUrl: audioUrl,
+                    audioSrc: audio.src,
+                    audioReadyState: audio.readyState,
+                    audioNetworkState: audio.networkState,
+                    audioFileType: audioFile.type,
+                    audioFileSize: audioFile.size
+                });
+
+                // Ensure audio source is set
+                if (!audio.src || audio.src !== audioUrl) {
+                    console.log('âš ï¸ Audio source not set, setting it now...');
+                    audio.src = audioUrl;
+                    audio.type = audioFile.type || 'audio/webm';
+                }
+
+                // Get play button and add direct click handler as backup
+                const playBtn = bubble.querySelector(`[data-audio-id="${messageId}"]`);
+                if (playBtn) {
+                    // Remove any existing handlers first
+                    const newPlayBtn = playBtn.cloneNode(true);
+                    playBtn.parentNode.replaceChild(newPlayBtn, playBtn);
+
+                    // Add direct click handler to ensure it works
+                    newPlayBtn.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('ðŸŽµ Direct play button click handler triggered for:', messageId);
+                        console.log('ðŸ” Audio state:', {
+                            paused: audio.paused,
+                            ended: audio.ended,
+                            readyState: audio.readyState,
+                            networkState: audio.networkState,
+                            src: audio.src,
+                            currentTime: audio.currentTime,
+                            duration: audio.duration
+                        });
+
+                        const icon = newPlayBtn.querySelector('i');
+                        if (!icon) {
+                            console.error('âŒ Icon not found');
+                            return;
+                        }
+
+                        if (audio.paused || audio.ended) {
+                            if (audio.ended) {
+                                audio.currentTime = 0;
+                            }
+
+                            // Ensure audio source is set and properly loaded
+                            if (!audio.src || audio.src === '' || audio.src !== audioUrl) {
+                                console.log('âš ï¸ Audio source missing or incorrect, setting to:', audioUrl);
+                                audio.src = audioUrl;
+                                // Always reload after setting src
+                                audio.load();
+                            } else if (audio.readyState === 0 || audio.networkState === 3) {
+                                // Audio failed to load, try reloading
+                                console.log('âš ï¸ Audio not loaded properly, reloading...');
+                                audio.load();
+                            }
+
+                            // Wait for audio to be ready
+                            const attemptPlay = () => {
+                                // Double-check audio is ready
+                                if (audio.readyState < 2) {
+                                    console.log('â³ Audio still not ready, waiting...');
+                                    audio.addEventListener('canplay', attemptPlay, { once: true });
+                                    return;
+                                }
+
+                                // Check for errors before playing
+                                if (audio.error) {
+                                    console.error('âŒ Audio has error before play:', audio.error);
+                                    // Try reloading once more
+                                    audio.load();
+                                    audio.addEventListener('canplay', attemptPlay, { once: true });
+                                    return;
+                                }
+
+                                console.log('â–¶ï¸ Attempting to play audio...');
+                                const playPromise = audio.play();
+                                if (playPromise !== undefined) {
+                                    playPromise.then(() => {
+                                        icon.className = 'fas fa-pause';
+                                        icon.style.marginLeft = '0';
+
+                                        const timeDisplay = bubble.querySelector('.audio-time');
+                                        if (timeDisplay) {
+                                            timeDisplay.textContent = '0:00';
+                                        }
+
+                                        console.log('âœ… Audio playback started successfully');
+                                    }).catch(error => {
+                                        console.error('âŒ Error playing audio:', error);
+                                        console.error('Error details:', {
+                                            name: error.name,
+                                            message: error.message,
+                                            stack: error.stack
+                                        });
+
+                                        // Try reloading and playing again
+                                        console.log('ðŸ”„ Attempting to reload and retry...');
+                                        audio.load();
+                                        setTimeout(() => {
+                                            audio.play().catch(err => {
+                                                console.error('âŒ Retry also failed:', err);
+                                                alert('Error playing voice message: ' + error.message);
+                                                icon.className = 'fas fa-play';
+                                                icon.style.marginLeft = '2px';
+                                            });
+                                        }, 200);
+                                    });
+                                } else {
+                                    icon.className = 'fas fa-pause';
+                                    icon.style.marginLeft = '0';
+                                }
+                            };
+
+                            if (audio.readyState < 2 || audio.networkState === 3) {
+                                console.log('â³ Audio not ready, waiting for canplay...');
+                                audio.addEventListener('canplay', attemptPlay, { once: true });
+                                audio.addEventListener('error', () => {
+                                    console.error('âŒ Audio error while waiting for canplay');
+                                    // Try one more time after a delay
+                                    setTimeout(() => {
+                                        audio.load();
+                                        audio.addEventListener('canplay', attemptPlay, { once: true });
+                                    }, 300);
+                                }, { once: true });
+                                audio.load();
+                            } else {
+                                attemptPlay();
+                            }
+                        } else {
+                            audio.pause();
+                            icon.className = 'fas fa-play';
+                            icon.style.marginLeft = '2px';
+                            console.log('â¸ï¸ Audio paused');
+                        }
+                    }, { capture: true }); // Use capture phase
+                }
+
+                // Set audio source explicitly - use src directly (not source element) for blob URLs
+                // Remove any existing source elements first
+                const existingSources = audio.querySelectorAll('source');
+                existingSources.forEach(src => src.remove());
+
+                // Set the src directly on the audio element
+                if (audio.src !== audioUrl) {
+                    audio.src = audioUrl;
+                }
+
+                // Set the type attribute to help browser decode correctly
+                if (audioFile && audioFile.type) {
+                    audio.type = audioFile.type;
+                }
+
+                // Always call load() to ensure the audio is properly initialized
+                // Use a small delay to ensure blob URL is fully ready
+                setTimeout(() => {
+                    try {
+                        audio.load();
+                        console.log('âœ… Audio element loaded for:', messageId);
+                    } catch (e) {
+                        console.warn('Warning loading audio:', e);
+                    }
+                }, 50);
+
+                // Add comprehensive error handling with recovery
+                audio.addEventListener('error', function (e) {
+                    console.error('âŒ Audio Error Event:', {
+                        error: e,
+                        code: audio.error ? audio.error.code : 'unknown',
+                        message: audio.error ? audio.error.message : 'unknown',
+                        networkState: audio.networkState,
+                        readyState: audio.readyState,
+                        src: audio.src,
+                        currentSrc: audio.currentSrc
+                    });
+
+                    // Try to recover by reloading the audio
+                    if (audio.error && audio.error.code === 4) {
+                        console.log('ðŸ”„ Attempting to recover from demuxer error by reloading...');
+                        // Clear the src and set it again
+                        const currentSrc = audio.src;
+                        audio.src = '';
+                        setTimeout(() => {
+                            audio.src = currentSrc;
+                            audio.load();
+                        }, 100);
+                    }
+
+                    const timeDisplay = bubble.querySelector('.audio-time');
+                    if (timeDisplay) {
+                        timeDisplay.textContent = 'Error';
+                        timeDisplay.style.color = '#ef4444';
+                    }
+                });
+
+                audio.addEventListener('loadstart', () => {
+                    console.log('ðŸ”„ Audio loadstart for:', messageId);
+                });
+
+                audio.addEventListener('loadeddata', () => {
+                    console.log('âœ… Audio loadeddata for:', messageId, 'Duration:', audio.duration);
+                });
+
+                audio.addEventListener('canplay', () => {
+                    console.log('âœ… Audio canplay for:', messageId, 'Duration:', audio.duration);
+                });
+
+                audio.addEventListener('canplaythrough', () => {
+                    console.log('âœ… Audio canplaythrough for:', messageId);
+                });
+
+                // Load audio
+                try {
+                    audio.load();
+                    console.log('âœ… Audio element initialized for message:', messageId, 'URL:', audioUrl);
+                } catch (error) {
+                    console.error('âŒ Error loading audio:', error);
+                }
+
+                // Store the recorded duration on the audio element for easy access
+                if (audioFile && audioFile.recordedDuration) {
+                    audio.dataset.recordedDuration = audioFile.recordedDuration;
+                    console.log('âœ… Stored recorded duration on audio element:', audioFile.recordedDuration, 'ms');
+
+                    // IMMEDIATELY update the duration display
+                    const timeDisplay = bubble.querySelector('.audio-time');
+                    if (timeDisplay) {
+                        const durationSeconds = Math.floor(audioFile.recordedDuration / 1000);
+                        const minutes = Math.floor(durationSeconds / 60);
+                        const seconds = durationSeconds % 60;
+                        const durationText = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                        timeDisplay.textContent = durationText;
+                        console.log('âœ… Immediately set duration display to:', durationText);
+                    }
+                } else {
+                    console.warn('âŒ No recordedDuration found on audioFile:', audioFile);
+                }
+
+                // Initialize waveform bars (generate based on audio analysis if available, otherwise random)
+                const waveformContainer = bubble.querySelector('.waveform-playback');
+                if (waveformContainer && waveformContainer.children.length === 0) {
+                    // Create waveform bars - we'll update them during playback based on audio analysis
+                    for (let i = 0; i < 50; i++) {
+                        const bar = document.createElement('div');
+                        // Start with random heights for visual effect
+                        const height = 4 + Math.random() * 16;
+                        bar.style.cssText = `width: 2px; background: rgba(17, 88, 229, 0.4); border-radius: 1px; height: ${height}px; transition: height 0.1s ease; min-height: 4px;`;
+                        bar.dataset.barIndex = i;
+                        waveformContainer.appendChild(bar);
+                    }
+
+                    // Try to analyze audio and create waveform based on actual audio data
+                    // Function will be called when audio is loaded
+                    if (audio.readyState >= 2) {
+                        analyzeAudioForWaveform(audio, waveformContainer);
+                    } else {
+                        audio.addEventListener('canplay', () => {
+                            analyzeAudioForWaveform(audio, waveformContainer);
+                        }, { once: true });
+                    }
+                }
+
+                // Set up time update listener
+                const updateDuration = () => {
+                    const timeDisplay = bubble.querySelector('.audio-time');
+                    if (!timeDisplay) {
+                        console.warn('Time display element not found');
+                        return;
+                    }
+
+                    // Use recorded duration if available, otherwise use audio.duration
+                    let duration = 0;
+                    const recordedDuration = audio.dataset.recordedDuration;
+
+                    if (recordedDuration) {
+                        duration = Math.floor(parseInt(recordedDuration) / 1000); // Convert ms to seconds
+                        console.log('âœ… Using recorded duration:', duration, 'seconds (from', recordedDuration, 'ms)');
+                    } else if (audio.duration && !isNaN(audio.duration) && isFinite(audio.duration) && audio.duration > 0) {
+                        duration = Math.floor(audio.duration);
+                        console.log('Using audio.duration:', duration, 'seconds');
+                    } else {
+                        console.warn('âš ï¸ No duration available, recordedDuration:', recordedDuration, 'audio.duration:', audio.duration);
+                        // Try to get from audio element if it's loaded
+                        if (audio.readyState >= 1) { // HAVE_METADATA
+                            duration = Math.floor(audio.duration);
+                            if (duration > 0) {
+                                console.log('Got duration from audio.readyState:', duration);
+                            }
+                        }
+                    }
+
+                    if (duration > 0) {
+                        const minutes = Math.floor(duration / 60);
+                        const seconds = duration % 60;
+                        const durationText = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+                        timeDisplay.textContent = durationText;
+                        console.log('âœ… Updated duration display to:', durationText);
+                    } else {
+                        console.warn('âš ï¸ Duration is 0, cannot update display');
+                        // Set a default if we have the recorded duration
+                        if (recordedDuration) {
+                            const durationMs = parseInt(recordedDuration);
+                            if (durationMs > 0) {
+                                const durationSeconds = Math.floor(durationMs / 1000);
+                                const minutes = Math.floor(durationSeconds / 60);
+                                const seconds = durationSeconds % 60;
+                                const durationText = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                                timeDisplay.textContent = durationText;
+                                console.log('âœ… Set duration from recordedDuration fallback:', durationText);
+                            }
+                        }
+                    }
+                };
+
+                // Listen for metadata load
+                audio.addEventListener('loadedmetadata', () => {
+                    console.log('Audio metadata loaded, duration:', audio.duration);
+                    updateDuration();
+                });
+
+                // Listen for canplay event
+                audio.addEventListener('canplay', () => {
+                    console.log('Audio can play, duration:', audio.duration);
+                    updateDuration();
+                });
+
+                // Try immediately
+                updateDuration();
+
+                // Multiple fallback attempts
+                setTimeout(updateDuration, 100);
+                setTimeout(updateDuration, 300);
+                setTimeout(updateDuration, 500);
+                setTimeout(updateDuration, 1000);
+                setTimeout(updateDuration, 2000);
+
+                // Store the total duration for display
+                let totalDurationSeconds = 0;
+                const recordedDuration = audio.dataset.recordedDuration;
+                if (recordedDuration) {
+                    totalDurationSeconds = Math.floor(parseInt(recordedDuration) / 1000);
+                }
+
+                // Throttle timeupdate for better performance
+                let lastUpdateTime = 0;
+                audio.addEventListener('timeupdate', function () {
+                    const now = Date.now();
+                    // Update at most every 100ms for better performance
+                    if (now - lastUpdateTime < 100 && !audio.paused) {
+                        return;
+                    }
+                    lastUpdateTime = now;
+
+                    const timeDisplay = bubble.querySelector('.audio-time');
+                    const progressBar = bubble.querySelector('.waveform-progress');
+
+                    if (timeDisplay) {
+                        // ALWAYS show current playback time when playing (from 0:00 to duration)
+                        if (!audio.paused) {
+                            const currentTime = Math.floor(audio.currentTime);
+                            const minutes = Math.floor(currentTime / 60);
+                            const seconds = currentTime % 60;
+                            timeDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                        } else {
+                            // Show current time if paused (not at beginning), otherwise show total duration
+                            if (audio.currentTime > 0) {
+                                const currentTime = Math.floor(audio.currentTime);
+                                const minutes = Math.floor(currentTime / 60);
+                                const seconds = currentTime % 60;
+                                timeDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                            } else {
+                                // Show total duration when not playing and at beginning
+                                if (totalDurationSeconds > 0) {
+                                    const minutes = Math.floor(totalDurationSeconds / 60);
+                                    const seconds = totalDurationSeconds % 60;
+                                    timeDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                                } else if (audio.duration && audio.duration > 0 && !isNaN(audio.duration) && isFinite(audio.duration)) {
+                                    const duration = Math.floor(audio.duration);
+                                    const minutes = Math.floor(duration / 60);
+                                    const seconds = duration % 60;
+                                    timeDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                                }
+                            }
+                        }
+                    }
+
+                    // Update progress bar smoothly
+                    if (progressBar && audio.duration && !isNaN(audio.duration) && isFinite(audio.duration) && audio.duration > 0) {
+                        const progress = Math.min(100, Math.max(0, (audio.currentTime / audio.duration) * 100));
+                        progressBar.style.width = `${progress}%`;
+                    }
+
+                    // Update waveform during playback - show progress by darkening bars
+                    if (!audio.paused && audio.duration && !isNaN(audio.duration) && isFinite(audio.duration)) {
+                        updatePlaybackWaveform(audio, bubble);
+                    }
+                });
+
+                audio.addEventListener('ended', function () {
+                    console.log('âœ… Audio playback ended for:', messageId);
+                    const btn = bubble.querySelector(`[data-audio-id="${messageId}"]`);
+                    if (btn) {
+                        const icon = btn.querySelector('i');
+                        if (icon) {
+                            icon.className = 'fas fa-play';
+                            icon.style.marginLeft = '2px';
+                        }
+                    }
+                    const progressBar = bubble.querySelector('.waveform-progress');
+                    if (progressBar) {
+                        progressBar.style.width = '0%';
+                    }
+
+                    // Reset waveform
+                    const waveformContainer = bubble.querySelector('.waveform-playback');
+                    if (waveformContainer) {
+                        const bars = waveformContainer.querySelectorAll('div');
+                        bars.forEach(bar => {
+                            bar.style.background = 'rgba(17, 88, 229, 0.3)';
+                            bar.style.opacity = '0.6';
+                        });
+                    }
+
+                    // Reset to show total duration when playback ends
+                    const timeDisplay = bubble.querySelector('.audio-time');
+                    if (timeDisplay && totalDurationSeconds > 0) {
+                        const minutes = Math.floor(totalDurationSeconds / 60);
+                        const seconds = totalDurationSeconds % 60;
+                        timeDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                    }
+                });
+
+                audio.addEventListener('pause', function () {
+                    console.log('â¸ï¸ Audio playback paused for:', messageId);
+                    // Show current time when paused (not total duration)
+                    const timeDisplay = bubble.querySelector('.audio-time');
+                    if (timeDisplay) {
+                        if (audio.currentTime > 0) {
+                            const currentTime = Math.floor(audio.currentTime);
+                            const minutes = Math.floor(currentTime / 60);
+                            const seconds = currentTime % 60;
+                            timeDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                        } else if (totalDurationSeconds > 0) {
+                            const minutes = Math.floor(totalDurationSeconds / 60);
+                            const seconds = totalDurationSeconds % 60;
+                            timeDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                        }
+                    }
+                });
+
+                audio.addEventListener('play', function () {
+                    console.log('â–¶ï¸ Audio playback started for:', messageId);
+                    console.log('ðŸ” Play event - Audio state:', {
+                        currentTime: audio.currentTime,
+                        duration: audio.duration,
+                        paused: audio.paused,
+                        ended: audio.ended,
+                        readyState: audio.readyState
+                    });
+
+                    // Reset timer to 0:00 when playback starts
+                    const timeDisplay = bubble.querySelector('.audio-time');
+                    if (timeDisplay) {
+                        timeDisplay.textContent = '0:00';
+                    }
+
+                    // Reset progress bar
+                    const progressBar = bubble.querySelector('.waveform-progress');
+                    if (progressBar) {
+                        progressBar.style.width = '0%';
+                    }
+
+                    // Reset waveform to show all bars as unplayed initially
+                    const waveformContainer = bubble.querySelector('.waveform-playback');
+                    if (waveformContainer) {
+                        const bars = waveformContainer.querySelectorAll('div');
+                        bars.forEach(bar => {
+                            bar.style.background = 'rgba(17, 88, 229, 0.3)';
+                            bar.style.opacity = '0.6';
+                        });
+                    }
+                });
+            }, 100);
+
+            // Scroll to bottom
+            setTimeout(() => {
+                container.scrollTop = container.scrollHeight;
+            }, 100);
+        }
+
+        console.log('âœ… Voice message sent successfully to', contactId);
+
+        // Simulate receiving a response after 1-3 seconds
+        setTimeout(() => {
+            simulateReceivedMessage(contactId, contactName, contactAvatar);
+        }, 1000 + Math.random() * 2000);
+    }
+
+    /**
+     * Send message with text + all attachments
+     */
+    function sendMessagesMessage() {
+        console.log('sendMessagesMessage called');
+        console.log('Current active contact:', window.currentActiveContact);
+
+        const msgInput = document.getElementById('messageInput');
+        if (!msgInput) {
+            console.error('Message input not found!');
+            return;
+        }
+
+        // Check if a conversation is active
+        if (!window.currentActiveContact) {
+            alert('Please select a conversation first');
+            return;
+        }
+
+        const message = msgInput.value.trim();
+        const files = window.messagesAttachments || [];
+
+        // Prevent empty messages (no text AND no attachments)
+        if (!message && files.length === 0) {
+            alert('Please enter a message or attach a file');
+            return;
+        }
+
+        console.log('Sending message:', message, 'with', files.length, 'files');
+
+        // Get active contact info
+        const activeContact = document.querySelector('.thread-item.active, .chat-item.active');
+        const contactName = activeContact ? (activeContact.dataset.name || 'Unknown') : 'Unknown';
+        const contactId = window.currentActiveContact;
+        const contactAvatar = activeContact ? activeContact.querySelector('.avatar img')?.src : '';
+
+        // Create message HTML
+        let messageHtml = `<div class="msg-row right">
+            <div class="bubble user">`;
+
+        // Add text or placeholder
+        if (message) {
+            messageHtml += escapeHtml(message);
+        } else if (files.length > 0) {
+            messageHtml += `Sent ${files.length} file(s)`;
+        }
+
+        messageHtml += `</div>`;
+
+        // Add attachments if any
+        if (files.length > 0) {
+            messageHtml += '<div class="message-attachments">';
+            files.forEach(file => {
+                const icon = getFileIcon(file);
+                const isAudio = file.type.startsWith('audio/') || file.name.endsWith('.webm');
+                const isImage = file.type.startsWith('image/');
+                const isVideo = file.type.startsWith('video/');
+
+                // Create object URL for the file
+                const fileUrl = URL.createObjectURL(file);
+
+                if (isAudio) {
+                    // Create audio player for voice messages
+                    messageHtml += `<div class="attachment-item voice-message-item">
+                        <i class="fas ${icon}"></i>
+                        <audio controls style="max-width: 200px; height: 32px;">
+                            <source src="${fileUrl}" type="${file.type || 'audio/webm'}">
+                        </audio>
+                        <a href="${fileUrl}" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: none; margin-left: 8px; cursor: pointer;" title="Open in new tab">
+                            <span>${escapeHtml(file.name)}</span>
+                        </a>
+                    </div>`;
+                } else if (isImage) {
+                    // Images: clickable to open in new tab
+                    messageHtml += `<div class="attachment-item" style="cursor: pointer;">
+                        <a href="${fileUrl}" target="_blank" rel="noopener noreferrer" style="display: flex; align-items: center; gap: 8px; color: inherit; text-decoration: none; width: 100%;">
+                            <i class="fas ${icon}" style="color: var(--primary);"></i>
+                            <span>${escapeHtml(file.name)}</span>
+                            <i class="fas fa-external-link-alt" style="margin-left: auto; font-size: 0.7rem; opacity: 0.6;"></i>
+                        </a>
+                    </div>`;
+                } else if (isVideo) {
+                    // Videos: clickable to open in new tab
+                    messageHtml += `<div class="attachment-item" style="cursor: pointer;">
+                        <a href="${fileUrl}" target="_blank" rel="noopener noreferrer" style="display: flex; align-items: center; gap: 8px; color: inherit; text-decoration: none; width: 100%;">
+                            <i class="fas ${icon}" style="color: var(--primary);"></i>
+                            <span>${escapeHtml(file.name)}</span>
+                            <i class="fas fa-external-link-alt" style="margin-left: auto; font-size: 0.7rem; opacity: 0.6;"></i>
+                        </a>
+                    </div>`;
+                } else {
+                    // Other files (PDF, DOC, etc.): clickable to open in new tab
+                    messageHtml += `<div class="attachment-item" style="cursor: pointer;">
+                        <a href="${fileUrl}" target="_blank" rel="noopener noreferrer" style="display: flex; align-items: center; gap: 8px; color: inherit; text-decoration: none; width: 100%;">
+                            <i class="fas ${icon}" style="color: var(--primary);"></i>
+                            <span>${escapeHtml(file.name)}</span>
+                            <i class="fas fa-external-link-alt" style="margin-left: auto; font-size: 0.7rem; opacity: 0.6;"></i>
+                        </a>
+                    </div>`;
+                }
+            });
+            messageHtml += '</div>';
+        }
+
+        messageHtml += `<div class="avatar">
+            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop&crop=face" alt="You" 
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+            <div class="avatar-fallback" style="display: none;"><i class="fas fa-user"></i></div>
+        </div></div>`;
+
+        // Store message data with file URLs for later access
+        const fileUrls = Array.from(files).map(f => {
+            const url = URL.createObjectURL(f);
+            return { name: f.name, type: f.type, size: f.size, url: url };
+        });
+
+        const messageData = {
+            html: messageHtml,
+            text: message,
+            files: fileUrls,
+            timestamp: new Date().toISOString(),
+            sender: 'user'
+        };
+
+        // Initialize messages array if it doesn't exist
+        if (!window.messagesData[contactId]) {
+            window.messagesData[contactId] = [];
+        }
+
+        // Add to stored messages
+        window.messagesData[contactId].push(messageData);
+
+        // Add message to container
+        const container = document.getElementById('messagesContainer');
+        if (container) {
+            container.insertAdjacentHTML('beforeend', messageHtml);
+            // Scroll to bottom
+            setTimeout(() => {
+                container.scrollTop = container.scrollHeight;
+            }, 100);
+        }
+
+        // Reset composer state
+        msgInput.value = '';
+        window.messagesAttachments = [];
+        updateAttachmentPreview();
+        const fileInputEl = document.getElementById('fileInput');
+        if (fileInputEl) fileInputEl.value = '';
+
+        console.log('Messages: Message sent successfully to', contactId);
+
+        // Simulate receiving a response after 1-3 seconds
+        setTimeout(() => {
+            simulateReceivedMessage(contactId, contactName, contactAvatar);
+        }, 1000 + Math.random() * 2000);
+    }
+
+    /**
+     * Initialize the messages composer with attachment support
+     * Only initializes if messages section is present
+     */
+    function initMessagesComposer() {
+        console.log('=== INIT MESSAGES COMPOSER CALLED ===');
+        console.log('Retry count:', initMessagesComposer._retryCount || 0);
+
+        // Only initialize if messages section exists
+        const messagesSection = document.getElementById('messagesSection');
+        if (!messagesSection) {
+            console.warn('Messages section not found, retrying...');
+            if (!initMessagesComposer._retryCount) initMessagesComposer._retryCount = 0;
+            if (initMessagesComposer._retryCount < 10) {
+                initMessagesComposer._retryCount++;
+                setTimeout(initMessagesComposer, 200);
+            } else {
+                console.error('Messages: Failed to find messagesSection after 10 retries');
+            }
+            return;
+        }
+
+        console.log('Messages section found:', messagesSection);
+
+        // Check if section is visible (might be hidden initially in dynamic loading)
+        const isVisible = messagesSection.offsetParent !== null ||
+            messagesSection.style.display !== 'none' ||
+            !messagesSection.style.display;
+
+        if (!isVisible && messagesSection.style.display === 'none') {
+            console.log('Messages section is hidden, will initialize when visible');
+            return;
+        }
+
+        composer = document.getElementById('composerLarge') || document.querySelector('.composer-large');
+        fileInput = document.getElementById('fileInput');
+        attachmentBtn = document.getElementById('attachmentBtn');
+        sendBtn = document.getElementById('sendMessageBtn');
+        messageInput = document.getElementById('messageInput');
+        messagesContainer = document.getElementById('messagesContainer');
+
+        console.log('Found elements:', {
+            composer: !!composer,
+            fileInput: !!fileInput,
+            attachmentBtn: !!attachmentBtn,
+            sendBtn: !!sendBtn,
+            messageInput: !!messageInput,
+            messagesContainer: !!messagesContainer
+        });
+
+        // Check which elements are missing
+        const missingElements = [];
+        if (!composer) missingElements.push('composer-large');
+        if (!fileInput) missingElements.push('fileInput');
+        if (!attachmentBtn) missingElements.push('attachmentBtn');
+        if (!sendBtn) missingElements.push('sendMessageBtn');
+        if (!messageInput) missingElements.push('messageInput');
+
+        if (missingElements.length > 0) {
+            // Retry if elements not ready (max 50 attempts = 5 seconds)
+            if (!initMessagesComposer._retryCount) initMessagesComposer._retryCount = 0;
+            if (initMessagesComposer._retryCount < 50) {
+                initMessagesComposer._retryCount++;
+                if (initMessagesComposer._retryCount % 10 === 0) {
+                    console.log('Messages: Waiting for composer elements:', missingElements);
+                }
+                setTimeout(initMessagesComposer, 100);
+            } else {
+                console.error('Messages: Failed to initialize composer: missing elements', missingElements);
+            }
+            return;
+        }
+
+        // Reset retry counter on success
+        initMessagesComposer._retryCount = 0;
+        console.log('Messages: All composer elements found, initializing...');
+
+        // Make functions globally accessible for debugging
+        window.switchConversation = switchConversation;
+        window.sendMessagesMessage = sendMessagesMessage;
+        window.addAttachments = addAttachments;
+        window.updateAttachmentPreview = updateAttachmentPreview;
+
+        // Clean up existing listeners if already initialized
+        if (messagesComposerInitialized) {
+            if (fileInput && messagesComposerHandlers.fileInputChange) {
+                fileInput.removeEventListener('change', messagesComposerHandlers.fileInputChange);
+            }
+            if (attachmentBtn && messagesComposerHandlers.attachmentBtnClick) {
+                attachmentBtn.removeEventListener('click', messagesComposerHandlers.attachmentBtnClick);
+            }
+            if (sendBtn && messagesComposerHandlers.sendBtnClick) {
+                sendBtn.removeEventListener('click', messagesComposerHandlers.sendBtnClick);
+            }
+            if (messageInput && messagesComposerHandlers.messageInputKeypress) {
+                messageInput.removeEventListener('keypress', messagesComposerHandlers.messageInputKeypress);
+            }
+        }
+
+        // Initialize attachment state
+        if (!Array.isArray(window.messagesAttachments)) {
+            window.messagesAttachments = [];
+        }
+
+        /**
+         * Handle file selection from file input
+         */
+        messagesComposerHandlers.fileInputChange = function (e) {
+            const files = e.target.files;
+            if (files && files.length > 0) {
+                addAttachments(files);
+            }
+            // Clear input to allow selecting the same files again
+            fileInput.value = '';
+        };
+        fileInput.addEventListener('change', messagesComposerHandlers.fileInputChange);
+
+        /**
+         * Handle attach button click
+         */
+        messagesComposerHandlers.attachmentBtnClick = function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('ðŸ”µ Messages: Attach button clicked');
+
+            const attachBtn = document.getElementById('attachmentBtn');
+            const fileInputEl = document.getElementById('fileInput');
+
+            if (!attachBtn || !fileInputEl) {
+                console.error('Attach button or file input not found!');
+                return;
+            }
+
+            if (attachBtn.disabled) {
+                console.log('Messages: Attach button is disabled, ignoring click');
+                return;
+            }
+
+            // Reset file input to allow re-selecting same files
+            fileInputEl.value = '';
+            console.log('Messages: Triggering file input click');
+            fileInputEl.click();
+        };
+        if (attachmentBtn) {
+            attachmentBtn.addEventListener('click', messagesComposerHandlers.attachmentBtnClick);
+            console.log('âœ… Messages: Attach button listener attached');
+        } else {
+            console.error('âŒ Messages: Attach button not found for listener');
+        }
+
+        /**
+         * Switch to a conversation
+         */
+        function switchConversation(contactId, contactName, contactRole) {
+            console.log('Switching conversation:', contactId, contactName);
+            // Update active state
+            document.querySelectorAll('.thread-item, .chat-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            const activeItem = document.querySelector(`[data-contact="${contactId}"]`);
+            if (activeItem) {
+                activeItem.classList.add('active');
+            }
+
+            // Update current active contact
+            window.currentActiveContact = contactId;
+
+            // Mark as read
+            markConversationAsRead(contactId);
+
+            // Update thread header
+            const threadHeader = document.getElementById('threadHeaderName');
+            if (threadHeader) {
+                threadHeader.textContent = contactName || 'Select a conversation';
+            }
+
+            // Load messages for this conversation
+            loadConversationMessages(contactId);
+
+            // Enable composer - get fresh references
+            const msgInput = document.getElementById('messageInput');
+            const sendBtnEl = document.getElementById('sendMessageBtn');
+            const attachBtnEl = document.getElementById('attachmentBtn');
+            const composerEl = document.querySelector('.composer-large');
+
+            if (msgInput) msgInput.disabled = false;
+            if (sendBtnEl) sendBtnEl.disabled = false;
+            if (attachBtnEl) attachBtnEl.disabled = false;
+            if (composerEl) composerEl.style.opacity = '1';
+
+            // Hide "no active conversation" message
+            const noActiveMsg = document.getElementById('noActiveConversationMessage');
+            if (noActiveMsg) noActiveMsg.style.display = 'none';
+
+            // Show messages container
+            const container = document.getElementById('messagesContainer');
+            if (container) container.style.display = 'flex';
+
+            console.log('Messages: Switched to conversation:', contactId);
+        }
+
+        /**
+         * Load messages for a conversation
+         */
+        function loadConversationMessages(contactId) {
+            const container = document.getElementById('messagesContainer');
+            if (!container) return;
+
+            // Initialize messages array if it doesn't exist
+            if (!window.messagesData[contactId]) {
+                window.messagesData[contactId] = [];
+            }
+
+            const messages = window.messagesData[contactId];
+
+            // Clear container
+            container.innerHTML = '';
+
+            // If no messages, show empty state
+            if (messages.length === 0) {
+                container.innerHTML = '<p style="text-align:center;color:var(--muted);padding:2rem;">No messages yet. Start the conversation!</p>';
+                return;
+            }
+
+            // Render all messages
+            messages.forEach(msg => {
+                container.insertAdjacentHTML('beforeend', msg.html);
+            });
+
+            // Scroll to bottom
+            setTimeout(() => {
+                container.scrollTop = container.scrollHeight;
+            }, 100);
+        }
+
+        /**
+         * Send message with text + all attachments
+         */
+        function sendMessagesMessage() {
+            console.log('sendMessagesMessage called');
+            console.log('Current active contact:', window.currentActiveContact);
+
+            // Get fresh references to DOM elements
+            const msgInput = document.getElementById('messageInput');
+            if (!msgInput) {
+                console.error('Message input not found!');
+                return;
+            }
+
+            // Check if a conversation is active
+            if (!window.currentActiveContact) {
+                alert('Please select a conversation first');
+                return;
+            }
+
+            const message = msgInput.value.trim();
+            const files = window.messagesAttachments || [];
+
+            // Prevent empty messages (no text AND no attachments)
+            if (!message && files.length === 0) {
+                alert('Please enter a message or attach a file');
+                return;
+            }
+
+            console.log('Sending message:', message, 'with', files.length, 'files');
+
+            // Get active contact info
+            const activeContact = document.querySelector('.thread-item.active, .chat-item.active');
+            const contactName = activeContact ? (activeContact.dataset.name || 'Unknown') : 'Unknown';
+            const contactId = window.currentActiveContact;
+            const contactAvatar = activeContact ? activeContact.querySelector('.avatar img')?.src : '';
+
+            // Create message HTML
+            let messageHtml = `<div class="msg-row right">
+                <div class="bubble user">`;
+
+            // Add text or placeholder
+            if (message) {
+                messageHtml += escapeHtml(message);
+            } else if (files.length > 0) {
+                messageHtml += `Sent ${files.length} file(s)`;
+            }
+
+            messageHtml += `</div>`;
+
+            // Add attachments if any
+            if (files.length > 0) {
+                messageHtml += '<div class="message-attachments">';
+                files.forEach(file => {
+                    const icon = getFileIcon(file);
+                    const isAudio = file.type.startsWith('audio/') || file.name.endsWith('.webm');
+                    const isImage = file.type.startsWith('image/');
+                    const isVideo = file.type.startsWith('video/');
+
+                    // Create object URL for the file
+                    const fileUrl = URL.createObjectURL(file);
+
+                    if (isAudio) {
+                        // Create audio player for voice messages
+                        messageHtml += `<div class="attachment-item voice-message-item">
+                            <i class="fas ${icon}"></i>
+                            <audio controls style="max-width: 200px; height: 32px;">
+                                <source src="${fileUrl}" type="${file.type || 'audio/webm'}">
+                            </audio>
+                            <a href="${fileUrl}" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: none; margin-left: 8px; cursor: pointer;" title="Open in new tab">
+                                <span>${escapeHtml(file.name)}</span>
+                            </a>
+                        </div>`;
+                    } else if (isImage) {
+                        // Images: clickable to open in new tab
+                        messageHtml += `<div class="attachment-item" style="cursor: pointer;">
+                            <a href="${fileUrl}" target="_blank" rel="noopener noreferrer" style="display: flex; align-items: center; gap: 8px; color: inherit; text-decoration: none; width: 100%;">
+                                <i class="fas ${icon}" style="color: var(--primary);"></i>
+                                <span>${escapeHtml(file.name)}</span>
+                                <i class="fas fa-external-link-alt" style="margin-left: auto; font-size: 0.7rem; opacity: 0.6;"></i>
+                            </a>
+                        </div>`;
+                    } else if (isVideo) {
+                        // Videos: clickable to open in new tab
+                        messageHtml += `<div class="attachment-item" style="cursor: pointer;">
+                            <a href="${fileUrl}" target="_blank" rel="noopener noreferrer" style="display: flex; align-items: center; gap: 8px; color: inherit; text-decoration: none; width: 100%;">
+                                <i class="fas ${icon}" style="color: var(--primary);"></i>
+                                <span>${escapeHtml(file.name)}</span>
+                                <i class="fas fa-external-link-alt" style="margin-left: auto; font-size: 0.7rem; opacity: 0.6;"></i>
+                            </a>
+                        </div>`;
+                    } else {
+                        // Other files (PDF, DOC, etc.): clickable to open in new tab
+                        messageHtml += `<div class="attachment-item" style="cursor: pointer;">
+                            <a href="${fileUrl}" target="_blank" rel="noopener noreferrer" style="display: flex; align-items: center; gap: 8px; color: inherit; text-decoration: none; width: 100%;">
+                                <i class="fas ${icon}" style="color: var(--primary);"></i>
+                                <span>${escapeHtml(file.name)}</span>
+                                <i class="fas fa-external-link-alt" style="margin-left: auto; font-size: 0.7rem; opacity: 0.6;"></i>
+                            </a>
+                        </div>`;
+                    }
+                });
+                messageHtml += '</div>';
+            }
+
+            messageHtml += `<div class="avatar">
+                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop&crop=face" alt="You" 
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                <div class="avatar-fallback" style="display: none;"><i class="fas fa-user"></i></div>
+            </div></div>`;
+
+            // Store message data with file URLs for later access
+            const fileUrls = Array.from(files).map(f => {
+                const url = URL.createObjectURL(f);
+                return { name: f.name, type: f.type, size: f.size, url: url };
+            });
+
+            const messageData = {
+                html: messageHtml,
+                text: message,
+                files: fileUrls,
+                timestamp: new Date().toISOString(),
+                sender: 'user'
+            };
+
+            // Initialize messages array if it doesn't exist
+            if (!window.messagesData[contactId]) {
+                window.messagesData[contactId] = [];
+            }
+
+            // Add to stored messages
+            window.messagesData[contactId].push(messageData);
+
+            // Add message to container
+            const container = document.getElementById('messagesContainer');
+            if (container) {
+                container.insertAdjacentHTML('beforeend', messageHtml);
+                // Scroll to bottom
+                setTimeout(() => {
+                    container.scrollTop = container.scrollHeight;
+                }, 100);
+            }
+
+            // Reset composer state
+            msgInput.value = '';
+            window.messagesAttachments = [];
+            updateAttachmentPreview();
+            const fileInputEl = document.getElementById('fileInput');
+            if (fileInputEl) fileInputEl.value = '';
+
+            console.log('Messages: Message sent successfully to', contactId);
+
+            // Simulate receiving a response after 1-3 seconds
+            setTimeout(() => {
+                simulateReceivedMessage(contactId, contactName, contactAvatar);
+            }, 1000 + Math.random() * 2000);
+        }
+
+        /**
+         * Get file icon class based on file type
+         */
+        function getFileIcon(file) {
+            const type = (file.type || '').toLowerCase();
+            const name = (file.name || '').toLowerCase();
+
+            if (type.startsWith('image/')) return 'fa-image';
+            if (type.startsWith('video/')) return 'fa-video';
+            if (type.startsWith('audio/')) return 'fa-file-audio';
+            if (type === 'application/pdf' || name.endsWith('.pdf')) return 'fa-file-pdf';
+            if (type.includes('word') || type.includes('document') || name.endsWith('.doc') || name.endsWith('.docx')) return 'fa-file-word';
+            if (type.includes('excel') || type.includes('spreadsheet') || name.endsWith('.xls') || name.endsWith('.xlsx')) return 'fa-file-excel';
+            if (type.includes('powerpoint') || type.includes('presentation') || name.endsWith('.ppt') || name.endsWith('.pptx')) return 'fa-file-powerpoint';
+            if (type.includes('zip') || type.includes('rar') || type.includes('archive') || name.endsWith('.zip') || name.endsWith('.rar')) return 'fa-file-archive';
+            if (name.endsWith('.txt') || type.includes('text')) return 'fa-file-alt';
+
+            return 'fa-file';
+        }
+
+        /**
+         * Escape HTML to prevent XSS
+         */
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        /**
+         * Handle send button click
+         */
+        messagesComposerHandlers.sendBtnClick = function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('ðŸŸ¢ Messages: Send button clicked, isRecording:', VoiceRecorder.isRecording);
+
+            // If recording, stop and send the recording instead
+            if (VoiceRecorder.isRecording) {
+                console.log('Recording active, stopping and sending recording');
+                sendVoiceRecording();
+                return;
+            }
+
+            const sendBtnEl = document.getElementById('sendMessageBtn');
+            console.log('Send button disabled:', sendBtnEl?.disabled);
+            if (sendBtnEl && !sendBtnEl.disabled) {
+                sendMessagesMessage();
+            } else {
+                console.log('Messages: Send button is disabled, ignoring click');
+            }
+        };
+        if (sendBtn) {
+            sendBtn.addEventListener('click', messagesComposerHandlers.sendBtnClick);
+            console.log('âœ… Messages: Send button listener attached');
+        } else {
+            console.error('âŒ Messages: Send button not found for listener');
+        }
+
+        /**
+         * Handle Enter key in input (but allow Shift+Enter for new lines)
+         */
+        messagesComposerHandlers.messageInputKeypress = function (e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessagesMessage();
+            }
+        };
+        if (messageInput) {
+            messageInput.addEventListener('keypress', messagesComposerHandlers.messageInputKeypress);
+        }
+
+        /**
+         * Handle microphone button - click to start/stop recording (like WhatsApp)
+         */
+        const microphoneBtn = document.getElementById('microphoneBtn');
+        if (microphoneBtn) {
+            // Click to toggle recording
+            messagesComposerHandlers.microphoneBtnClick = function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                if (!VoiceRecorder.isRecording) {
+                    // Start recording
+                    startVoiceRecording();
+                } else {
+                    // If recording, stop and send
+                    sendVoiceRecording();
+                }
+            };
+            microphoneBtn.addEventListener('click', messagesComposerHandlers.microphoneBtnClick);
+        }
+
+        // Recording UI button handlers (set up once, works for dynamically created UI)
+        document.addEventListener('click', function (e) {
+            // Cancel button
+            const cancelBtn = e.target.closest('#cancelRecordingBtn');
+            if (cancelBtn) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Cancel button clicked');
+                cancelVoiceRecording();
+                return;
+            }
+
+            // Pause/Resume button (check button or icon inside)
+            const pauseResumeBtn = e.target.closest('#pauseResumeBtn');
+            if (pauseResumeBtn) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                // Prevent multiple rapid clicks
+                if (VoiceRecorder.isProcessing) {
+                    console.log('Already processing pause/resume, ignoring click');
+                    return;
+                }
+
+                console.log('Pause/Resume button clicked, isPaused:', VoiceRecorder.isPaused, 'isRecording:', VoiceRecorder.isRecording, 'recorder state:', VoiceRecorder.recorder?.state);
+
+                // Use setTimeout to ensure state is properly checked
+                setTimeout(() => {
+                    if (VoiceRecorder.isPaused) {
+                        resumeVoiceRecording();
+                    } else if (VoiceRecorder.isRecording && !VoiceRecorder.isPaused) {
+                        pauseVoiceRecording();
+                    }
+                }, 0);
+                return;
+            }
+
+            // Send button in recording mode
+            const sendRecordingBtn = e.target.closest('#sendRecordingBtn');
+            if (sendRecordingBtn) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Send recording button clicked');
+                sendVoiceRecording();
+                return;
+            }
+        });
+
+        /**
+         * Initialize audio playback controls for voice messages
+         */
+        function initializeAudioControls() {
+            // Use event delegation for dynamically added audio players
+            // Use capture phase to ensure we catch the event before other handlers
+            document.addEventListener('click', function (e) {
+                // Play/pause button - check if clicked element or its parent is the button
+                const playBtn = e.target.closest('.play-pause-btn') ||
+                    (e.target.classList.contains('play-pause-btn') ? e.target : null) ||
+                    (e.target.closest('i') && e.target.closest('i').parentElement?.classList.contains('play-pause-btn') ? e.target.closest('i').parentElement : null);
+
+                if (playBtn) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    const audioId = playBtn.dataset.audioId;
+                    if (!audioId) {
+                        console.error('âŒ No audio ID found on play button');
+                        return;
+                    }
+
+                    const audio = document.getElementById(audioId);
+                    if (!audio) {
+                        console.error('âŒ Audio element not found:', audioId);
+                        return;
+                    }
+
+                    const icon = playBtn.querySelector('i');
+                    if (!icon) {
+                        console.error('âŒ Icon element not found in play button');
+                        return;
+                    }
+
+                    console.log('ðŸŽµ Play button clicked for:', audioId, 'Current state - paused:', audio.paused, 'ended:', audio.ended);
+
+                    if (audio.paused || audio.ended) {
+                        // Reset to beginning if ended
+                        if (audio.ended) {
+                            audio.currentTime = 0;
+                        }
+
+                        // Ensure audio source is set
+                        const audioUrl = audio.dataset.audioUrl || audio.src;
+                        if (!audio.src || audio.src === '' || audio.src === window.location.href || audio.src !== audioUrl) {
+                            console.log('âš ï¸ Audio source missing or invalid, setting to:', audioUrl);
+                            if (audioUrl && audioUrl.startsWith('blob:')) {
+                                audio.src = audioUrl;
+                                // Always reload after setting src
+                                audio.load();
+                            } else {
+                                console.error('âŒ No valid audio URL available!', {
+                                    datasetUrl: audio.dataset.audioUrl,
+                                    currentSrc: audio.src,
+                                    audioId: audioId
+                                });
+                                alert('Audio source not available. Please try recording again.');
+                                return;
+                            }
+                        } else if (audio.readyState === 0 || audio.networkState === 3) {
+                            // Audio failed to load, try reloading
+                            console.log('âš ï¸ Audio not loaded properly, reloading...');
+                            audio.load();
+                        }
+
+                        console.log('ðŸ” Audio state before play:', {
+                            src: audio.src,
+                            currentSrc: audio.currentSrc,
+                            readyState: audio.readyState,
+                            networkState: audio.networkState,
+                            duration: audio.duration,
+                            error: audio.error ? audio.error.message : null
+                        });
+
+                        // Wait for audio to be ready
+                        const playAudio = () => {
+                            // Check for errors before playing
+                            if (audio.error) {
+                                console.error('âŒ Audio has error before play:', audio.error);
+                                // Try reloading once more
+                                audio.load();
+                                audio.addEventListener('canplay', playAudio, { once: true });
+                                return;
+                            }
+
+                            // Double-check audio is ready
+                            if (audio.readyState < 2) {
+                                console.log('â³ Audio still not ready, waiting...');
+                                audio.addEventListener('canplay', playAudio, { once: true });
+                                return;
+                            }
+
+                            console.log('â–¶ï¸ Attempting to play audio:', audioId);
+                            const playPromise = audio.play();
+                            if (playPromise !== undefined) {
+                                playPromise.then(() => {
+                                    // Playback started successfully
+                                    icon.className = 'fas fa-pause';
+                                    icon.style.marginLeft = '0';
+
+                                    // Reset timer to 0:00 when playback starts
+                                    const bubble = audio.closest('.bubble');
+                                    if (bubble) {
+                                        const timeDisplay = bubble.querySelector('.audio-time');
+                                        if (timeDisplay) {
+                                            timeDisplay.textContent = '0:00';
+                                        }
+
+                                        // Reset waveform to show all bars as unplayed
+                                        const waveformContainer = bubble.querySelector('.waveform-playback');
+                                        if (waveformContainer) {
+                                            const bars = waveformContainer.querySelectorAll('div');
+                                            bars.forEach(bar => {
+                                                bar.style.background = 'rgba(17, 88, 229, 0.3)';
+                                                bar.style.opacity = '0.6';
+                                            });
+                                        }
+                                    }
+
+                                    console.log('âœ… Audio playback started successfully for:', audioId);
+                                }).catch(error => {
+                                    // Ignore the common "interrupted by pause" error - it's harmless
+                                    if (error.name === 'AbortError' ||
+                                        error.message.includes('interrupted') ||
+                                        error.message.includes('pause')) {
+                                        // This is a harmless error when play() is quickly interrupted
+                                        // Just check if audio is actually paused and update UI accordingly
+                                        if (audio.paused) {
+                                            icon.className = 'fas fa-play';
+                                            icon.style.marginLeft = '2px';
+                                        } else {
+                                            icon.className = 'fas fa-pause';
+                                            icon.style.marginLeft = '0';
+                                        }
+                                        return;
+                                    }
+                                    // Only show alert for real errors
+                                    console.error('âŒ Error playing audio:', error);
+                                    console.error('Error details:', {
+                                        name: error.name,
+                                        message: error.message,
+                                        audioSrc: audio.src,
+                                        audioReadyState: audio.readyState,
+                                        audioNetworkState: audio.networkState,
+                                        audioError: audio.error
+                                    });
+
+                                    // Try reloading and playing again
+                                    console.log('ðŸ”„ Attempting to reload and retry...');
+                                    audio.load();
+                                    setTimeout(() => {
+                                        audio.play().catch(err => {
+                                            console.error('âŒ Retry also failed:', err);
+                                            alert('Error playing voice message: ' + (error.message || 'Unknown error') + '\n\nCheck console (F12) for details.');
+                                            icon.className = 'fas fa-play';
+                                            icon.style.marginLeft = '2px';
+                                        });
+                                    }, 200);
+                                });
+                            } else {
+                                // For older browsers
+                                icon.className = 'fas fa-pause';
+                                icon.style.marginLeft = '0';
+
+                                // Reset timer to 0:00 when playback starts
+                                const bubble = audio.closest('.bubble');
+                                if (bubble) {
+                                    const timeDisplay = bubble.querySelector('.audio-time');
+                                    if (timeDisplay) {
+                                        timeDisplay.textContent = '0:00';
+                                    }
+                                }
+                            }
+                        };
+
+                        // If audio is not ready, wait for it
+                        if (audio.readyState < 2 || audio.networkState === 3) {
+                            console.log('â³ Audio not ready (readyState:', audio.readyState, ', networkState:', audio.networkState, '), waiting for canplay...');
+                            audio.addEventListener('canplay', () => {
+                                console.log('âœ… Audio can play now, attempting playback...');
+                                playAudio();
+                            }, { once: true });
+                            audio.addEventListener('error', () => {
+                                console.error('âŒ Audio error while waiting for canplay');
+                                // Try one more time after a delay
+                                setTimeout(() => {
+                                    audio.load();
+                                    audio.addEventListener('canplay', playAudio, { once: true });
+                                }, 300);
+                            }, { once: true });
+                            audio.load();
+                        } else {
+                            playAudio();
+                        }
+                    } else {
+                        // Pause audio
+                        audio.pause();
+                        icon.className = 'fas fa-play';
+                        icon.style.marginLeft = '2px';
+                        console.log('â¸ï¸ Audio playback paused for:', audioId);
+                    }
+                }
+
+                // Speed control buttons
+                if (e.target.closest('.speed-btn')) {
+                    const btn = e.target.closest('.speed-btn');
+                    const speed = parseFloat(btn.dataset.speed);
+                    const audioId = btn.dataset.audioId;
+                    const audio = document.getElementById(audioId);
+
+                    if (audio) {
+                        audio.playbackRate = speed;
+
+                        // Update active state
+                        const bubble = audio.closest('.bubble');
+                        if (bubble) {
+                            bubble.querySelectorAll('.speed-btn').forEach(b => {
+                                b.classList.remove('active');
+                                b.style.background = 'transparent';
+                                b.style.border = '1px solid var(--divider, rgba(15, 23, 42, 0.08))';
+                                b.style.color = 'var(--muted, #6c7a89)';
+                                b.style.fontWeight = 'normal';
+                            });
+                            btn.classList.add('active');
+                            btn.style.background = speed === 1 ? 'rgba(17, 88, 229, 0.1)' : 'rgba(17, 88, 229, 0.05)';
+                            btn.style.border = `1px solid ${speed === 1 ? 'rgba(17, 88, 229, 0.3)' : 'rgba(17, 88, 229, 0.2)'}`;
+                            btn.style.color = 'var(--primary, #1158e5)';
+                            btn.style.fontWeight = '600';
+                        }
+                    }
+                }
+
+                // Speed control buttons
+                if (e.target.closest('.speed-btn')) {
+                    const btn = e.target.closest('.speed-btn');
+                    const speed = parseFloat(btn.dataset.speed);
+                    const voiceItem = btn.closest('.voice-message-item');
+                    if (!voiceItem) return;
+
+                    const audio = voiceItem.querySelector('audio');
+                    if (audio) {
+                        audio.playbackRate = speed;
+                    }
+
+                    // Update active state
+                    voiceItem.querySelectorAll('.speed-btn').forEach(b => {
+                        b.classList.remove('active');
+                        b.style.background = 'transparent';
+                        b.style.color = 'var(--muted)';
+                        b.style.border = '1px solid var(--divider)';
+                    });
+                    btn.classList.add('active');
+                    btn.style.background = 'var(--primary)';
+                    btn.style.color = 'white';
+                    btn.style.border = 'none';
+                }
+            });
+
+            // Update time display for all audio elements
+            document.addEventListener('timeupdate', function (e) {
+                if (e.target.tagName === 'AUDIO') {
+                    const audio = e.target;
+                    const voiceItem = audio.closest('.voice-message-item');
+                    if (!voiceItem) return;
+
+                    const timeDisplay = voiceItem.querySelector('.audio-time');
+                    const durationDisplay = voiceItem.querySelector('.audio-duration');
+
+                    if (timeDisplay) {
+                        const currentTime = Math.floor(audio.currentTime);
+                        const minutes = Math.floor(currentTime / 60);
+                        const seconds = currentTime % 60;
+                        timeDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                    }
+
+                    if (durationDisplay && audio.duration) {
+                        const duration = Math.floor(audio.duration);
+                        const minutes = Math.floor(duration / 60);
+                        const seconds = duration % 60;
+                        durationDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                    }
+
+                    // Update waveform during playback
+                    updatePlaybackWaveform(audio, voiceItem);
+                }
+            });
+
+            // Initialize duration when audio is loaded
+            document.addEventListener('loadedmetadata', function (e) {
+                if (e.target.tagName === 'AUDIO') {
+                    const audio = e.target;
+                    const voiceItem = audio.closest('.voice-message-item');
+                    if (!voiceItem) return;
+
+                    const durationDisplay = voiceItem.querySelector('.audio-duration');
+                    if (durationDisplay && audio.duration) {
+                        const duration = Math.floor(audio.duration);
+                        const minutes = Math.floor(duration / 60);
+                        const seconds = duration % 60;
+                        durationDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                    }
+                }
+            });
+        }
+
+        /**
+         * Analyze audio and create waveform visualization based on audio data
+         */
+        function analyzeAudioForWaveform(audio, waveformContainer) {
+            if (!audio || !waveformContainer) return;
+
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const source = audioContext.createMediaElementSource(audio);
+                const analyser = audioContext.createAnalyser();
+                analyser.fftSize = 256;
+                source.connect(analyser);
+
+                const bufferLength = analyser.frequencyBinCount;
+                const dataArray = new Uint8Array(bufferLength);
+
+                // Update waveform bars based on audio analysis
+                const bars = waveformContainer.querySelectorAll('div');
+                if (bars.length === 0) return;
+
+                const updateWaveform = () => {
+                    if (audio.paused || audio.ended) return;
+
+                    analyser.getByteFrequencyData(dataArray);
+
+                    // Map frequency data to waveform bars
+                    const barCount = bars.length;
+                    const dataStep = Math.floor(bufferLength / barCount);
+
+                    bars.forEach((bar, index) => {
+                        const dataIndex = index * dataStep;
+                        const value = dataArray[dataIndex] || 0;
+                        const height = Math.max(4, (value / 255) * 20); // Scale to 4-24px
+                        bar.style.height = `${height}px`;
+                    });
+
+                    if (!audio.paused && !audio.ended) {
+                        requestAnimationFrame(updateWaveform);
+                    }
+                };
+
+                // Start updating when audio plays
+                audio.addEventListener('play', () => {
+                    updateWaveform();
+                }, { once: true });
+
+            } catch (error) {
+                console.warn('Could not analyze audio for waveform:', error);
+                // Fallback: use random heights (already set in initialization)
+            }
+        }
+
+        /**
+         * Update waveform visualization during playback (WhatsApp style)
+         * Darkens bars progressively as audio plays from start to end
+         */
+        function updatePlaybackWaveform(audio, bubble) {
+            const waveformContainer = bubble.querySelector('.waveform-playback');
+            if (!waveformContainer) {
+                console.warn('Waveform container not found');
+                return;
+            }
+
+            if (!audio.duration || audio.duration === 0 || isNaN(audio.duration) || !isFinite(audio.duration)) {
+                return;
+            }
+
+            const bars = waveformContainer.querySelectorAll('div');
+            if (bars.length === 0) {
+                console.warn('No waveform bars found');
+                return;
+            }
+
+            // Calculate progress (0 to 1)
+            const progress = Math.min(1, Math.max(0, audio.currentTime / audio.duration));
+            const activeBarIndex = Math.floor(progress * bars.length);
+
+            // Update each bar based on playback position
+            bars.forEach((bar, index) => {
+                if (index < activeBarIndex) {
+                    // Already played - darker/brighter color
+                    bar.style.background = 'rgba(17, 88, 229, 0.9)';
+                    bar.style.opacity = '1';
+                    bar.style.transition = 'background 0.1s ease, opacity 0.1s ease';
+                } else if (index === activeBarIndex) {
+                    // Currently playing - medium color
+                    bar.style.background = 'rgba(17, 88, 229, 0.7)';
+                    bar.style.opacity = '1';
+                    bar.style.transition = 'background 0.1s ease, opacity 0.1s ease';
+                } else {
+                    // Not yet played - lighter color
+                    bar.style.background = 'rgba(17, 88, 229, 0.3)';
+                    bar.style.opacity = '0.6';
+                    bar.style.transition = 'background 0.1s ease, opacity 0.1s ease';
+                }
+            });
+        }
+
+        // Initialize audio controls when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeAudioControls);
+        } else {
+            initializeAudioControls();
+        }
+
+        /**
+         * Drag and drop handlers
+         */
+        const composerLarge = document.getElementById('composerLarge');
+        if (composerLarge) {
+            messagesComposerHandlers.dragOver = function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                composerLarge.style.borderColor = 'var(--primary)';
+                composerLarge.style.backgroundColor = 'rgba(17, 88, 229, 0.05)';
+            };
+
+            messagesComposerHandlers.dragLeave = function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                composerLarge.style.borderColor = '';
+                composerLarge.style.backgroundColor = '';
+            };
+
+            messagesComposerHandlers.drop = function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                composerLarge.style.borderColor = '';
+                composerLarge.style.backgroundColor = '';
+
+                const files = e.dataTransfer.files;
+                if (files && files.length > 0) {
+                    addAttachments(files);
+                }
+            };
+
+            composerLarge.addEventListener('dragover', messagesComposerHandlers.dragOver);
+            composerLarge.addEventListener('dragleave', messagesComposerHandlers.dragLeave);
+            composerLarge.addEventListener('drop', messagesComposerHandlers.drop);
+
+            // Also add to messages area for better UX
+            const messagesArea = document.querySelector('.messages-area');
+            if (messagesArea) {
+                messagesArea.addEventListener('dragover', messagesComposerHandlers.dragOver);
+                messagesArea.addEventListener('dragleave', messagesComposerHandlers.dragLeave);
+                messagesArea.addEventListener('drop', messagesComposerHandlers.drop);
+            }
+        }
+
+        // Use event delegation on the contact list container
+        const contactList = document.getElementById('messagesContactList');
+        if (contactList) {
+            // Remove existing listener if any
+            contactList.removeEventListener('click', handleContactClick);
+            contactList.addEventListener('click', handleContactClick);
+            console.log('âœ… Contact list click handler attached');
+            console.log('Contact list element:', contactList);
+            console.log('Contact items found:', contactList.querySelectorAll('.thread-item, .chat-item').length);
+        } else {
+            console.error('âŒ Contact list not found!');
+        }
+
+        /**
+         * Handle search in contact list
+         */
+        const searchBox = document.getElementById('messagesSearch');
+        if (searchBox) {
+            searchBox.addEventListener('input', function (e) {
+                const searchTerm = e.target.value.toLowerCase().trim();
+                const contactList = document.getElementById('messagesContactList');
+
+                if (!contactList) return;
+
+                const items = contactList.querySelectorAll('.thread-item, .chat-item');
+                let hasVisibleItems = false;
+
+                items.forEach(item => {
+                    const name = (item.dataset.name || '').toLowerCase();
+                    const role = (item.dataset.role || '').toLowerCase();
+
+                    if (searchTerm === '' || name.includes(searchTerm) || role.includes(searchTerm)) {
+                        item.style.display = '';
+                        hasVisibleItems = true;
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+
+                // Show/hide "no messages" message
+                const noMessagesMsg = document.getElementById('noMessagesMessage');
+                if (noMessagesMsg) {
+                    noMessagesMsg.style.display = hasVisibleItems ? 'none' : 'block';
+                }
+            });
+        }
+
+        // Initialize mock data
+        initializeMockData();
+
+        // Initialize with the first active conversation if available
+        const activeContact = document.querySelector('.thread-item.active, .chat-item.active');
+        if (activeContact) {
+            const contactId = activeContact.dataset.contact;
+            const contactName = activeContact.dataset.name;
+            const contactRole = activeContact.dataset.role;
+
+            if (contactId) {
+                switchConversation(contactId, contactName, contactRole);
+            }
+        } else {
+            // No active conversation - disable composer
+            const msgInput = document.getElementById('messageInput');
+            const sendBtnEl = document.getElementById('sendMessageBtn');
+            const attachBtnEl = document.getElementById('attachmentBtn');
+            const composerEl = document.querySelector('.composer-large');
+
+            if (msgInput) msgInput.disabled = true;
+            if (sendBtnEl) sendBtnEl.disabled = true;
+            if (attachBtnEl) attachBtnEl.disabled = true;
+            if (composerEl) composerEl.style.opacity = '0.6';
+
+            // Show "no active conversation" message
+            const noActiveMsg = document.getElementById('noActiveConversationMessage');
+            if (noActiveMsg) {
+                noActiveMsg.style.display = 'block';
+                noActiveMsg.innerHTML = '<p style="text-align:center;color:var(--muted);padding:2rem;">Select a conversation to start messaging</p>';
+            }
+
+            // Hide messages container
+            const container = document.getElementById('messagesContainer');
+            if (container) container.style.display = 'none';
+        }
+
+        // Mark as initialized
+        messagesComposerInitialized = true;
+
+        console.log('âœ… Messages: Composer initialized successfully');
+        console.log('âœ… All event handlers attached');
+        console.log('âœ… Functions available:', {
+            sendMessagesMessage: typeof sendMessagesMessage,
+            switchConversation: typeof switchConversation,
+            addAttachments: typeof addAttachments
+        });
+
+        // Test if elements are clickable
+        console.log('=== ELEMENT CLICKABILITY TEST ===');
+        const testElements = {
+            sendBtn: document.getElementById('sendMessageBtn'),
+            attachBtn: document.getElementById('attachmentBtn'),
+            micBtn: document.getElementById('microphoneBtn'),
+            contactList: document.getElementById('messagesContactList'),
+            contactItems: document.querySelectorAll('.thread-item, .chat-item')
+        };
+
+        Object.entries(testElements).forEach(([name, el]) => {
+            if (Array.isArray(el) || el instanceof NodeList) {
+                console.log(`${name}: ${el.length} items found`);
+                el.forEach((item, idx) => {
+                    const style = window.getComputedStyle(item);
+                    console.log(`  ${name}[${idx}]: pointer-events=${style.pointerEvents}, cursor=${style.cursor}`);
+                });
+            } else if (el) {
+                const style = window.getComputedStyle(el);
+                console.log(`${name}: pointer-events=${style.pointerEvents}, cursor=${style.cursor}, disabled=${el.disabled}`);
+            } else {
+                console.log(`${name}: NOT FOUND`);
+            }
+        });
+
+        // Make functions globally accessible after initialization
+        window.sendMessagesMessage = sendMessagesMessage;
+        window.switchConversation = switchConversation;
+        window.addAttachments = addAttachments;
+        window.updateAttachmentPreview = updateAttachmentPreview;
+        // Voice recording functions (using correct names)
+        window.startVoiceRecording = startVoiceRecording;
+        window.sendVoiceRecording = sendVoiceRecording;
+        window.cancelVoiceRecording = cancelVoiceRecording;
+        window.sendVoiceMessage = sendVoiceMessage;
+        window.handleContactClick = handleContactClick;
+        window.initMessagesComposer = initMessagesComposer;
+
+        // Backward compatibility: Create aliases for old function names
+        window.startAudioRecording = startVoiceRecording;
+        window.stopAudioRecording = sendVoiceRecording;
+    }
+
+    // Make functions globally accessible immediately (before initialization)
+    // This ensures they're available even if initialization hasn't completed
+    window.sendMessagesMessage = sendMessagesMessage;
+    window.switchConversation = switchConversation;
+    window.addAttachments = addAttachments;
+    window.updateAttachmentPreview = updateAttachmentPreview;
+    // Voice recording functions (using correct names)
+    window.startVoiceRecording = startVoiceRecording;
+    window.sendVoiceRecording = sendVoiceRecording;
+    window.cancelVoiceRecording = cancelVoiceRecording;
+    window.sendVoiceMessage = sendVoiceMessage;
+    window.handleContactClick = handleContactClick;
+    window.initMessagesComposer = initMessagesComposer;
+
+    // Backward compatibility: Create aliases for old function names
+    window.startAudioRecording = startVoiceRecording;
+    window.stopAudioRecording = sendVoiceRecording;
+
+    console.log('âœ… Messages script loaded, functions defined');
+    console.log('Available functions:', {
+        sendMessagesMessage: typeof sendMessagesMessage,
+        switchConversation: typeof switchConversation,
+        addAttachments: typeof addAttachments,
+        handleContactClick: typeof handleContactClick,
+        initMessagesComposer: typeof initMessagesComposer
+    });
+
+    // Initialize composer when DOM is ready
+    function initializeMessagesSystem() {
+        // Wait a bit to ensure DOM is ready
+        setTimeout(() => {
+            initMessagesComposer();
+        }, 100);
+    }
+
+    // Try to initialize immediately
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeMessagesSystem);
+    } else {
+        initializeMessagesSystem();
+    }
+
+    // Also try immediately if section already exists (for direct page loads)
+    (function () {
+        const messagesSection = document.getElementById('messagesSection');
+        if (messagesSection) {
+            setTimeout(() => {
+                if (!messagesComposerInitialized) {
+                    console.log('Messages section found on page load, initializing...');
+                    initMessagesComposer();
+                }
+            }, 200);
+        }
+    })();
+
+    // Re-initialize when messages section is loaded dynamically
+    // This is called by dashboard.js when section changes
+    window.initMessagesComposerOnLoad = function () {
+        console.log('=== Re-initializing messages composer ===');
+        messagesComposerInitialized = false;
+
+        // Clear any existing handlers to prevent duplicates
+        const oldSendBtn = document.getElementById('sendMessageBtn');
+        const oldMessageInput = document.getElementById('messageInput');
+        const oldFileInput = document.getElementById('fileInput');
+        const oldAttachmentBtn = document.getElementById('attachmentBtn');
+        const oldMicBtn = document.getElementById('microphoneBtn');
+        const oldContactList = document.getElementById('messagesContactList');
+        const oldComposer = document.getElementById('composerLarge');
+        const oldMessagesArea = document.querySelector('.messages-area');
+
+        if (oldSendBtn && messagesComposerHandlers.sendBtnClick) {
+            oldSendBtn.removeEventListener('click', messagesComposerHandlers.sendBtnClick);
+        }
+        if (oldMessageInput && messagesComposerHandlers.messageInputKeypress) {
+            oldMessageInput.removeEventListener('keypress', messagesComposerHandlers.messageInputKeypress);
+        }
+        if (oldFileInput && messagesComposerHandlers.fileInputChange) {
+            oldFileInput.removeEventListener('change', messagesComposerHandlers.fileInputChange);
+        }
+        if (oldAttachmentBtn && messagesComposerHandlers.attachmentBtnClick) {
+            oldAttachmentBtn.removeEventListener('click', messagesComposerHandlers.attachmentBtnClick);
+        }
+        if (oldMicBtn && messagesComposerHandlers.microphoneBtnClick) {
+            oldMicBtn.removeEventListener('click', messagesComposerHandlers.microphoneBtnClick);
+            oldMicBtn.removeEventListener('mousedown', messagesComposerHandlers.microphoneBtnMouseDown);
+            oldMicBtn.removeEventListener('mouseup', messagesComposerHandlers.microphoneBtnMouseUp);
+        }
+        if (oldContactList) {
+            oldContactList.removeEventListener('click', handleContactClick);
+        }
+        if (oldComposer && messagesComposerHandlers.dragOver) {
+            oldComposer.removeEventListener('dragover', messagesComposerHandlers.dragOver);
+            oldComposer.removeEventListener('dragleave', messagesComposerHandlers.dragLeave);
+            oldComposer.removeEventListener('drop', messagesComposerHandlers.drop);
+        }
+        if (oldMessagesArea && messagesComposerHandlers.dragOver) {
+            oldMessagesArea.removeEventListener('dragover', messagesComposerHandlers.dragOver);
+            oldMessagesArea.removeEventListener('dragleave', messagesComposerHandlers.dragLeave);
+            oldMessagesArea.removeEventListener('drop', messagesComposerHandlers.drop);
+        }
+
+        // Reset handlers
+        messagesComposerHandlers = {
+            fileInputChange: null,
+            attachmentBtnClick: null,
+            sendBtnClick: null,
+            messageInputKeypress: null,
+            contactItemClick: null,
+            microphoneBtnClick: null,
+            microphoneBtnMouseDown: null,
+            microphoneBtnMouseUp: null,
+            dragOver: null,
+            dragLeave: null,
+            drop: null
+        };
+
+        // Reset global state
+        window.messagesAttachments = [];
+        window.currentActiveContact = null;
+
+        // Re-initialize after a short delay to ensure DOM is ready
+        setTimeout(() => {
+            console.log('Starting initialization...');
+            initMessagesComposer();
+        }, 400);
+    };
+
+    // Also listen for section visibility changes
+    const observer = new MutationObserver(function (mutations) {
+        const messagesSection = document.getElementById('messagesSection');
+        if (messagesSection && messagesSection.style.display !== 'none' && !messagesComposerInitialized) {
+            console.log('Messages section became visible, initializing...');
+            setTimeout(() => {
+                initMessagesComposer();
+            }, 100);
+        }
+    });
+
+    // Observe the dynamic content container
+    const dynamicContainer = document.getElementById('dynamicContentContainer');
+    if (dynamicContainer) {
+        observer.observe(dynamicContainer, {
+            childList: true,
+            subtree: true,
+            attributes: true,
+            attributeFilter: ['style', 'class']
+        });
+    }
+
+    // Also try to initialize if messages section already exists
+    setTimeout(() => {
+        const messagesSection = document.getElementById('messagesSection');
+        if (messagesSection && !messagesComposerInitialized) {
+            console.log('Messages section found, initializing...');
+            initMessagesComposer();
+        }
+    }, 500);
+
+    // ============================================
+    // DROPDOWN MENU FUNCTIONALITY FOR TEACHER
+    // ============================================
+    function initializeDropdownMenu() {
+        const dropdownBtn = document.getElementById('newChatDropdownBtn');
+        const dropdownMenu = document.getElementById('newChatDropdown');
+        const dropdownItems = document.querySelectorAll('.dropdown-item');
+
+        if (!dropdownBtn || !dropdownMenu) return;
+
+        // Toggle dropdown on button click
+        dropdownBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const isVisible = dropdownMenu.style.display === 'block';
+            dropdownMenu.style.display = isVisible ? 'none' : 'block';
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!dropdownBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                dropdownMenu.style.display = 'none';
+            }
+        });
+
+        // Handle dropdown item clicks
+        dropdownItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                const chatType = this.dataset.chatType;
+                dropdownMenu.style.display = 'none';
+
+                if (chatType === 'admin') {
+                    createNewChat('admin', 'Admin', 'Administrator', 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=80&h=80&fit=crop&crop=faces');
+                } else if (chatType === 'csrep') {
+                    createNewChat('cs-rep', 'CS Representative', 'Customer Service', 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=80&h=80&fit=crop&crop=faces');
+                } else if (chatType === 'student') {
+                    showStudentSelectionModal();
+                }
+            });
+
+            // Hover effect
+            item.addEventListener('mouseenter', function() {
+                this.style.background = 'rgba(17, 88, 229, 0.08)';
+            });
+            item.addEventListener('mouseleave', function() {
+                this.style.background = 'transparent';
+            });
+        });
+    }
+
+    // Create new chat with Admin or CS Rep
+    function createNewChat(contactId, contactName, contactRole, contactAvatar) {
+        const contactList = document.getElementById('messagesContactList');
+        if (!contactList) return;
+
+        // Check if chat already exists
+        const existingChat = document.querySelector(`[data-contact="${contactId}"]`);
+        if (existingChat) {
+            // Switch to existing chat
+            switchConversation(contactId, contactName, contactRole);
+            return;
+        }
+
+        // Create new chat item
+        const chatItem = document.createElement('div');
+        chatItem.className = 'thread-item';
+        chatItem.setAttribute('data-contact', contactId);
+        chatItem.setAttribute('data-name', contactName);
+        chatItem.setAttribute('data-role', contactRole);
+        chatItem.setAttribute('data-avatar', contactAvatar);
+
+        const pillClass = contactId === 'admin' ? 'admin' : 'cs-rep';
+        const pillText = contactId === 'admin' ? 'A' : 'CS';
+
+        chatItem.innerHTML = `
+            <div class="avatar">
+                <img src="${contactAvatar}" alt="${contactName}"
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                <div class="avatar-fallback" style="display: none;"><i class="fas fa-user"></i></div>
+            </div>
+            <div class="meta">
+                <span class="name">${contactName}</span>
+                <span class="role">${contactRole}</span>
+            </div>
+            <span class="pill ${pillClass}">${pillText}</span>
+        `;
+
+        // Add click handler
+        chatItem.addEventListener('click', function() {
+            switchConversation(contactId, contactName, contactRole);
+        });
+
+        // Insert at the beginning of contact list (after students, before admin/cs-rep if they exist)
+        const existingAdmin = document.querySelector('[data-contact="admin"]');
+        const existingCSRep = document.querySelector('[data-contact="cs-rep"]');
+        
+        if (contactId === 'admin' && existingCSRep) {
+            contactList.insertBefore(chatItem, existingCSRep);
+        } else if (contactId === 'cs-rep') {
+            // Add CS Rep after Admin if Admin exists, otherwise at the end
+            if (existingAdmin) {
+                existingAdmin.parentNode.insertBefore(chatItem, existingAdmin.nextSibling);
+            } else {
+                contactList.appendChild(chatItem);
+            }
+        } else {
+            // Add Admin before CS Rep if CS Rep exists
+            if (existingCSRep) {
+                contactList.insertBefore(chatItem, existingCSRep);
+            } else {
+                contactList.appendChild(chatItem);
+            }
+        }
+
+        // Initialize data for new contact
+        if (!window.messagesData[contactId]) {
+            window.messagesData[contactId] = [];
+        }
+        if (!window.messagesUnreadCounts[contactId]) {
+            window.messagesUnreadCounts[contactId] = 0;
+        }
+
+        // Switch to the new conversation
+        switchConversation(contactId, contactName, contactRole);
+    }
+
+    // Show modal for selecting a student to chat with
+    function showStudentSelectionModal() {
+        // Mock assigned students data - in real app, this would come from API
+        const assignedStudents = [
+            { id: 'sarah-williams', name: 'Sarah Williams', role: 'Student - Mathematics', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&h=80&fit=crop&crop=faces' },
+            { id: 'michael-chen', name: 'Michael Chen', role: 'Student - Chemistry', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=faces' },
+            { id: 'jessica-martinez', name: 'Jessica Martinez', role: 'Student - Biology', avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&h=80&fit=crop&crop=faces' }
+        ];
+
+        // Create modal HTML
+        const modalHTML = `
+            <div id="studentSelectionModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; display: flex; align-items: center; justify-content: center;">
+                <div style="background: var(--surface); border-radius: 16px; padding: 24px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 8px 32px rgba(0,0,0,0.2);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3 style="margin: 0; font-size: 1.5rem; font-weight: 700;">Select a Student</h3>
+                        <button id="closeStudentModal" style="background: transparent; border: none; font-size: 1.5rem; cursor: pointer; color: var(--muted);">&times;</button>
+                    </div>
+                    <div id="studentList" style="display: flex; flex-direction: column; gap: 8px;">
+                        ${assignedStudents.map(student => `
+                            <div class="student-item" data-student-id="${student.id}" data-student-name="${student.name}" data-student-role="${student.role}" data-student-avatar="${student.avatar}" style="padding: 12px; border: 1px solid var(--divider); border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: all 0.2s;">
+                                <div class="avatar" style="width: 44px; height: 44px; border-radius: 12px; overflow: hidden;">
+                                    <img src="${student.avatar}" alt="${student.name}" style="width: 100%; height: 100%; object-fit: cover;" />
+                                </div>
+                                <div style="flex: 1;">
+                                    <div style="font-weight: 600; color: var(--text);">${student.name}</div>
+                                    <div style="font-size: 0.85rem; color: var(--muted);">${student.role}</div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Remove existing modal if any
+        const existingModal = document.getElementById('studentSelectionModal');
+        if (existingModal) {
+            existingModal.remove();
+        }
+
+        // Add modal to page
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+        // Add event listeners
+        const modal = document.getElementById('studentSelectionModal');
+        const closeBtn = document.getElementById('closeStudentModal');
+        const studentItems = document.querySelectorAll('.student-item');
+
+        // Close modal handlers
+        closeBtn.addEventListener('click', () => modal.remove());
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) modal.remove();
+        });
+
+        // Student item click handlers
+        studentItems.forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                this.style.borderColor = 'var(--primary)';
+                this.style.background = 'rgba(17, 88, 229, 0.05)';
+            });
+            item.addEventListener('mouseleave', function() {
+                this.style.borderColor = 'var(--divider)';
+                this.style.background = 'transparent';
+            });
+            item.addEventListener('click', function() {
+                const studentId = this.dataset.studentId;
+                const studentName = this.dataset.studentName;
+                const studentRole = this.dataset.studentRole;
+                const studentAvatar = this.dataset.studentAvatar;
+                modal.remove();
+                createNewChat(studentId, studentName, studentRole, studentAvatar);
+            });
+        });
+    }
+
+    // Initialize dropdown when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeDropdownMenu);
+    } else {
+        initializeDropdownMenu();
+    }
+
+    // Also initialize when messages section is loaded dynamically
+    const observer = new MutationObserver(function(mutations) {
+        const dropdownBtn = document.getElementById('newChatDropdownBtn');
+        if (dropdownBtn && !dropdownBtn.dataset.initialized) {
+            dropdownBtn.dataset.initialized = 'true';
+            initializeDropdownMenu();
+        }
+    });
+
+    const dynamicContainer = document.getElementById('dynamicContentContainer');
+    if (dynamicContainer) {
+        observer.observe(dynamicContainer, {
+            childList: true,
+            subtree: true
+        });
+    }
+</script>
+
+{% endblock %}

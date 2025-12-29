@@ -1,0 +1,108 @@
+{% extends "teacher/teacher_base.html" %}
+
+{% block content %}
+<section class="content-section" id="threadsSection" aria-labelledby="threadsHeading">
+    <div class="threads-section-header">
+        <div class="threads-header-left">
+            <h1 class="section-title" id="threadsHeading">Communication Threads</h1>
+            <p class="section-subtitle">Monitor and manage all communication threads between students, teachers, and CS representatives.</p>
+        </div>
+        <div class="threads-header-right">
+            <button class="create-thread-btn" id="showCreateThreadModalBtn" style="display: none;">
+                <i class="fas fa-plus"></i> Create New Thread
+            </button>
+        </div>
+    </div>
+
+    <!-- Thread Filters -->
+    <div class="thread-filters-container">
+        <div class="thread-filters">
+            <button class="filter-pill active" data-filter="all">All Threads</button>
+            <button class="filter-pill" data-filter="assignment">Assignment Related</button>
+            <button class="filter-pill" data-filter="invoice">Invoice Related</button>
+            <button class="filter-pill" data-filter="general">General</button>
+            <button class="filter-pill" data-filter="support">Support</button>
+            <button class="filter-pill" data-filter="active">Active</button>
+            <button class="filter-pill" data-filter="resolved">Resolved</button>
+            <button class="filter-pill" data-filter="closed">Closed</button>
+        </div>
+    </div>
+
+    <!-- Threads List Container -->
+    <div class="threads-list-container">
+        <div class="threads-list" id="teacherThreadsList">
+            <!-- Threads will be populated by JS -->
+        </div>
+    </div>
+
+    <!-- Thread Detail View (inline) -->
+    <div class="thread-detail-view" id="teacherThreadDetailView" style="display:none;">
+        <div class="thread-detail-header">
+            <div>
+                <button class="ghost-button" id="backToThreadsListBtn">
+                    <i class="fas fa-arrow-left"></i> Back to Threads
+                </button>
+                <h2 class="thread-detail-subject" id="teacherThreadViewSubject">Thread Subject</h2>
+                <div class="thread-view-meta">
+                    <span class="thread-type-badge" id="teacherThreadViewType">General</span>
+                    <span class="thread-link" id="teacherThreadViewAssignment" style="display:none;">
+                        <i class="fas fa-link"></i> Assignment: <span></span>
+                    </span>
+                    <span class="thread-link" id="teacherThreadViewInvoice" style="display:none;">
+                        <i class="fas fa-link"></i> Invoice: <span></span>
+                    </span>
+                </div>
+                <div id="teacherThreadViewParticipants" class="thread-participants-list"></div>
+            </div>
+            <div class="thread-status-actions" id="teacherThreadStatusActions" style="display:none;">
+                <button type="button" class="ghost-button" id="teacherResolveThreadBtn">
+                    <i class="fas fa-check"></i> Resolve
+                </button>
+                <button type="button" class="danger-button" id="teacherCloseThreadBtn">
+                    <i class="fas fa-lock"></i> Close
+                </button>
+                <button type="button" class="danger-button" id="teacherDeleteThreadBtn" style="background: #ef4444; display: none;">
+                    <i class="fas fa-trash-alt"></i> Delete
+                </button>
+            </div>
+        </div>
+        <div class="thread-view-body">
+            <div id="teacherThreadViewMessages" class="thread-messages-container">
+                <!-- Messages populated by JS -->
+            </div>
+            <div class="thread-composer" id="teacherThreadComposer">
+                <div id="teacherThreadComposerDisabled" class="composer-disabled-notice">
+                    <i class="fas fa-lock"></i>
+                    <span>This thread is resolved/closed. No further messages can be sent.</span>
+                </div>
+                <div class="composer-input-wrapper">
+                    <textarea id="teacherThreadReplyInput" placeholder="Type your reply..." rows="3"></textarea>
+                    <div class="composer-floating-actions">
+                        <button class="icon-btn voice-record-btn" title="Record voice">
+                            <i class="fas fa-microphone"></i>
+                        </button>
+                        <button class="icon-btn" title="Attach file" id="teacherThreadAttachBtn">
+                            <i class="fas fa-paperclip"></i>
+                        </button>
+                        <input type="file" id="teacherThreadFileInput" style="display:none;" multiple
+                            accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt,.zip,.rar">
+                        <button class="primary-button" id="teacherThreadReplySendBtn">
+                            <i class="fas fa-paper-plane"></i> Send
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    <div id="noTeacherThreadsMessage" class="threads-empty-state" style="display: none;">
+        <div class="empty-state-icon">
+            <i class="fas fa-comments-dots"></i>
+        </div>
+        <h3>No threads found</h3>
+        <p>You will be added to threads by administrators or CS representatives</p>
+    </div>
+</section>
+{% endblock %}
+

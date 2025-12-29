@@ -1,0 +1,1316 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Nano Problem</title>
+    <link rel="stylesheet" href="{% static 'css/Admin_Dash1.css' %}">
+    <link rel="stylesheet" href="{% static 'css/threads.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- CSRF Token for JavaScript access -->
+    {% csrf_token %}
+    <header class="top-header">
+        <div class="header-logo">
+            <span class="logo-text">Nano</span><span class="logo-accent"> Problem</span>
+        </div>
+        <div class="header-search">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Search..." class="search-input-field">
+        </div>
+        <div class="header-actions">
+            <button class="icon-button" id="sidebarToggle" title="Toggle menu" aria-label="Toggle menu">
+                <i class="fas fa-bars"></i>
+            </button>
+            <button class="dark-mode-toggle" id="themeToggle" title="Toggle theme" aria-label="Toggle theme">
+                <i class="fas fa-moon"></i>
+            </button>
+            <button class="icon-button notification-button" id="notificationButton" title="Notifications"
+                aria-label="Notifications">
+                <i class="fas fa-bell"></i>
+                <span class="notification-dot"></span>
+            </button>
+            <!-- Notification Dropdown -->
+            <div class="notification-dropdown" id="notificationDropdown">
+                <div class="notification-dropdown-header">
+                    <h3 class="dropdown-title">Notifications</h3>
+                    <button class="dropdown-action-btn" onclick="markAllAsRead()" title="Mark all as read">
+                        <i class="fas fa-check-double"></i>
+                    </button>
+                </div>
+                <div class="notification-dropdown-content">
+                    <!-- Recent Notifications List -->
+                    <div class="notification-dropdown-list" id="adminNotificationDropdownList">
+                        <div class="notification-loading" style="text-align: center; padding: 1.5rem; color: #9ca3af;">
+                            Loading notifications...
+                        </div>
+                    </div>
+                </div>
+                <div class="notification-dropdown-footer">
+                    <a href="#" class="dropdown-footer-link"
+                        onclick="event.preventDefault(); showSection('notification');">
+                        <i class="fas fa-eye"></i>
+                        View All Notifications
+                    </a>
+                </div>
+            </div>
+            <div class="user-profile-menu" role="button" tabindex="0">
+                <div class="user-profile-avatar"
+                    style="position: relative; width: 40px; height: 40px; border-radius: 50%; overflow: hidden; background-color: #f3f4f6; display: flex; align-items: center; justify-content: center;">
+                    {% if profile_picture_url %}
+                    <img id="adminProfilePicture" src="{{ profile_picture_url }}" alt="Admin"
+                        style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                    <i class="fas fa-user" id="adminProfileIcon"
+                        style="font-size: 20px; color: #9ca3af; display: none;"></i>
+                    {% else %}
+                    <img id="adminProfilePicture" src="" alt="Admin"
+                        style="width: 100%; height: 100%; object-fit: cover; display: none;">
+                    <i class="fas fa-user" id="adminProfileIcon"
+                        style="font-size: 20px; color: #9ca3af; display: flex;"></i>
+                    {% endif %}
+                </div>
+                <div class="user-profile-info">
+                    <span class="user-profile-name" id="adminProfileName">{% if user.first_name %}{{ user.first_name }}{% else %}Admin{% endif %}</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="user-dropdown" role="menu">
+                    <a href="#" class="dropdown-item" data-section="profile"
+                        onclick="event.preventDefault(); showSection('profile');">
+                        <i class="fas fa-user"></i> Profile
+                    </a>
+                    <a href="#" class="dropdown-item" data-section="settings"
+                        onclick="event.preventDefault(); showSection('settings');">
+                        <i class="fas fa-cog"></i> Settings
+                    </a>
+                    <form action="{% url 'account:logout' %}" method="POST" id="logoutForm" style="display: none;">
+                        {% csrf_token %}
+                    </form>
+                    <a href="#" class="dropdown-item logout-link" onclick="event.preventDefault(); if(confirm('Are you sure you want to logout?')) document.getElementById('logoutForm').submit();">
+                        <i class="fas fa-right-from-bracket"></i> Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="layout">
+        <aside class="sidebar">
+            <nav class="nav-menu" aria-label="Primary">
+                <ul class="nav-list">
+                    <li class="nav-item active">
+                        <a href="#" class="nav-link" data-section="dashboard">
+                            <i class="fas fa-home"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="students">
+                            <i class="fas fa-users"></i>
+                            <span>Student Management</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="messages">
+                            <i class="fas fa-comment-dots"></i>
+                            <span>Messages</span>
+                            <span class="notification-dot" data-badge-dot="messages" style="display:none;"></span>
+                            <span class="nav-badge" data-badge-key="messages" style="display:none;">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="threads">
+                            <i class="fas fa-comments"></i>
+                            <span>Threads</span>
+                            <span class="notification-dot" data-badge-dot="threads" style="display:none;"></span>
+                            <span class="nav-badge" data-badge-key="threads" style="display:none;">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="assignment-requests">
+                            <i class="fas fa-clipboard-list"></i>
+                            <span>Assignment Requests</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="invoice-management">
+                            <i class="fas fa-receipt"></i>
+                            <span>Invoice Management</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="content-review">
+                            <i class="fas fa-clipboard-check"></i>
+                            <span>Content Review</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="meetings-record">
+                            <i class="fas fa-video"></i>
+                            <span>Meetings Record</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="add-teacher">
+                            <i class="fas fa-user-plus"></i>
+                            <span>Add Teacher</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="cs-rep-management">
+                            <i class="fas fa-headset"></i>
+                            <span>Add CS Rep</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="user-management">
+                            <i class="fas fa-users-cog"></i>
+                            <span>User Management</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="visitors">
+                            <i class="fas fa-user-friends"></i>
+                            <span>Visitors</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="feedback-reports">
+                            <i class="fas fa-clipboard-list"></i>
+                            <span>Feedback & Reports</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="announcements">
+                            <i class="fas fa-bullhorn"></i>
+                            <span>Announcements</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="notification">
+                            <i class="fas fa-bell"></i>
+                            <span>Notifications</span>
+                            <span class="notification-dot" data-badge-dot="notifications" style="display:none;"></span>
+                            <span class="nav-badge" data-badge-key="notifications" style="display:none;">0</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main">
+            <!-- Dynamic Content Container -->
+            <div id="dynamicContentContainer" class="main-content">
+                {% block content %}
+                {% endblock %}
+                <!-- Toast Notification -->
+                <div class="toast-container" id="toastContainer"></div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal-overlay" id="successModal" style="display: none;">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2 class="modal-title">Success</h2>
+                <button class="modal-close" onclick="closeSuccessModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" style="text-align: center; padding: 2rem;">
+                <div style="font-size: 3rem; color: #10b981; margin-bottom: 1rem;">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <p id="successMessage" style="font-size: 1.1rem; line-height: 1.5; white-space: pre-line;"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary" onclick="closeSuccessModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Password Reset Form Modal -->
+    <div class="modal-overlay" id="passwordResetFormModal" style="display: none;">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2 class="modal-title">Reset User Password</h2>
+                <button class="modal-close" onclick="closePasswordResetFormModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 2rem;">
+                <form id="passwordResetForm" onsubmit="submitPasswordReset(event)">
+                    <input type="hidden" id="passwordResetUserId" value="">
+                    <div style="margin-bottom: 1.5rem;">
+                        <p style="font-size: 1rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+                            Setting temporary password for:
+                        </p>
+                        <p style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary);" id="passwordResetFormUserName">
+                            -
+                        </p>
+                        <p style="font-size: 0.9rem; color: var(--text-secondary);" id="passwordResetFormUserEmail">
+                            -
+                        </p>
+                    </div>
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="display: block; font-size: 0.9rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem;">
+                            Temporary Password <span style="color: var(--error-color);">*</span>
+                        </label>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="text" id="passwordResetFormPassword" required
+                                style="flex: 1; padding: 0.75rem; font-size: 1rem; 
+                                       background: var(--bg-primary); border: 2px solid var(--border-color); 
+                                       border-radius: 6px; color: var(--text-primary);"
+                                placeholder="Enter temporary password" minlength="6">
+                            <button type="button" onclick="generateRandomPassword()" 
+                                style="padding: 0.75rem 1rem; background: var(--secondary-color); color: white; 
+                                       border: none; border-radius: 6px; cursor: pointer; font-weight: 600;
+                                       white-space: nowrap;"
+                                title="Generate random password">
+                                <i class="fas fa-random"></i> Generate
+                            </button>
+                        </div>
+                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem;">
+                            <i class="fas fa-info-circle"></i> Minimum 6 characters. This password will be used by the user to log in.
+                        </p>
+                    </div>
+                    <div style="background: var(--bg-secondary); border-radius: 8px; padding: 1rem; margin-top: 1.5rem;">
+                        <p style="font-size: 0.9rem; color: var(--text-secondary); margin: 0;">
+                            <i class="fas fa-shield-alt"></i> <strong>Note:</strong> The user will be able to log in with this temporary password. They can change it after logging in.
+                        </p>
+                    </div>
+                    <div class="modal-footer" style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
+                        <button type="button" class="btn-secondary" onclick="closePasswordResetFormModal()">Cancel</button>
+                        <button type="submit" class="btn-primary" id="submitPasswordResetBtn">
+                            <i class="fas fa-key"></i> Reset Password
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Password Reset Confirmation Modal -->
+    <div class="modal-overlay" id="passwordResetModal" style="display: none;">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2 class="modal-title">Password Reset Successful</h2>
+                <button class="modal-close" onclick="closePasswordResetModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 2rem;">
+                <div style="text-align: center; margin-bottom: 1.5rem;">
+                    <div style="font-size: 3rem; color: #10b981; margin-bottom: 1rem;">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <p style="font-size: 1rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+                        Temporary password has been set for:
+                    </p>
+                    <p style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary);" id="passwordResetUserName">
+                        -
+                    </p>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary);" id="passwordResetUserEmail">
+                        -
+                    </p>
+                </div>
+                <div style="background: var(--bg-secondary); border-radius: 8px; padding: 1.5rem; margin: 1.5rem 0;">
+                    <label style="display: block; font-size: 0.9rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.5rem;">
+                        Temporary Password:
+                    </label>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <input type="text" id="passwordResetPasswordDisplay" readonly 
+                            style="flex: 1; padding: 0.75rem; font-size: 1.1rem; font-family: monospace; 
+                                   background: var(--bg-primary); border: 2px solid var(--border-color); 
+                                   border-radius: 6px; color: var(--text-primary); font-weight: 600;"
+                            value="">
+                        <button type="button" onclick="copyPasswordToClipboard()" 
+                            style="padding: 0.75rem 1rem; background: var(--primary-color); color: white; 
+                                   border: none; border-radius: 6px; cursor: pointer; font-weight: 600;
+                                   transition: background 0.2s;"
+                            onmouseover="this.style.background='var(--primary-hover)'"
+                            onmouseout="this.style.background='var(--primary-color)'"
+                            title="Copy password">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
+                    <p style="font-size: 0.85rem; color: var(--warning-color); margin-top: 0.75rem; font-weight: 500;">
+                        <i class="fas fa-exclamation-triangle"></i> Please copy this password now. It will not be shown again.
+                    </p>
+                </div>
+                <div style="text-align: center; margin-top: 1.5rem;">
+                    <p style="font-size: 0.9rem; color: var(--text-secondary);">
+                        Share this password with the user so they can log into their account.
+                    </p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary" onclick="closePasswordResetModal()">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Todo Modal -->
+    <div class="modal-overlay" id="todoModal" style="display: none;"
+        onclick="if(event.target===this && typeof closeTodoModal==='function') closeTodoModal();">
+        <div class="modal-content modern-modal todo-modal-content">
+            <div class="modern-modal-header">
+                <div class="modal-header-content">
+                    <div class="modal-icon-wrapper">
+                        <i class="fas fa-tasks"></i>
+                    </div>
+                    <div>
+                        <h2 class="modern-modal-title" id="todoModalTitle">Add New Todo</h2>
+                        <p class="modern-modal-subtitle" id="todoModalSubtitle">Create a new task to stay organized</p>
+                    </div>
+                </div>
+                <button class="modern-close-btn" onclick="if(typeof closeTodoModal==='function') closeTodoModal();"
+                    aria-label="Close modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modern-modal-body">
+                <form id="todoForm" class="modern-form todo-form">
+                    <input type="hidden" id="todoId" name="todo_id">
+
+                    <!-- Title Field -->
+                    <div class="modern-form-group">
+                        <label for="todoTitle" class="modern-label">
+                            <i class="fas fa-heading"></i>
+                            Title <span class="required">*</span>
+                        </label>
+                        <input type="text" id="todoTitle" name="title" class="modern-input"
+                            placeholder="e.g., Review student essays" required autocomplete="off">
+                        <small class="form-hint">Give your todo a clear, descriptive title</small>
+                    </div>
+
+                    <!-- Description Field -->
+                    <div class="modern-form-group">
+                        <label for="todoDescription" class="modern-label">
+                            <i class="fas fa-align-left"></i>
+                            Description
+                        </label>
+                        <textarea id="todoDescription" name="description" class="modern-textarea"
+                            placeholder="Add more details about this task (optional)" rows="4"></textarea>
+                        <small class="form-hint">Provide additional context or notes</small>
+                    </div>
+
+                    <!-- Category and Priority Row -->
+                    <div class="modern-form-row">
+                        <div class="modern-form-group">
+                            <label for="todoVariety" class="modern-label">
+                                <i class="fas fa-tag"></i>
+                                Category <span class="required">*</span>
+                            </label>
+                            <div class="select-wrapper">
+                                <select id="todoVariety" name="variety" class="modern-select" required>
+                                    <option value="">Choose category</option>
+                                    <option value="academic">Academic</option>
+                                    <option value="administrative">Administrative</option>
+                                    <option value="meeting">Meeting</option>
+                                    <option value="grading">Grading</option>
+                                    <option value="preparation">Preparation</option>
+                                    <option value="personal">Personal</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modern-form-group">
+                            <label for="todoPriority" class="modern-label">
+                                <i class="fas fa-exclamation-circle"></i>
+                                Priority <span class="required">*</span>
+                            </label>
+                            <div class="select-wrapper">
+                                <select id="todoPriority" name="priority" class="modern-select priority-select"
+                                    required>
+                                    <option value="low">Low</option>
+                                    <option value="medium" selected>Medium</option>
+                                    <option value="high">High</option>
+                                    <option value="urgent">Urgent</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Due Date Field -->
+                    <div class="modern-form-group">
+                        <label for="todoDueDate" class="modern-label">
+                            <i class="fas fa-calendar-alt"></i>
+                            Due Date
+                        </label>
+                        <div class="date-input-wrapper">
+                            <input type="date" id="todoDueDate" name="due_date" class="modern-input date-input">
+                            <button type="button" class="date-clear-btn"
+                                onclick="if(typeof clearDueDate==='function') clearDueDate();" title="Clear date">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <small class="form-hint">Set a deadline for this task (optional)</small>
+                    </div>
+
+                    <div class="modern-modal-footer">
+                        <button type="button" class="modern-btn-secondary"
+                            onclick="if(typeof closeTodoModal==='function') closeTodoModal();">Cancel</button>
+                        <button type="submit" class="modern-btn-primary">
+                            <span id="submitButtonText">Save Todo</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts moved to bottom for proper loading -->
+    <script src="{% static 'java/toastNotifications.js' %}"></script>
+    <script src="{% static 'java/apiClient.js' %}"></script>
+    <script src="{% static 'java/realtimeDashboard.js' %}"></script>
+    <script>
+        window.currentUserId = "{{ request.user.id }}";
+        window.currentUserRole = "{{ request.user.role }}";
+    </script>
+    <script src="{% static 'java/messaging.js' %}"></script>
+    <script src="{% static 'java/threads.js' %}"></script>
+    <script src="{% static 'java/Admin_Dash.js' %}"></script>
+    <script src="{% static 'java/todo_manager.js' %}"></script>
+    <script src="{% static 'java/invoice_management.js' %}"></script>
+
+    <!-- Content Details Modal -->
+    <div class="modal-overlay" id="contentDetailsModal" style="display: none;">
+        <div class="modal-card large-modal">
+            <div class="modal-header">
+                <h2 class="modal-title" id="contentDetailsTitle">Content Details</h2>
+                <button class="modal-close" onclick="closeContentDetailsModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="content-detail-container">
+                    <!-- Content Information -->
+                    <div class="content-info-section">
+                        <h3 class="section-title">Content Information</h3>
+                        <div class="content-info-grid">
+                            <div class="info-item">
+                                <label class="info-label">Content Type</label>
+                                <div class="info-value" id="modalContentType">-</div>
+                            </div>
+                            <div class="info-item">
+                                <label class="info-label">Title</label>
+                                <div class="info-value" id="modalContentTitle">-</div>
+                            </div>
+                            <div class="info-item">
+                                <label class="info-label">Subject</label>
+                                <div class="info-value" id="modalContentSubject">-</div>
+                            </div>
+                            <div class="info-item">
+                                <label class="info-label">Submitted Date</label>
+                                <div class="info-value" id="modalContentSubmitted">-</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Student Information -->
+                    <div class="student-info-section">
+                        <h3 class="section-title">Student Information</h3>
+                        <div class="student-info-card">
+                            <div class="student-details-detail">
+                                <h4 class="student-name" id="modalStudentName">-</h4>
+                                <p class="student-email" id="modalStudentEmail">-</p>
+                                <p class="student-id">Student ID: <span id="modalStudentId">-</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Teacher Information -->
+                    <div class="teacher-info-section">
+                        <h3 class="section-title">Teacher Information</h3>
+                        <div class="teacher-info-card">
+                            <div class="teacher-details-detail">
+                                <h4 class="teacher-name" id="modalTeacherName">-</h4>
+                                <p class="teacher-email" id="modalTeacherEmail">-</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submission Documents -->
+                    <div class="submission-docs-section">
+                        <h3 class="section-title">Submission Documents</h3>
+                        <div class="docs-list" id="modalSubmissionDocs">
+                            <!-- Documents will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Additional Information -->
+                    <div class="additional-info-section">
+                        <h3 class="section-title">Additional Information</h3>
+                        <div class="additional-info-content" id="modalAdditionalInfo">
+                            <!-- Additional info will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modern-btn-secondary" onclick="closeContentDetailsModal()">Close</button>
+                <button class="modern-btn-primary" onclick="downloadAllDocuments()">
+                    <i class="fas fa-download"></i>
+                    Download All Documents
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback Modal -->
+    <div class="modal-overlay" id="feedbackModal" style="display: none;">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2 class="modal-title">Send Feedback to Teacher</h2>
+                <button class="modal-close" onclick="closeFeedbackModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="feedbackForm" onsubmit="submitFeedback(event)">
+                    <input type="hidden" id="feedbackContentId" value="">
+                    <input type="hidden" id="feedbackContentType" value="">
+                    <input type="hidden" id="feedbackTeacherName" value="">
+
+                    <div class="form-group">
+                        <label for="feedbackTeacher" class="form-label">Teacher</label>
+                        <input type="text" id="feedbackTeacher" class="form-input" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="feedbackMessage" class="form-label">Feedback
+                            Message</label>
+                        <textarea id="feedbackMessage" class="form-textarea" rows="6"
+                            placeholder="Enter your feedback regarding this submission..." required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="feedbackPriority" class="form-label">Priority</label>
+                        <select id="feedbackPriority" class="form-select">
+                            <option value="normal">Normal</option>
+                            <option value="high">High</option>
+                            <option value="urgent">Urgent</option>
+                        </select>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="closeFeedbackModal()">Cancel</button>
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-paper-plane"></i>
+                            Send Feedback
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Invoice Modal -->
+    <div class="modal-overlay" id="createInvoiceModal" style="display: none;">
+        <div class="modal-card large-modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Create New Invoice</h2>
+                <button class="modal-close" onclick="closeCreateInvoiceModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="createInvoiceForm" onsubmit="submitCreateInvoice(event)">
+                    <div class="form-row">
+                        <div class="form-column">
+                            <div class="form-group">
+                                <label for="invoiceStudent" class="form-label">
+                                    Student <span class="required-indicator">*</span>
+                                </label>
+                                <select id="invoiceStudent" class="form-select" required onchange="loadStudentAssignmentsForInvoice(this.value)">
+                                    <option value="">Select Student</option>
+                                    <!-- Populated dynamically -->
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-column">
+                            <div class="form-group">
+                                <label for="invoiceAssignment" class="form-label">
+                                    Assignment <span class="required-indicator">*</span>
+                                </label>
+                                <select id="invoiceAssignment" class="form-select" required>
+                                    <option value="">Select Assignment</option>
+                                    <!-- Populated dynamically -->
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-column">
+                            <div class="form-group">
+                                <label for="invoiceAmount" class="form-label">
+                                    Charge Amount (USD) <span class="required-indicator">*</span>
+                                </label>
+                                <div class="amount-input-wrapper">
+                                    <span class="currency-symbol">$</span>
+                                    <input type="number" id="invoiceAmount" class="form-input" placeholder="0.00"
+                                        step="0.01" min="0" required oninput="calculateInvoiceFromAmount()">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-column">
+                            <div class="form-group">
+                                <label class="form-label">Discount Type</label>
+                                <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
+                                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                        <input type="radio" name="discountType" value="amount" checked onchange="updateDiscountLabels()"> Amount ($)
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                        <input type="radio" name="discountType" value="percentage" onchange="updateDiscountLabels()"> Percentage (%)
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-column">
+                            <div class="form-group">
+                                <label for="invoiceDiscountValue" class="form-label" id="discountValueLabel">
+                                    Discount Amount ($)
+                                </label>
+                                <div class="amount-input-wrapper">
+                                    <span class="currency-symbol" id="discountSymbol">$</span>
+                                    <input type="number" id="invoiceDiscountValue" class="form-input" placeholder="0.00"
+                                        step="0.01" min="0" value="0.00" oninput="calculateInvoiceFromDiscount()">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-column">
+                            <div class="form-group">
+                                <label for="invoiceTotalAmount" class="form-label">
+                                    Total Payable Amount (USD)
+                                </label>
+                                <div class="amount-input-wrapper total-amount-wrapper">
+                                    <span class="currency-symbol">$</span>
+                                    <input type="number" id="invoiceTotalAmount" class="form-input" placeholder="0.00"
+                                        step="0.01" min="0" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-column">
+                            <div class="form-group">
+                                <label for="invoiceLink" class="form-label">
+                                    Invoice Payment Link <span class="required-indicator">*</span>
+                                </label>
+                                <input type="url" id="invoiceLink" class="form-input" placeholder="https://..." required>
+                            </div>
+                        </div>
+                        <div class="form-column">
+                            <div class="form-group">
+                                <label for="invoiceDueDate" class="form-label">
+                                    Due Date <span class="required-indicator">*</span>
+                                </label>
+                                <input type="date" id="invoiceDueDate" class="form-input" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="invoiceNotes" class="form-label">Notes (Optional)</label>
+                        <textarea id="invoiceNotes" class="form-textarea" rows="3"
+                            placeholder="Add any additional notes or instructions for this invoice..."></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="closeCreateInvoiceModal()">Cancel</button>
+                        <button type="submit" class="btn-primary" id="submitInvoiceBtn">
+                            <i class="fas fa-paper-plane"></i>
+                            Create & Send to Student
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- JavaScript code moved to Admin_Dash.js -->
+
+    <!-- Create Thread Modal -->
+    <div class="modal-overlay" id="createThreadModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Create New Thread</h2>
+                <button class="modal-close" onclick="closeCreateThreadModal()" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="createThreadForm">
+                    <div class="form-grid">
+                        <div class="input-field" id="studentSelectField" style="display: none;">
+                            <span>Select Student *</span>
+                            <select id="studentSelect" name="studentSelect">
+                                <option value="">Select student...</option>
+                                <!-- Populated dynamically -->
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="input-field full-width">
+                            <span>Thread Subject *</span>
+                            <input type="text" id="threadSubject" name="threadSubject"
+                                placeholder="e.g., Student Progress Update" required>
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="input-field">
+                            <span>Thread Type *</span>
+                            <select id="threadType" name="threadType" required>
+                                <option value="">Select type...</option>
+                                <option value="assignment">Assignment Related</option>
+                                <option value="invoice">Invoice Related</option>
+                                <option value="general">General</option>
+                                <option value="support">Support</option>
+                            </select>
+                        </div>
+                        <div class="input-field" id="relatedAssignmentField" style="display: none;">
+                            <span>Related Assignment</span>
+                            <select id="relatedAssignment" name="relatedAssignment">
+                                <option value="">Select assignment...</option>
+                                <option value="1">ASG-2025-001</option>
+                                <option value="2">ASG-2025-002</option>
+                            </select>
+                        </div>
+                        <div class="input-field" id="relatedInvoiceField" style="display: none;">
+                            <span>Related Invoice</span>
+                            <select id="relatedInvoice" name="relatedInvoice">
+                                <option value="">Select invoice...</option>
+                                <option value="1">INV-2025-045</option>
+                                <option value="2">INV-2025-046</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="input-field full-width">
+                            <span>Initial Message *</span>
+                            <textarea id="threadMessage" name="threadMessage" rows="4"
+                                placeholder="Start your conversation..." required></textarea>
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="input-field full-width">
+                            <span>Recipients</span>
+                            <div id="recipientSelectionList" class="recipient-selection-list">
+                                <!-- Recipients cards will be populated here -->
+                            </div>
+                            <select id="threadRecipient" name="threadRecipient" multiple style="display: none;">
+                                <!-- Hidden select to store selected values -->
+                            </select>
+                            <small style="color: var(--muted); margin-top: 4px; display: block;">Select multiple recipients. The creator is always included.</small>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="ghost-button" onclick="closeCreateThreadModal()">Cancel</button>
+                <button type="button" class="primary-button" id="createThreadSubmitBtn">
+                    <i class="fas fa-paper-plane"></i> Create Thread
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Assignment Details Modal -->
+    <div class="modal-overlay" id="assignmentDetailsModal" style="display: none;">
+        <div class="modal-card large-modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Assignment Details</h2>
+                <button class="modal-close" onclick="closeAssignmentDetailsModal()" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Hidden fields for storing IDs -->
+                <input type="hidden" id="modalAssignmentIdValue" value="">
+                <input type="hidden" id="modalStudentIdValue" value="">
+
+                <!-- Student Information Section -->
+                <div class="assignment-detail-section">
+                    <h3 class="section-title">Student Information</h3>
+                    <div class="student-info-card">
+                        <div class="student-details-detail">
+                            <h4 class="student-name" id="modalStudentName">-</h4>
+                            <p class="student-email" id="modalStudentEmail">-</p>
+                            <p class="student-id">Student ID: <span id="modalStudentId">-</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Assignment Information Section -->
+                <div class="assignment-detail-section">
+                    <h3 class="section-title">Assignment Information</h3>
+                    <div class="assignment-info-grid">
+                        <div class="info-item">
+                            <label class="info-label">Assignment ID</label>
+                            <div class="info-value" id="modalAssignmentId">-</div>
+                        </div>
+                        <div class="info-item">
+                            <label class="info-label">Title</label>
+                            <div class="info-value" id="modalAssignmentTitle">-</div>
+                        </div>
+                        <div class="info-item">
+                            <label class="info-label">Type</label>
+                            <div class="info-value" id="modalAssignmentType">-</div>
+                        </div>
+                        <div class="info-item">
+                            <label class="info-label">Deadline</label>
+                            <div class="info-value" id="modalDeadline">-</div>
+                        </div>
+                        <div class="info-item">
+                            <label class="info-label">Priority</label>
+                            <div class="info-value" id="modalPriority">-</div>
+                        </div>
+                        <div class="info-item">
+                            <label class="info-label">Submission Date</label>
+                            <div class="info-value" id="modalSubmissionDate">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Features Section -->
+                <div class="assignment-detail-section">
+                    <h3 class="section-title">Features</h3>
+                    <div class="features-container" id="modalFeatures">
+                        <span class="tag">Loading...</span>
+                    </div>
+                </div>
+
+                <!-- Completion Information Section (Initially Hidden) -->
+                <div class="assignment-detail-section" id="modalCompletionSection" style="display: none;">
+                    <h3 class="section-title">Completion Details (Teacher Submission)</h3>
+                    <div class="completion-info-card">
+                        <div class="info-item full-width">
+                            <label class="info-label">Completion Notes</label>
+                            <div class="info-value" id="modalCompletionNotes">-</div>
+                        </div>
+                        <div class="info-item full-width">
+                            <label class="info-label">Solution Attachments</label>
+                            <div class="attachments-grid" id="modalSolutionAttachments">
+                                <!-- Solution files will be injected here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Teacher Assignment Section -->
+                <div class="assignment-detail-section">
+                    <h3 class="section-title">Teacher Assignment</h3>
+                    <div class="teacher-assignment-container">
+                        <div class="teacher-select-group">
+                            <div class="form-group">
+                                <label for="primaryTeacherSelect" class="form-label">Primary Teacher</label>
+                                <select id="primaryTeacherSelect" class="form-select"
+                                    onchange="handlePrimaryTeacherChange(this)">
+                                    <option value="">Select Primary Teacher</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="helperTeacherSelect" class="form-label">Helper Teacher (Optional)</label>
+                                <select id="helperTeacherSelect" class="form-select"
+                                    onchange="handleHelperTeacherChange(this)">
+                                    <option value="">Select Helper Teacher (Optional)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="assigned-teachers-container">
+                            <h4 class="subsection-title">Assigned Teachers</h4>
+                            <div id="assignedTeachersList" class="assigned-teachers-list">
+                                <p class="no-teachers" style="padding: 1rem; text-align: center; color: #9ca3af;">No
+                                    teachers assigned yet.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modern-btn-secondary" onclick="closeAssignmentDetailsModal()">Close</button>
+                <button class="modern-btn-primary" onclick="saveTeacherAssignments()">
+                    <i class="fas fa-save"></i>
+                    Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Announcement Modal (reused from Teacher_Dash.html) -->
+    <div class="modal-overlay announcement-modal-overlay" id="createAnnouncementModal" style="display: none;">
+        <div class="announcement-modal" id="announcementModal">
+            <!-- Modal Header -->
+            <div class="announcement-modal-header">
+                <div class="announcement-modal-header-content">
+                    <div class="announcement-modal-icon">
+                        <i class="fas fa-bullhorn"></i>
+                    </div>
+                    <div class="announcement-modal-title-section">
+                        <h2 class="announcement-modal-title">Create New Announcement</h2>
+                        <p class="announcement-modal-subtitle">Share important information with students and
+                            teachers</p>
+                    </div>
+                </div>
+                <button class="announcement-modal-close" onclick="closeCreateAnnouncementModal()" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="announcement-modal-body">
+                <form id="announcementForm" class="announcement-form">
+                    <!-- Basic Information Section -->
+                    <div class="announcement-form-section">
+                        <div class="form-section-header">
+                            <i class="fas fa-info-circle"></i>
+                            <h3 class="form-section-title">Basic Information</h3>
+                        </div>
+
+                        <div class="announcement-form-grid">
+                            <div class="announcement-form-field full-width">
+                                <label for="announcementTitle" class="announcement-form-label">
+                                    <span>Announcement Title</span>
+                                    <span class="required-indicator">*</span>
+                                </label>
+                                <div class="announcement-input-wrapper">
+                                    <i class="fas fa-heading input-icon"></i>
+                                    <input type="text" id="announcementTitle" class="announcement-form-input"
+                                        placeholder="Enter a clear and descriptive title" required>
+                                </div>
+                            </div>
+
+                            <!-- Priority Selection with Visual Cards -->
+                            <div class="announcement-form-field full-width">
+                                <label class="announcement-form-label">
+                                    <span>Priority Level</span>
+                                </label>
+                                <div class="priority-selection-cards">
+                                    <input type="radio" name="announcementPriority" id="priorityGeneral" value="general"
+                                        checked>
+                                    <label for="priorityGeneral" class="priority-card general-priority">
+                                        <div class="priority-card-icon">
+                                            <i class="fas fa-info-circle"></i>
+                                        </div>
+                                        <div class="priority-card-content">
+                                            <div class="priority-card-title">General</div>
+                                            <div class="priority-card-desc">Standard announcement</div>
+                                        </div>
+                                        <div class="priority-checkmark">
+                                            <i class="fas fa-check"></i>
+                                        </div>
+                                    </label>
+
+                                    <input type="radio" name="announcementPriority" id="priorityImportant"
+                                        value="important">
+                                    <label for="priorityImportant" class="priority-card important-priority">
+                                        <div class="priority-card-icon">
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                        <div class="priority-card-content">
+                                            <div class="priority-card-title">Important</div>
+                                            <div class="priority-card-desc">Requires attention</div>
+                                        </div>
+                                        <div class="priority-checkmark">
+                                            <i class="fas fa-check"></i>
+                                        </div>
+                                    </label>
+
+                                    <input type="radio" name="announcementPriority" id="priorityUrgent" value="urgent">
+                                    <label for="priorityUrgent" class="priority-card urgent-priority">
+                                        <div class="priority-card-icon">
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                        </div>
+                                        <div class="priority-card-content">
+                                            <div class="priority-card-title">Urgent</div>
+                                            <div class="priority-card-desc">Immediate action needed</div>
+                                        </div>
+                                        <div class="priority-checkmark">
+                                            <i class="fas fa-check"></i>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Content Section -->
+                    <div class="announcement-form-section">
+                        <div class="form-section-header">
+                            <i class="fas fa-align-left"></i>
+                            <h3 class="form-section-title">Announcement Content</h3>
+                        </div>
+
+                        <div class="announcement-form-field full-width">
+                            <label for="announcementContent" class="announcement-form-label">
+                                <span>Message</span>
+                                <span class="required-indicator">*</span>
+                            </label>
+                            <div class="announcement-textarea-wrapper">
+                                <textarea id="announcementContent" class="announcement-form-textarea" rows="6"
+                                    placeholder="Write your announcement message here. Be clear and concise..."
+                                    required></textarea>
+                                <div class="character-count">
+                                    <span id="contentCharacterCount">0</span> / 2000 characters
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tags Section -->
+                    <div class="announcement-form-section">
+                        <div class="form-section-header">
+                            <i class="fas fa-tags"></i>
+                            <h3 class="form-section-title">Tags</h3>
+                            <span class="form-section-subtitle">(Optional)</span>
+                        </div>
+
+                        <div class="announcement-form-field full-width">
+                            <label for="announcementTags" class="announcement-form-label">
+                                <span>Add Tags</span>
+                            </label>
+                            <div class="tags-input-container">
+                                <div class="tags-input-wrapper">
+                                    <i class="fas fa-tag input-icon"></i>
+                                    <input type="text" id="announcementTags" class="announcement-form-input tags-input"
+                                        placeholder="Type and press Enter to add tags">
+                                </div>
+                                <div class="tags-preview" id="tagsPreview">
+                                    <!-- Tags will be added here dynamically -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recipients Section -->
+                    <div class="announcement-form-section">
+                        <div class="form-section-header">
+                            <i class="fas fa-users"></i>
+                            <h3 class="form-section-title">Select Recipients</h3>
+                            <span class="required-indicator">*</span>
+                        </div>
+
+                        <div class="recipient-selection-modern">
+                            <!-- Quick Selection Cards -->
+                            <div class="recipient-quick-select">
+                                <div class="quick-select-card" data-type="all-students">
+                                    <input type="checkbox" id="selectAllStudents" class="recipient-checkbox-modern">
+                                    <label for="selectAllStudents" class="quick-select-label">
+                                        <div class="quick-select-icon students-icon">
+                                            <i class="fas fa-user-graduate"></i>
+                                        </div>
+                                        <div class="quick-select-content">
+                                            <div class="quick-select-title">All Students</div>
+                                            <div class="quick-select-count"><span id="allStudentsCount">0</span> students</div>
+                                        </div>
+                                    </label>
+                                </div>
+
+                                <div class="quick-select-card" data-type="all-teachers">
+                                    <input type="checkbox" id="selectAllTeachers" class="recipient-checkbox-modern">
+                                    <label for="selectAllTeachers" class="quick-select-label">
+                                        <div class="quick-select-icon teachers-icon">
+                                            <i class="fas fa-chalkboard-teacher"></i>
+                                        </div>
+                                        <div class="quick-select-content">
+                                            <div class="quick-select-title">All Teachers</div>
+                                            <div class="quick-select-count"><span id="allTeachersCount">0</span> teachers</div>
+                                        </div>
+                                    </label>
+                                </div>
+
+                                <div class="quick-select-card" data-type="all-csreps">
+                                    <input type="checkbox" id="selectAllCSReps" class="recipient-checkbox-modern">
+                                    <label for="selectAllCSReps" class="quick-select-label">
+                                        <div class="quick-select-icon csreps-icon" style="background-color: rgba(139, 92, 246, 0.1); color: #8b5cf6;">
+                                            <i class="fas fa-headset"></i>
+                                        </div>
+                                        <div class="quick-select-content">
+                                            <div class="quick-select-title">All CS Reps</div>
+                                            <div class="quick-select-count"><span id="allCSRepsCount">0</span> reps</div>
+                                        </div>
+                                    </label>
+                                </div>
+
+                                <div class="quick-select-card" data-type="specific">
+                                    <input type="checkbox" id="selectSpecific" class="recipient-checkbox-modern"
+                                        onchange="toggleSpecificRecipients()">
+                                    <label for="selectSpecific" class="quick-select-label">
+                                        <div class="quick-select-icon specific-icon">
+                                            <i class="fas fa-user-friends"></i>
+                                        </div>
+                                        <div class="quick-select-content">
+                                            <div class="quick-select-title">Select Specific</div>
+                                            <div class="quick-select-count">Choose individuals</div>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Specific Recipient Selection Panel -->
+                            <div id="specificRecipientsPanel" class="specific-recipients-panel" style="display: none;">
+                                <div class="recipient-panel-header">
+                                    <h4 class="recipient-panel-title">Select Specific Recipients</h4>
+                                    <div class="recipient-panel-summary" id="selectedRecipientsSummary">
+                                        <i class="fas fa-check-circle"></i>
+                                        <span id="selectedRecipientsCount">0</span> selected
+                                    </div>
+                                </div>
+
+                                <div class="recipient-tabs-modern">
+                                    <button type="button" class="recipient-tab-modern active" data-tab="students"
+                                        onclick="switchRecipientTab('students')">
+                                        <i class="fas fa-user-graduate"></i>
+                                        <span>Students</span>
+                                        <span class="tab-count" id="studentsCount">5</span>
+                                    </button>
+                                    <button type="button" class="recipient-tab-modern" data-tab="teachers"
+                                        onclick="switchRecipientTab('teachers')">
+                                        <i class="fas fa-chalkboard-teacher"></i>
+                                        <span>Teachers</span>
+                                        <span class="tab-count" id="teachersCount">3</span>
+                                    </button>
+                                    <button type="button" class="recipient-tab-modern" data-tab="csreps"
+                                        onclick="switchRecipientTab('csreps')">
+                                        <i class="fas fa-headset"></i>
+                                        <span>CS Reps</span>
+                                        <span class="tab-count" id="csrepsCount">0</span>
+                                    </button>
+                                </div>
+
+                                <div class="recipient-search-modern">
+                                    <div class="search-input-modern-wrapper">
+                                        <i class="fas fa-search search-icon-modern"></i>
+                                        <input type="text" id="recipientSearch" class="search-input-modern"
+                                            placeholder="Search by name or email..." oninput="filterRecipients()">
+                                        <button type="button" class="clear-search-btn" id="clearSearchBtn"
+                                            onclick="clearRecipientSearch()" style="display: none;">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="recipient-list-container-modern">
+                                    <!-- Students List -->
+                                    <div class="recipient-list-modern active" id="studentsList">
+                                        <div class="recipient-list-header">
+                                            <span class="list-title">Students</span>
+                                            <button type="button" class="select-all-btn"
+                                                onclick="selectAllInList('students')">
+                                                <i class="fas fa-check-double"></i>
+                                                Select All
+                                            </button>
+                                        </div>
+                                        <div class="recipient-items-wrapper">
+                                            <!-- Students list injected here -->
+                                        </div>
+                                    </div>
+
+                                    <!-- Teachers List -->
+                                    <div class="recipient-list-modern" id="teachersList">
+                                        <div class="recipient-list-header">
+                                            <span class="list-title">Teachers</span>
+                                            <button type="button" class="select-all-btn"
+                                                onclick="selectAllInList('teachers')">
+                                                <i class="fas fa-check-double"></i>
+                                                Select All
+                                            </button>
+                                        </div>
+                                        <div class="recipient-items-wrapper">
+                                            <!-- Teachers list injected here -->
+                                        </div>
+                                    </div>
+
+                                    <!-- CS Reps List -->
+                                    <div class="recipient-list-modern" id="csrepsList">
+                                        <div class="recipient-list-header">
+                                            <span class="list-title">CS Reps</span>
+                                            <button type="button" class="select-all-btn"
+                                                onclick="selectAllInList('csreps')">
+                                                <i class="fas fa-check-double"></i>
+                                                Select All
+                                            </button>
+                                        </div>
+                                        <div class="recipient-items-wrapper">
+                                            <!-- CS Reps list injected here -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Schedule & Options Section -->
+                    <div class="announcement-form-section">
+                        <div class="form-section-header">
+                            <i class="fas fa-calendar-alt"></i>
+                            <h3 class="form-section-title">Schedule & Options</h3>
+                        </div>
+
+                        <div class="announcement-form-grid">
+                            <div class="announcement-form-field">
+                                <label class="announcement-form-label">
+                                    <span>Schedule</span>
+                                </label>
+                                <div class="schedule-options">
+                                    <label class="schedule-option">
+                                        <input type="radio" name="scheduleOption" value="now" checked>
+                                        <span class="schedule-option-content">
+                                            <i class="fas fa-bolt"></i>
+                                            <span>Send Immediately</span>
+                                        </span>
+                                    </label>
+                                    <label class="schedule-option">
+                                        <input type="radio" name="scheduleOption" value="later">
+                                        <span class="schedule-option-content">
+                                            <i class="fas fa-clock"></i>
+                                            <span>Schedule for Later</span>
+                                        </span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="announcement-form-field">
+                                <label for="scheduledDateTime" class="announcement-form-label">
+                                    <span>Scheduled Date & Time</span>
+                                </label>
+                                <div class="announcement-input-wrapper">
+                                    <i class="fas fa-calendar-day input-icon"></i>
+                                    <input type="datetime-local" id="scheduledDateTime" class="announcement-form-input">
+                                </div>
+                                <small class="field-hint">Only required if "Schedule for Later" is selected.</small>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="announcement-modal-footer">
+                <button type="button" class="announcement-cancel-btn" onclick="closeCreateAnnouncementModal()">
+                    <i class="fas fa-times"></i>
+                    <span>Cancel</span>
+                </button>
+                <button type="button" class="announcement-submit-btn" onclick="submitAnnouncement()">
+                    <i class="fas fa-paper-plane"></i>
+                    <span>Create Announcement</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

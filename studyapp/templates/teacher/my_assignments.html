@@ -1,0 +1,1045 @@
+{% extends "teacher/teacher_base.html" %}
+{% load masking_tags %}
+
+{% block content %}
+<div class="content-section" id="my_assignmentsSection">
+
+
+    <!-- Assignment Header -->
+    <div class="assignment-header">
+        <div class="assignment-title-section">
+            <h1 class="assignment-title">My Assignments</h1>
+            <p class="assignment-subtitle">Track and manage your assigned student requests.</p>
+        </div>
+    </div>
+
+    <!-- Assignment Navigation Tabs -->
+    <div class="tracker-tabs">
+        <button class="tracker-tab-btn active" data-tab="inProcess">
+            <span>In Process</span>
+        </button>
+        <button class="tracker-tab-btn" data-tab="completed">
+            <span>Completed</span>
+        </button>
+        <button class="tracker-tab-btn" data-tab="cancelled">
+            <span>Cancel/Deleted</span>
+        </button>
+    </div>
+
+    <!-- Assignment Content -->
+    <div class="tracker-content">
+        <!-- In Process Assignments -->
+        <div class="tab-content active" id="inProcessContent">
+            <div class="assignments-table-container">
+                <table class="assignments-table">
+                    <thead>
+                        <tr>
+                            <th>STUDENT</th>
+                            <th>ASSIGNMENT ID</th>
+                            <th>ASSIGNMENT</th>
+                            <th>PRIORITY</th>
+                            <th>SERVICE TYPE</th>
+                            <th>SUBMISSION DATE</th>
+                            <th>DUE DATE</th>
+                            <th>STATUS</th>
+                            <th>ACTIONS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for task in assigned_tasks %}
+                        {% if task.assignment.status == 'assigned' or task.assignment.status == 'in-process' or task.assignment.status == 'on-hold' %}
+                        <tr class="assignment-row" data-id="{{ task.assignment.id }}"
+                            data-brief="{{ task.assignment.description|escape }}"
+                            data-content="{{ task.assignment.completion_notes|default:''|escape }}"
+                            data-priority="{{ task.assignment.get_priority_display }}"
+                            data-attachments="{{ task.assignment.attachments_json|default:'[]' }}"
+                            data-student-id="{{ task.assignment.student.student_id }}">
+                            <td class="student-info">
+                                <div class="student-name">{{ task.assignment.student.user.get_full_name }}</div>
+                                <div class="student-id-code">{{ task.assignment.student.student_id }}</div>
+                            </td>
+                            <td class="assignment-id"><code>{{ task.assignment.assignment_code }}</code></td>
+                            <td class="assignment-title">{{ task.assignment.title }}</td>
+                            <td class="assignment-priority">
+                                <span class="priority-badge {{ task.assignment.priority }}">
+                                    {{ task.assignment.get_priority_display }}
+                                </span>
+                            </td>
+                            <td class="assignment-service-type">{{ task.assignment.get_service_type_display }}</td>
+                            <td class="submission-date">{{ task.assignment.created_at|date:"M d, Y" }}</td>
+                            <td class="due-date">{{ task.assignment.due_date|date:"M d, Y"|default:"-" }}</td>
+                            <td class="assignment-status">
+                                <span class="status-badge {{ task.assignment.status }}">
+                                    {% if task.assignment.status == 'in-process' or task.assignment.status == 'assigned'%}
+                                    <i
+                                        class="fas fa-cog {% if task.assignment.status == 'in-process' %}fa-spin{% endif %}"></i>
+                                    {% endif %}
+                                    <span class="status-text">{{ task.assignment.get_status_display|upper }}</span>
+                                </span>
+                            </td>
+                            <td class="assignment-actions-cell">
+                                <div class="assignment-actions">
+                                    <button class="action-btn view-btn" data-action="view" title="View Assignment" onclick="window.viewAssignment && window.viewAssignment(this); return false;">
+                                        <i class="fas fa-eye"></i>
+                                        <span class="btn-text">VIEW</span>
+                                    </button> {% if task.assignment.status == 'assigned' %}<button
+                                        class="action-btn start-btn" data-action="start"
+                                        data-assignment-id="{{ task.assignment.id }}" title="Start Process" onclick="window.startProcess && window.startProcess('{{ task.assignment.id }}'); return false;">
+                                        <i class="fas fa-play"></i>
+                                        <span class="btn-text">START</span>
+                                    </button> {% elif task.assignment.status == 'in-process' %}
+                                    <button class="action-btn complete-btn" data-action="complete"
+                                        title="Mark Complete" onclick="window.openMarkCompleteModal && window.openMarkCompleteModal(this); return false;">
+                                        <i class="fas fa-check-circle"></i>
+                                        <span class="btn-text">DONE</span>
+                                    </button>{% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endif %}
+                        {% empty %}
+                        <tr>
+                            <td colspan="9" class="text-center">No assignments in process.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Completed Assignments -->
+        <div class="tab-content" id="completedContent" style="display: none;">
+            <div class="assignments-table-container">
+                <table class="assignments-table">
+                    <thead>
+                        <tr>
+                            <th>STUDENT</th>
+                            <th>ASSIGNMENT ID</th>
+                            <th>ASSIGNMENT</th>
+                            <th>SERVICE TYPE</th>
+                            <th>COMPLETED DATE</th>
+                            <th>STATUS</th>
+                            <th>ACTIONS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for task in assigned_tasks %}
+                        {% if task.assignment.status == 'completed' %}
+                        <tr class="assignment-row" data-id="{{ task.assignment.id }}"
+                            data-brief="{{ task.assignment.description|escape }}"
+                            data-content="{{ task.assignment.completion_notes|default:''|escape }}"
+                            data-priority="{{ task.assignment.get_priority_display }}"
+                            data-attachments="{{ task.assignment.attachments_json|default:'[]' }}"
+                            data-student-id="{{ task.assignment.student.student_id }}">
+                            <td class="student-info">
+                                <div class="student-name">{{ task.assignment.student.user.get_full_name }}</div>
+                                <div class="student-id-code">{{ task.assignment.student.student_id }}</div>
+                            </td>
+                            <td class="assignment-id"><code>{{ task.assignment.assignment_code }}</code></td>
+                            <td class="assignment-title">{{ task.assignment.title }}</td>
+                            <td class="assignment-service-type">{{ task.assignment.get_service_type_display }}</td>
+                            <td class="completed-date">{{ task.assignment.completed_at|date:"M d, Y" }}</td>
+                            <td class="assignment-status">
+                                <span class="status-badge completed">
+                                    <i class="fas fa-check"></i>
+                                    <span class="status-text">COMPLETED</span>
+                                </span>
+                            </td>
+                            <td class="assignment-actions-cell">
+                                <div class="assignment-actions">
+                                    <button class="action-btn view-btn" data-action="view" title="View Assignment" onclick="window.viewAssignment && window.viewAssignment(this); return false;">
+                                        <i class="fas fa-eye"></i>
+                                        <span class="btn-text">VIEW</span>
+                                    </button>
+                                    <button class="action-btn download-btn" data-action="download"
+                                        title="Download Assignment" onclick="window.downloadAssignment && window.downloadAssignment(this); return false;">
+                                        <i class="fas fa-download"></i>
+                                        <span class="btn-text">DOWNLOAD</span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endif %}
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center">No completed assignments.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Cancelled/Deleted Assignments -->
+        <div class="tab-content" id="cancelledContent" style="display: none;">
+            <div class="assignments-table-container">
+                <table class="assignments-table">
+                    <thead>
+                        <tr>
+                            <th>STUDENT</th>
+                            <th>ASSIGNMENT ID</th>
+                            <th>ASSIGNMENT</th>
+                            <th>SERVICE TYPE</th>
+                            <th>STATUS</th>
+                            <th>ACTIONS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for task in assigned_tasks %}
+                        {% if task.assignment.status == 'cancelled' or task.assignment.status == 'deleted' %}
+                        <tr class="assignment-row" data-id="{{ task.assignment.id }}"
+                            data-brief="{{ task.assignment.description|escape }}"
+                            data-content="{{ task.assignment.completion_notes|default:''|escape }}"
+                            data-priority="{{ task.assignment.get_priority_display }}"
+                            data-attachments="{{ task.assignment.attachments_json|default:'[]' }}"
+                            data-student-id="{{ task.assignment.student.student_id }}">
+                            <td class="student-info">
+                                <div class="student-name">{{ task.assignment.student.user.get_full_name }}</div>
+                                <div class="student-id-code">{{ task.assignment.student.student_id }}</div>
+                            </td>
+                            <td class="assignment-id"><code>{{ task.assignment.assignment_code }}</code></td>
+                            <td class="assignment-title">{{ task.assignment.title }}</td>
+                            <td class="assignment-service-type">{{ task.assignment.get_service_type_display }}</td>
+                            <td class="assignment-status">
+                                <span class="status-badge {{ task.assignment.status }}">
+                                    <i class="fas fa-ban"></i>
+                                    <span class="status-text">{{ task.assignment.get_status_display|upper }}</span>
+                                </span>
+                            </td>
+                            <td class="assignment-actions-cell">
+                                <button class="action-btn view-btn" data-action="view" title="View Assignment" onclick="if(typeof window.viewAssignment==='function')window.viewAssignment(this);else console.error('viewAssignment not found');return false;">
+                                    <i class="fas fa-eye"></i> VIEW
+                                </button>
+                            </td>
+                        </tr>
+                        {% endif %}
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center">No cancelled or deleted assignments.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Assignment Details Section (inside main section) -->
+    <div id="assignmentDetailSection" style="display: none;">
+        <div class="assignment-detail-header">
+            <h1 class="assignment-detail-title">Assignment Details</h1>
+            <button type="button" class="close-detail-btn" onclick="closeAssignmentDetail()">
+                <i class="fas fa-times"></i> Close
+            </button>
+        </div>
+
+        <div class="assignment-detail-card">
+            <div class="form-row">
+                <div class="form-column">
+                    <label>Assignment Title</label>
+                    <div id="detailTitle" class="detail-field"></div>
+                </div>
+                <div class="form-column">
+                    <label>Service Type</label>
+                    <div id="detailCourse" class="detail-field"></div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-column">
+                    <label>Submission Date</label>
+                    <div id="detailSubmission" class="detail-field"></div>
+                </div>
+                <div class="form-column">
+                    <label>Due Date</label>
+                    <div id="detailDue" class="detail-field"></div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-column full-width">
+                    <label>Assignment Brief</label>
+                    <textarea id="detailBrief" class="form-textarea" readonly rows="3"></textarea>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-column full-width">
+                    <label>Notes/Completion Info</label>
+                    <textarea id="detailContent" class="form-textarea" readonly rows="5"></textarea>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-column">
+                    <label>Priority</label>
+                    <div id="detailPriority" class="detail-field"></div>
+                </div>
+            </div>
+
+            <div class="attachments-section">
+                <h4>Attachments Received</h4>
+                <div id="detailAttachments" class="attachments-list">
+                    <!-- attachments injected here -->
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button type="button" class="cancel-btn" onclick="closeAssignmentDetail()">Back</button>
+                <button type="button" class="save-changes-btn" id="detailCompleteBtn" style="display: none;"
+                    onclick="openMarkCompleteFromDetail()">
+                    <i class="fas fa-check-circle"></i> Mark Complete
+                </button>
+                <button type="button" class="save-changes-btn" id="detailDoneBtn"
+                    onclick="closeAssignmentDetail()">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mark Complete Modal -->
+    <div class="modal-overlay" id="markCompleteModal" style="display: none; z-index: 10000;">
+        <div class="modal mark-complete-modal">
+            <div class="modal-header">
+                <h3>Mark Assignment as Complete</h3>
+                <button class="modal-close" onclick="closeMarkCompleteModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="markCompleteForm" class="mark-complete-form">
+                    <input type="hidden" id="completeAssignmentId" name="assignmentId">
+                    <input type="hidden" id="completeServiceType" name="serviceType">
+
+                    <!-- Assignment Solution Form -->
+                    <div id="assignmentSolutionForm" class="service-type-form" style="display: none;">
+                        <div class="form-group">
+                            <label for="assignmentFile" class="form-label">
+                                Upload Assignment Solution <span class="required">*</span>
+                            </label>
+                            <input type="file" id="assignmentFile" name="assignmentFile" class="form-input"
+                                accept=".pdf,.doc,.docx,.zip,.rar" multiple required
+                                onchange="handleFileSelection('assignmentFile', 'assignmentFileList')">
+                            <p class="form-hint">Upload the completed assignment file(s)</p>
+                            <div id="assignmentFileList" class="document-list"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="additionalDocuments" class="form-label">Additional Documents
+                                (Optional)</label>
+                            <input type="file" id="additionalDocuments" name="additionalDocuments" class="form-input"
+                                accept=".pdf,.doc,.docx,.zip,.rar,.jpg,.jpeg,.png" multiple
+                                onchange="handleFileSelection('additionalDocuments', 'additionalDocumentsList')">
+                            <p class="form-hint">Upload any additional supporting documents</p>
+                            <div id="additionalDocumentsList" class="document-list"></div>
+                        </div>
+                    </div>
+
+                    <!-- Solve Online Paper / Do My Exam Form -->
+                    <div id="examForm" class="service-type-form" style="display: none;">
+                        <div class="form-group">
+                            <label for="examAttemptDate" class="form-label">
+                                Exam Attempt Date & Time <span class="required">*</span>
+                            </label>
+                            <input type="datetime-local" id="examAttemptDate" name="examAttemptDate" class="form-input"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label for="examStatus" class="form-label">
+                                Exam Status <span class="required">*</span>
+                            </label>
+                            <select id="examStatus" name="examStatus" class="form-select" required>
+                                <option value="">Select Status</option>
+                                <option value="under_review">Under Review</option>
+                                <option value="result_available">Result Available</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="examProof" class="form-label">
+                                Upload Proof of Exam Attempted <span class="required">*</span>
+                            </label>
+                            <input type="file" id="examProof" name="examProof" class="form-input"
+                                accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" multiple required
+                                onchange="handleFileSelection('examProof', 'examProofList')">
+                            <p class="form-hint">Upload screenshot or document showing exam was attempted</p>
+                            <div id="examProofList" class="document-list"></div>
+                        </div>
+                        <div class="form-group" id="resultReportGroup" style="display: none;">
+                            <label for="resultReport" class="form-label">Result Report (Optional)</label>
+                            <input type="file" id="resultReport" name="resultReport" class="form-input"
+                                accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" multiple
+                                onchange="handleFileSelection('resultReport', 'resultReportList')">
+                            <p class="form-hint">Upload exam result report if available</p>
+                            <div id="resultReportList" class="document-list"></div>
+                        </div>
+                    </div>
+
+                    <!-- IT Project Form -->
+                    <div id="itProjectForm" class="service-type-form" style="display: none;">
+                        <div class="form-group">
+                            <label for="projectDocuments" class="form-label">
+                                Upload Project Documents <span class="required">*</span>
+                            </label>
+                            <input type="file" id="projectDocuments" name="projectDocuments" class="form-input"
+                                accept=".pdf,.doc,.docx,.zip,.rar,.pptx,.xlsx,.sql,.py,.java,.cpp,.js,.html,.css"
+                                multiple required
+                                onchange="handleFileSelection('projectDocuments', 'projectDocumentsList')">
+                            <p class="form-hint">Upload all project-related documents, code files, and resources
+                            </p>
+                            <div id="projectDocumentsList" class="document-list"></div>
+                        </div>
+                    </div>
+
+                    <!-- Writing Form -->
+                    <div id="writingForm" class="service-type-form" style="display: none;">
+                        <div class="form-group">
+                            <label for="writingDocuments" class="form-label">
+                                Upload Writing Documents <span class="required">*</span>
+                            </label>
+                            <input type="file" id="writingDocuments" name="writingDocuments" class="form-input"
+                                accept=".pdf,.doc,.docx,.txt,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain"
+                                multiple required
+                                onchange="handleFileSelection('writingDocuments', 'writingDocumentsList')">
+                            <p class="form-hint">Upload the completed writing assignment and related documents (PDF,
+                                DOC,
+                                DOCX, TXT files supported)</p>
+                            <div id="writingDocumentsList" class="document-list"></div>
+                        </div>
+                    </div>
+
+                    <!-- Common Completion Notes -->
+                    <div class="form-group" style="margin-top: 1.5rem;">
+                        <label for="completionNotes" class="form-label">Completion Notes <span
+                                class="required">*</span></label>
+                        <textarea id="completionNotes" name="completionNotes" class="form-textarea" rows="4"
+                            placeholder="Add important details about the completed work..." required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="cancel-btn" onclick="closeMarkCompleteModal()">Cancel</button>
+                <button type="button" class="save-changes-btn" onclick="submitMarkComplete()">
+                    <i class="fas fa-check-circle"></i>
+                    Mark as Complete
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // CRITICAL: Define all functions at the GLOBAL scope immediately
+    // This script MUST execute completely for buttons to work
+    // DO NOT wrap in IIFE - functions must be on window object
+    
+    console.log('=== MY_ASSIGNMENTS SCRIPT STARTING ===');
+    
+    // Define functions IMMEDIATELY at the start of the script to ensure they're available
+    // This ensures functions are defined even if script execution is interrupted
+    
+    // Define viewAssignment function
+    if (typeof window.viewAssignment === 'undefined') {
+        window.viewAssignment = function (button) {
+            const row = button.closest('.assignment-row');
+            if (!row) return;
+
+            const title = row.querySelector('.assignment-title')?.textContent || '';
+            const serviceType = row.querySelector('.assignment-service-type')?.textContent || '';
+            const submission = row.querySelector('.submission-date')?.textContent || row.querySelector('.completed-date')?.textContent || '';
+            const due = row.querySelector('.due-date')?.textContent || '-';
+            const brief = row.dataset.brief || '';
+            const content = row.dataset.content || '';
+            const priority = row.dataset.priority || '-';
+            const attachments = JSON.parse(row.dataset.attachments || '[]');
+            const statusBadge = row.querySelector('.status-badge');
+            const status = statusBadge ? (statusBadge.classList.contains('in-process') ? 'in-process' : '') : '';
+            const id = row.dataset.id || '';
+
+            const detailTitle = document.getElementById('detailTitle');
+            if (detailTitle) detailTitle.textContent = title;
+            const detailCourse = document.getElementById('detailCourse');
+            if (detailCourse) detailCourse.textContent = serviceType;
+            const detailSubmission = document.getElementById('detailSubmission');
+            if (detailSubmission) detailSubmission.textContent = submission;
+            const detailDue = document.getElementById('detailDue');
+            if (detailDue) detailDue.textContent = due;
+            const detailBrief = document.getElementById('detailBrief');
+            if (detailBrief) detailBrief.value = brief;
+            const detailContent = document.getElementById('detailContent');
+            if (detailContent) detailContent.value = content;
+            const detailPriority = document.getElementById('detailPriority');
+            if (detailPriority) detailPriority.textContent = priority;
+
+            window.currentDetailAssignment = { id: id, title: title, serviceType: serviceType };
+
+            const detailCompleteBtn = document.getElementById('detailCompleteBtn');
+            const detailDoneBtn = document.getElementById('detailDoneBtn');
+            if (status === 'in-process') {
+                if (detailCompleteBtn) detailCompleteBtn.style.display = 'inline-flex';
+                if (detailDoneBtn) detailDoneBtn.style.display = 'none';
+            } else {
+                if (detailCompleteBtn) detailCompleteBtn.style.display = 'none';
+                if (detailDoneBtn) detailDoneBtn.style.display = 'inline-flex';
+            }
+
+            const attachList = document.getElementById('detailAttachments');
+            if (attachList) {
+                attachList.innerHTML = '';
+                if (attachments.length === 0) {
+                    attachList.innerHTML = '<p class="no-attachments">No attachments found.</p>';
+                } else {
+                    attachments.forEach(file => {
+                        const div = document.createElement('div');
+                        div.className = 'attachment-item';
+                        div.innerHTML = `<div class="attachment-info"><i class="fas fa-file"></i><span>${file.name}</span></div><a href="${file.url}" class="download-attachment-btn" target="_blank" title="Download"><i class="fas fa-download"></i></a>`;
+                        attachList.appendChild(div);
+                    });
+                }
+            }
+
+            const trackerContent = document.querySelector('.tracker-content');
+            if (trackerContent) trackerContent.style.display = 'none';
+            const assignmentHeader = document.querySelector('.assignment-header');
+            if (assignmentHeader) assignmentHeader.style.display = 'none';
+            const trackerTabs = document.querySelector('.tracker-tabs');
+            if (trackerTabs) trackerTabs.style.display = 'none';
+            const detailSection = document.getElementById('assignmentDetailSection');
+            if (detailSection) detailSection.style.display = 'block';
+        };
+    }
+    
+    // Define startProcess function
+    if (typeof window.startProcess === 'undefined') {
+        window.startProcess = async function (id) {
+            if (!confirm('Are you sure you want to start working on this assignment?')) return;
+            try {
+                const response = await fetch(`/assingment/teacher/start-process/${id}/`, {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': (window.getCookie || getCookie)('csrftoken') }
+                });
+                const result = await response.json();
+                if (result.success) {
+                    showToast('Assignment is now In-Process.', 'success');
+                    if (window.switchSection) window.switchSection('my_assignments');
+                    else location.reload();
+                } else {
+                    showToast(result.error || 'Failed to update status', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('An error occurred.', 'error');
+            }
+        };
+    }
+    
+    // Helper function for CSRF token (needed by startProcess)
+    // Make it available in the scope where startProcess can access it
+    if (typeof getCookie === 'undefined') {
+        window.getCookie = function(name) {
+            // First, try to get from hidden input field (Django's {% csrf_token %})
+            if (name === 'csrftoken') {
+                const csrfInput = document.querySelector('input[name="csrfmiddlewaretoken"]');
+                if (csrfInput && csrfInput.value) {
+                    return csrfInput.value;
+                }
+            }
+            
+            // Second, try to get from cookies (with proper decoding)
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        };
+    }
+    
+    // Log that functions are defined
+    console.log('Assignment functions defined:', {
+        viewAssignment: typeof window.viewAssignment,
+        startProcess: typeof window.startProcess,
+        getCookie: typeof window.getCookie
+    });
+
+    // Event delegation for assignment actions (works even when HTML is loaded dynamically)
+    // Use a unique flag to prevent multiple listeners
+    if (!window.__teacherAssignmentListenersAttached) {
+        window.__teacherAssignmentListenersAttached = true;
+        
+        // Use event delegation on document to handle clicks even after dynamic content loads
+        document.addEventListener('click', function (e) {
+            const btn = e.target.closest('[data-action]');
+            if (!btn) return;
+
+            const action = btn.getAttribute('data-action');
+            const row = btn.closest('.assignment-row');
+            
+            // Only handle clicks within assignment-related sections
+            // Check for my_assignmentsSection or any assignment-row parent
+            const section = btn.closest('#my_assignmentsSection, .content-section');
+            if (!section && !row) return;
+
+            console.log('Assignment action clicked:', action, { btn, row, section });
+
+            if (action === 'view' && row) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (typeof window.viewAssignment === 'function') {
+                    window.viewAssignment(btn);
+                } else {
+                    console.error('viewAssignment function not found');
+                }
+            } else if (action === 'download' && row) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (typeof window.downloadAssignment === 'function') {
+                    window.downloadAssignment(btn);
+                } else {
+                    console.error('downloadAssignment function not found');
+                }
+            } else if (action === 'start') {
+                e.preventDefault();
+                e.stopPropagation();
+                const assignmentId = btn.getAttribute('data-assignment-id');
+                if (assignmentId && typeof window.startProcess === 'function') {
+                    window.startProcess(assignmentId);
+                } else {
+                    console.error('startProcess function not found or assignmentId missing');
+                }
+            } else if (action === 'complete' && row) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (typeof window.openMarkCompleteModal === 'function') {
+                    window.openMarkCompleteModal(btn);
+                } else {
+                    console.error('openMarkCompleteModal function not found');
+                }
+            }
+        });
+    }
+
+    // File management for multiple documents
+    const fileLists = {
+        assignmentFile: [],
+        additionalDocuments: [],
+        examProof: [],
+        resultReport: [],
+        projectDocuments: [],
+        writingDocuments: []
+    };
+
+    function handleFileSelection(inputId, listContainerId) {
+        const input = document.getElementById(inputId);
+        const listContainer = document.getElementById(listContainerId);
+        if (!input || !listContainer) return;
+
+        const files = Array.from(input.files);
+        if (!fileLists[inputId]) fileLists[inputId] = [];
+
+        files.forEach(file => {
+            const isDuplicate = fileLists[inputId].some(existing =>
+                existing.name === file.name && existing.size === file.size
+            );
+            if (!isDuplicate) fileLists[inputId].push(file);
+        });
+
+        // Clear input value to allow re-selection of same files if needed
+        // and ensure the change event fires next time
+        input.value = '';
+
+        updateFileList(inputId, listContainerId);
+    }
+
+    function removeFile(inputId, listContainerId, fileIndex) {
+        if (fileLists[inputId]) {
+            fileLists[inputId].splice(fileIndex, 1);
+            updateFileList(inputId, listContainerId);
+        }
+    }
+
+    function updateFileList(inputId, listContainerId) {
+        const listContainer = document.getElementById(listContainerId);
+        if (!listContainer) return;
+
+        const fileList = fileLists[inputId] || [];
+        if (fileList.length === 0) {
+            listContainer.innerHTML = '';
+            return;
+        }
+
+        let html = '<div class="document-list-header">Attached Documents (' + fileList.length + ')</div>';
+        fileList.forEach((file, index) => {
+            html += `
+                <div class="document-item">
+                    <div class="document-info">
+                        <i class="fas fa-file"></i>
+                        <div class="document-details">
+                            <span class="document-name" title="${file.name}">${file.name}</span>
+                        </div>
+                    </div>
+                    <button type="button" class="remove-document-btn" onclick="removeFile('${inputId}', '${listContainerId}', ${index})">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+        });
+        listContainer.innerHTML = html;
+    }
+
+    window.openMarkCompleteFromDetail = function () {
+        const data = window.currentDetailAssignment;
+        if (!data) return;
+
+        document.getElementById('completeAssignmentId').value = data.id;
+        document.getElementById('completeServiceType').value = data.serviceType;
+        const modalTitle = document.getElementById('markCompleteModalTitle');
+        if (modalTitle) modalTitle.textContent = `Mark Complete: ${data.title}`;
+
+        document.querySelectorAll('.service-type-form').forEach(form => form.style.display = 'none');
+
+        const normalizedType = data.serviceType.toLowerCase();
+        if (normalizedType.includes('assignment')) {
+            document.getElementById('assignmentSolutionForm').style.display = 'block';
+        } else if (normalizedType.includes('exam') || normalizedType.includes('paper')) {
+            document.getElementById('examForm').style.display = 'block';
+        } else if (normalizedType.includes('it project')) {
+            document.getElementById('itProjectForm').style.display = 'block';
+        } else if (normalizedType.includes('writing')) {
+            document.getElementById('writingForm').style.display = 'block';
+        }
+
+        document.getElementById('markCompleteModal').style.display = 'flex';
+    };
+
+    window.openMarkCompleteModal = function (button) {
+        const row = button.closest('tr');
+        if (!row) return;
+
+        const assignmentId = row.dataset.id || row.querySelector('.assignment-id code')?.textContent.trim() || '';
+        const assignmentTitle = row.querySelector('.assignment-title')?.textContent.trim() || '';
+        const serviceType = row.querySelector('.assignment-service-type')?.textContent.trim() || '';
+
+        document.getElementById('completeAssignmentId').value = assignmentId;
+        document.getElementById('completeServiceType').value = serviceType;
+        const modalTitle = document.getElementById('markCompleteModalTitle');
+        if (modalTitle) modalTitle.textContent = `Mark Complete: ${assignmentTitle}`;
+
+        document.querySelectorAll('.service-type-form').forEach(form => form.style.display = 'none');
+
+        const normalizedType = serviceType.toLowerCase();
+        if (normalizedType.includes('assignment')) {
+            document.getElementById('assignmentSolutionForm').style.display = 'block';
+        } else if (normalizedType.includes('exam') || normalizedType.includes('paper')) {
+            document.getElementById('examForm').style.display = 'block';
+        } else if (normalizedType.includes('it project')) {
+            document.getElementById('itProjectForm').style.display = 'block';
+        } else if (normalizedType.includes('writing')) {
+            document.getElementById('writingForm').style.display = 'block';
+        }
+
+        document.getElementById('markCompleteModal').style.display = 'flex';
+    };
+
+    window.startProcess = async function (id) {
+        if (!confirm('Are you sure you want to start working on this assignment?')) return;
+
+        try {
+            const response = await fetch(`/assingment/teacher/start-process/${id}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                }
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                showToast('Assignment is now In-Process.', 'success');
+                if (window.switchSection) window.switchSection('my_assignments');
+                else location.reload();
+            } else {
+                showToast(result.error || 'Failed to update status', 'error');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showToast('An error occurred.', 'error');
+        }
+    };
+
+    // Tab switching is handled globally in Teacher_Dash.js (dynamic section injection safe)
+
+    window.closeMarkCompleteModal = function () {
+        const modal = document.getElementById('markCompleteModal');
+        if (modal) modal.style.display = 'none';
+
+        const form = document.getElementById('markCompleteForm');
+        if (form) form.reset();
+
+        // Clear all cumulative file lists
+        Object.keys(fileLists).forEach(key => fileLists[key] = []);
+
+        // Clear all previews from the UI
+        document.querySelectorAll('.document-list').forEach(list => list.innerHTML = '');
+    };
+
+    window.submitMarkComplete = async function () {
+        const form = document.getElementById('markCompleteForm');
+        const submitBtn = document.querySelector('#markCompleteModal .save-changes-btn');
+
+        // Basic validation for common notes
+        const notes = document.getElementById('completionNotes')?.value.trim();
+        if (!notes) {
+            showToast('Please provide completion notes.', 'error');
+            return;
+        }
+
+        const formData = new FormData(form);
+
+        // Add files from our cumulative local fileLists
+        let totalFiles = 0;
+        Object.keys(fileLists).forEach(key => {
+            fileLists[key].forEach(file => {
+                formData.append(key, file);
+                totalFiles++;
+            });
+        });
+
+        // Specific validation: at least one file for some types
+        const serviceType = document.getElementById('completeServiceType').value.toLowerCase();
+        if (totalFiles === 0 && (serviceType.includes('assignment') || serviceType.includes('writing') || serviceType.includes('it project'))) {
+            if (!confirm('You haven\'t attached any solution files. Mark as complete anyway?')) {
+                return;
+            }
+        }
+
+        try {
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            }
+
+            const response = await fetch('/assingment/teacher/mark-complete/', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                }
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                showToast('Assignment marked as complete!', 'success');
+                closeMarkCompleteModal();
+                if (window.switchSection) window.switchSection('my_assignments');
+                else location.reload();
+            } else {
+                showToast(result.error || 'Failed to complete assignment', 'error');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showToast('An error occurred.', 'error');
+        } finally {
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Mark as Complete';
+            }
+        }
+    };
+
+    window.viewAssignment = function (button) {
+        const row = button.closest('.assignment-row');
+        if (!row) return;
+
+        const title = row.querySelector('.assignment-title')?.textContent || '';
+        const serviceType = row.querySelector('.assignment-service-type')?.textContent || '';
+        const submission = row.querySelector('.submission-date')?.textContent || row.querySelector('.completed-date')?.textContent || '';
+        const due = row.querySelector('.due-date')?.textContent || '-';
+        const brief = row.dataset.brief || '';
+        const content = row.dataset.content || '';
+        const priority = row.dataset.priority || '-';
+        const attachments = JSON.parse(row.dataset.attachments || '[]');
+        const statusBadge = row.querySelector('.status-badge');
+        const status = statusBadge ? (statusBadge.classList.contains('in-process') ? 'in-process' : '') : '';
+        const id = row.dataset.id || '';
+
+        const detailTitle = document.getElementById('detailTitle');
+        if (detailTitle) detailTitle.textContent = title;
+
+        const detailCourse = document.getElementById('detailCourse');
+        if (detailCourse) detailCourse.textContent = serviceType;
+
+        const detailSubmission = document.getElementById('detailSubmission');
+        if (detailSubmission) detailSubmission.textContent = submission;
+
+        const detailDue = document.getElementById('detailDue');
+        if (detailDue) detailDue.textContent = due;
+
+        const detailBrief = document.getElementById('detailBrief');
+        if (detailBrief) detailBrief.value = brief;
+
+        const detailContent = document.getElementById('detailContent');
+        if (detailContent) detailContent.value = content;
+
+        const detailPriority = document.getElementById('detailPriority');
+        if (detailPriority) detailPriority.textContent = priority;
+
+        // Store data for detail actions
+        window.currentDetailAssignment = {
+            id: id,
+            title: title,
+            serviceType: serviceType
+        };
+
+        // Show/hide mark complete button in detail view
+        const detailCompleteBtn = document.getElementById('detailCompleteBtn');
+        const detailDoneBtn = document.getElementById('detailDoneBtn');
+        if (status === 'in-process') {
+            if (detailCompleteBtn) detailCompleteBtn.style.display = 'inline-flex';
+            if (detailDoneBtn) detailDoneBtn.style.display = 'none';
+        } else {
+            if (detailCompleteBtn) detailCompleteBtn.style.display = 'none';
+            if (detailDoneBtn) detailDoneBtn.style.display = 'inline-flex';
+        }
+
+        const attachList = document.getElementById('detailAttachments');
+        if (attachList) {
+            attachList.innerHTML = '';
+            if (attachments.length === 0) {
+                attachList.innerHTML = '<p class="no-attachments">No attachments found.</p>';
+            } else {
+                attachments.forEach(file => {
+                    const div = document.createElement('div');
+                    div.className = 'attachment-item';
+                    div.innerHTML = `
+                        <div class="attachment-info">
+                            <i class="fas fa-file"></i>
+                            <span>${file.name}</span>
+                        </div>
+                        <a href="${file.url}" class="download-attachment-btn" target="_blank" title="Download">
+                            <i class="fas fa-download"></i>
+                        </a>
+                    `;
+                    attachList.appendChild(div);
+                });
+            }
+        }
+
+        const trackerContent = document.querySelector('.tracker-content');
+        if (trackerContent) trackerContent.style.display = 'none';
+
+        const assignmentHeader = document.querySelector('.assignment-header');
+        if (assignmentHeader) assignmentHeader.style.display = 'none';
+
+        const trackerTabs = document.querySelector('.tracker-tabs');
+        if (trackerTabs) trackerTabs.style.display = 'none';
+
+        const detailSection = document.getElementById('assignmentDetailSection');
+        if (detailSection) detailSection.style.display = 'block';
+    };
+
+    window.closeAssignmentDetail = function () {
+        const detailSection = document.getElementById('assignmentDetailSection');
+        if (detailSection) detailSection.style.display = 'none';
+
+        const trackerContent = document.querySelector('.tracker-content');
+        if (trackerContent) trackerContent.style.display = 'block';
+
+        const assignmentHeader = document.querySelector('.assignment-header');
+        if (assignmentHeader) assignmentHeader.style.display = 'block';
+
+        const trackerTabs = document.querySelector('.tracker-tabs');
+        if (trackerTabs) trackerTabs.style.display = 'flex';
+    };
+
+    window.downloadAssignment = async function (button) {
+        const row = button.closest('.assignment-row');
+        if (!row) return;
+
+        const id = row.dataset.id || '';
+        if (!id) {
+            alert('Assignment ID not found.');
+            return;
+        }
+
+        let downloadUrl = `/assingment/teacher/download-zip/${id}/`;
+
+        // Apply masking for teachers
+        if (typeof apiClient !== 'undefined' && localStorage.getItem('user_role') === 'TEACHER') {
+            try {
+                const response = await apiClient.post('/mask/generate/', { target_url: downloadUrl, link_type: 'assignment_zip' });
+                if (response.success) {
+                    downloadUrl = response.masked_url;
+                }
+            } catch (error) {
+                console.error('Failed to generate masked link:', error);
+            }
+        }
+
+        showToast('Preparing your download (ZIP with notes and files)...', 'info');
+
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.download = '';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Ensure showToast is available globally with a fallback
+    if (typeof window.showToast === 'undefined') {
+        window.showToast = function (message, type = 'info') {
+            console.log(`[Toast ${type}] ${message}`);
+            if (typeof window.showTemporaryMessage === 'function') {
+                window.showTemporaryMessage(message);
+            } else if (typeof showTemporaryMessage === 'function') {
+                showTemporaryMessage(message);
+            } else {
+                alert(message);
+            }
+        };
+    }
+
+    // Ensure functions are available on window object for event delegation
+    // This is a safety measure in case scripts execute in different order
+    console.log('My Assignments script loaded. Functions available:', {
+        viewAssignment: typeof window.viewAssignment,
+        downloadAssignment: typeof window.downloadAssignment,
+        startProcess: typeof window.startProcess,
+        openMarkCompleteModal: typeof window.openMarkCompleteModal
+    });
+    
+    // Force functions to be available on window (in case of scope issues)
+    if (typeof window.viewAssignment !== 'function') {
+        console.error('viewAssignment was not properly defined!');
+    }
+    if (typeof window.startProcess !== 'function') {
+        console.error('startProcess was not properly defined!');
+    }
+    
+    // Final verification - functions MUST be on window for onclick handlers to work
+    console.log('Final check - Functions on window:', {
+        viewAssignment: typeof window.viewAssignment,
+        startProcess: typeof window.startProcess,
+        downloadAssignment: typeof window.downloadAssignment,
+        openMarkCompleteModal: typeof window.openMarkCompleteModal
+    });
+</script>
+{% endblock %}

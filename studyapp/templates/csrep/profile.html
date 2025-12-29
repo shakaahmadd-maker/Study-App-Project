@@ -1,0 +1,417 @@
+{% extends "csrep/csrep_base.html" %}
+{% block content %}
+
+<section class="content-section" id="profileSection" aria-labelledby="profileHeading" style="overflow-y: auto; height: 100%;">
+    <header class="section-header">
+        <div>
+            <h1 class="section-title" id="profileHeading">Profile Management</h1>
+            <p class="section-subtitle">Manage your profile information and preferences.</p>
+        </div>
+    </header>
+
+    <div
+        style="width: 100%; max-width: 1200px; display: grid; grid-template-columns: 1fr; gap: 24px; margin: 0 auto; padding: 0 16px 24px 16px;">
+        <!-- Profile Picture Section -->
+        <div class="settings-card"
+            style="background: linear-gradient(135deg, rgba(17, 88, 229, 0.03) 0%, rgba(255, 255, 255, 1) 100%); border: 1px solid rgba(17, 88, 229, 0.1);">
+            <div style="display: flex; align-items: flex-start; gap: 24px; flex-wrap: wrap;">
+                <div class="profile-picture-container" style="position: relative; flex-shrink: 0;">
+                    <div id="profilePicturePreview"
+                        style="width: 120px; height: 120px; border-radius: 50%; overflow: hidden; border: 3px solid rgba(17, 88, 229, 0.2); background: linear-gradient(135deg, #f0f5ff 0%, #e0ebff 100%); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 12px rgba(17, 88, 229, 0.1);"
+                        title="Click to upload profile picture">
+                        {% if profile_picture_url %}
+                        <img id="profilePictureImg" src="{{ profile_picture_url }}" alt="Profile Picture"
+                            style="width: 100%; height: 100%; object-fit: cover; display: block;"
+                            onerror="this.style.display='none'; document.getElementById('profilePictureIcon').style.display='flex';" />
+                        {% else %}
+                        <img id="profilePictureImg" src="" alt="Profile Picture"
+                            style="width: 100%; height: 100%; object-fit: cover; display: none;"
+                            onerror="this.style.display='none'; document.getElementById('profilePictureIcon').style.display='flex';" />
+                        {% endif %}
+                        <i class="fas fa-user" id="profilePictureIcon"
+                            style="font-size: 48px; color: rgba(17, 88, 229, 0.4); display: flex; align-items: center; justify-content: center;"></i>
+                    </div>
+                    <label for="profilePictureInput"
+                        style="position: absolute; bottom: 0; right: 0; width: 38px; height: 38px; background: linear-gradient(135deg, #1158e5 0%, #0d47c7 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 12px rgba(17, 88, 229, 0.3); transition: all 0.3s; border: 2px solid white;"
+                        onmouseover="this.style.transform='scale(1.1)'; this.style.boxShadow='0 6px 16px rgba(17, 88, 229, 0.4)';"
+                        onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 4px 12px rgba(17, 88, 229, 0.3)';">
+                        <i class="fas fa-camera" style="color: white; font-size: 16px;"></i>
+                    </label>
+                    <input type="file" id="profilePictureInput" name="profilePictureInput" accept="image/*"
+                        style="display: none;" />
+                </div>
+                <div style="flex: 1; min-width: 250px;">
+                    <h3
+                        style="margin-top: 0; margin-bottom: 12px; font-size: 1.125rem; font-weight: 600; color: var(--text-primary);">
+                        <i class="fas fa-image" style="color: #1158e5; margin-right: 8px;"></i>Profile
+                        Picture
+                    </h3>
+                    <p style="margin: 0 0 8px 0; color: #6b7280; font-size: 0.875rem; line-height: 1.5;">
+                        Upload a profile picture to personalize your account and help others recognize you.
+                    </p>
+                    <p style="margin: 0 0 16px 0; color: #9ca3af; font-size: 0.75rem;">Recommended: Square
+                        image, max 5MB. JPG, PNG, or GIF.</p>
+                    <button type="button" id="removeProfilePictureBtn" class="ghost-button"
+                        style="display: none; padding: 8px 16px; font-size: 0.875rem; color: #ef4444; border-color: #ef4444;">
+                        <i class="fas fa-trash-alt" style="margin-right: 6px;"></i>Remove Picture</button>
+                </div>
+            </div>
+            <div id="profilePictureError" class="field-error" style="margin-top: 16px; display: none;">
+            </div>
+        </div>
+
+        <!-- Profile Information Form -->
+        <form id="profileForm" class="settings-card"
+            style="background: linear-gradient(135deg, rgba(17, 88, 229, 0.02) 0%, rgba(255, 255, 255, 1) 100%); border: 1px solid rgba(17, 88, 229, 0.1);">
+            {% csrf_token %}
+            <h3
+                style="margin-top: 0; margin-bottom: 24px; font-size: 1.125rem; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
+                <i class="fas fa-user-edit" style="color: #1158e5;"></i>Personal Information
+            </h3>
+            <div class="form-grid"
+                style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; width: 100%;">
+                <label class="input-field" style="grid-column: 1 / -1;">
+                    <span style="color: #374151; font-weight: 500;"><i class="fas fa-id-card"
+                            style="color: #1158e5; margin-right: 6px;"></i>CS-Rep ID</span>
+                    <input type="text" id="csrepId" name="csrepId" class="form-input" readonly value="{% if csrep_profile %}CS-REP-{{ csrep_profile.id|stringformat:'04d' }}{% else %}Loading...{% endif %}"
+                        style="background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%); cursor: not-allowed; font-family: 'Courier New', monospace; letter-spacing: 0.1em; font-weight: 600; color: #1158e5; border: 1px solid rgba(17, 88, 229, 0.2);" 
+                        data-csrep-id="{% if csrep_profile %}{{ csrep_profile.id }}{% endif %}" />
+                    <small style="display: block; margin-top: 6px; font-size: 0.75rem; color: #6b7280;">
+                        <i class="fas fa-info-circle" style="margin-right: 4px;"></i>Your unique identifier
+                        (read-only)</small>
+                </label>
+                <label class="input-field">
+                    <span style="color: #374151; font-weight: 500;">First Name <span class="required"
+                            style="color: #ef4444;">*</span></span>
+                    <input type="text" id="firstName" name="firstName" class="form-input" autocomplete="given-name"
+                        required value="{{ first_name }}" style="border: 1px solid #e5e7eb; transition: all 0.2s;"
+                        onfocus="this.style.borderColor='#1158e5'; this.style.boxShadow='0 0 0 3px rgba(17, 88, 229, 0.1)';"
+                        onblur="this.style.borderColor='#e5e7eb'; this.style.boxShadow='none';" />
+                    <span class="field-error" id="firstNameError"></span>
+                </label>
+                <label class="input-field">
+                    <span style="color: #374151; font-weight: 500;">Last Name <span class="required"
+                            style="color: #ef4444;">*</span></span>
+                    <input type="text" id="lastName" name="lastName" class="form-input" required value="{{ last_name }}"
+                        style="border: 1px solid #e5e7eb; transition: all 0.2s;"
+                        onfocus="this.style.borderColor='#1158e5'; this.style.boxShadow='0 0 0 3px rgba(17, 88, 229, 0.1)';"
+                        onblur="this.style.borderColor='#e5e7eb'; this.style.boxShadow='none';" />
+                    <span class="field-error" id="lastNameError"></span>
+                </label>
+                <label class="input-field" style="grid-column: 1 / -1;">
+                    <span style="color: #374151; font-weight: 500;"><i class="fas fa-envelope"
+                            style="color: #1158e5; margin-right: 6px;"></i>Email Address</span>
+                    <input type="email" id="email" name="email" class="form-input" autocomplete="email"
+                        value="{{ email }}" style="border: 1px solid #e5e7eb; transition: all 0.2s;"
+                        onfocus="this.style.borderColor='#1158e5'; this.style.boxShadow='0 0 0 3px rgba(17, 88, 229, 0.1)';"
+                        onblur="this.style.borderColor='#e5e7eb'; this.style.boxShadow='none';" />
+                    <span class="field-error" id="emailError"></span>
+                </label>
+            </div>
+            <div class="actions"
+                style="margin-top: 32px; padding-top: 24px; border-top: 1px solid rgba(17, 88, 229, 0.1); display: flex; gap: 12px; justify-content: flex-start; align-items: center;">
+                <button type="submit" class="primary-button update-btn"
+                    style="background: linear-gradient(135deg, #1158e5 0%, #0d47c7 100%); box-shadow: 0 4px 12px rgba(17, 88, 229, 0.3); transition: all 0.3s;"
+                    onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 16px rgba(17, 88, 229, 0.4)';"
+                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(17, 88, 229, 0.3)';">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+                <button type="button" class="ghost-button" data-open-section="overview"
+                    style="border: 1px solid #e5e7eb; transition: all 0.2s;"
+                    onmouseover="this.style.borderColor='#d1d5db'; this.style.backgroundColor='#f9fafb';"
+                    onmouseout="this.style.borderColor='#e5e7eb'; this.style.backgroundColor='transparent';">
+                    Cancel
+                </button>
+            </div>
+        </form>
+
+        <!-- Password Change Section -->
+        <div class="settings-card"
+            style="background: linear-gradient(135deg, rgba(17, 88, 229, 0.02) 0%, rgba(255, 255, 255, 1) 100%); border: 1px solid rgba(17, 88, 229, 0.1);">
+            <h3
+                style="margin-top: 0; margin-bottom: 24px; font-size: 1.125rem; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
+                <i class="fas fa-lock" style="color: #1158e5;"></i>Change Password
+            </h3>
+            <form id="passwordChangeForm">
+                <div class="form-grid" style="display: grid; grid-template-columns: 1fr; gap: 20px; width: 100%;">
+                    <label class="input-field">
+                        <span style="color: #374151; font-weight: 500;">Current Password <span class="required"
+                                style="color: #ef4444;">*</span></span>
+                        <input type="password" id="currentPassword" name="currentPassword" class="form-input" required
+                            style="border: 1px solid #e5e7eb; transition: all 0.2s;"
+                            onfocus="this.style.borderColor='#1158e5'; this.style.boxShadow='0 0 0 3px rgba(17, 88, 229, 0.1)';"
+                            onblur="this.style.borderColor='#e5e7eb'; this.style.boxShadow='none';" />
+                        <span class="field-error" id="currentPasswordError"></span>
+                    </label>
+                    <label class="input-field">
+                        <span style="color: #374151; font-weight: 500;">New Password <span class="required"
+                                style="color: #ef4444;">*</span></span>
+                        <input type="password" id="newPassword" name="newPassword" class="form-input" required
+                            style="border: 1px solid #e5e7eb; transition: all 0.2s;"
+                            onfocus="this.style.borderColor='#1158e5'; this.style.boxShadow='0 0 0 3px rgba(17, 88, 229, 0.1)';"
+                            onblur="this.style.borderColor='#e5e7eb'; this.style.boxShadow='none';" />
+                        <span class="field-error" id="newPasswordError"></span>
+                    </label>
+                    <label class="input-field">
+                        <span style="color: #374151; font-weight: 500;">Confirm New Password <span class="required"
+                                style="color: #ef4444;">*</span></span>
+                        <input type="password" id="confirmPassword" name="confirmPassword" class="form-input" required
+                            style="border: 1px solid #e5e7eb; transition: all 0.2s;"
+                            onfocus="this.style.borderColor='#1158e5'; this.style.boxShadow='0 0 0 3px rgba(17, 88, 229, 0.1)';"
+                            onblur="this.style.borderColor='#e5e7eb'; this.style.boxShadow='none';" />
+                        <span class="field-error" id="confirmPasswordError"></span>
+                    </label>
+                </div>
+                <div class="actions"
+                    style="margin-top: 24px; padding-top: 24px; border-top: 1px solid rgba(17, 88, 229, 0.1); display: flex; gap: 12px; justify-content: flex-start; align-items: center;">
+                    <button type="submit" class="primary-button"
+                        style="background: linear-gradient(135deg, #1158e5 0%, #0d47c7 100%); box-shadow: 0 4px 12px rgba(17, 88, 229, 0.3); transition: all 0.3s;"
+                        onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 16px rgba(17, 88, 229, 0.4)';"
+                        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(17, 88, 229, 0.3)';">
+                        <i class="fas fa-key"></i> Change Password
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<script>
+(function() {
+    // Get CSRF token - try multiple methods
+    function getCsrfToken() {
+        // First, try to get from hidden input field (Django's {% csrf_token %})
+        const csrfInput = document.querySelector('input[name="csrfmiddlewaretoken"]');
+        if (csrfInput && csrfInput.value) {
+            return csrfInput.value;
+        }
+        
+        // Second, try to get from meta tag
+        const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+        if (csrfMeta && csrfMeta.content) {
+            return csrfMeta.content;
+        }
+        
+        // Third, try to get from cookies (may not work if HTTPONLY is True)
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, 'csrftoken'.length + 1) === ('csrftoken' + '=')) {
+                    return decodeURIComponent(cookie.substring('csrftoken'.length + 1));
+                }
+            }
+        }
+        
+        return null;
+    }
+
+    // Handle profile form submission
+    const profileForm = document.getElementById('profileForm');
+    if (profileForm) {
+        profileForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const formData = new FormData();
+            formData.append('first_name', document.getElementById('firstName').value.trim());
+            formData.append('last_name', document.getElementById('lastName').value.trim());
+            formData.append('email', document.getElementById('email').value.trim());
+
+            // Profile picture
+            const profilePictureInput = document.getElementById('profilePictureInput');
+            if (profilePictureInput && profilePictureInput.files.length > 0) {
+                formData.append('profile_picture', profilePictureInput.files[0]);
+            }
+
+            try {
+                const csrftoken = getCsrfToken();
+                if (!csrftoken) {
+                    alert('Error: CSRF token not found. Please refresh the page and try again.');
+                    return;
+                }
+
+                const response = await fetch('/account/api/accounts/profile/', {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'X-CSRFToken': csrftoken
+                    },
+                    body: formData
+                });
+
+                // Check if response is ok before parsing JSON
+                if (!response.ok) {
+                    let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+                    try {
+                        const errorData = await response.json();
+                        errorMessage = errorData.error || errorData.message || errorMessage;
+                    } catch (e) {
+                        // If JSON parsing fails, use the status text
+                        const text = await response.text();
+                        if (text) {
+                            errorMessage = text;
+                        }
+                    }
+                    alert('Error: ' + errorMessage);
+                    return;
+                }
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Update header name dynamically
+                    const firstName = document.getElementById('firstName').value.trim();
+                    const headerName = document.getElementById('headerUserName');
+                    if (headerName && firstName) {
+                        headerName.textContent = firstName;
+                    } else if (typeof updateCSRepHeaderName === 'function') {
+                        updateCSRepHeaderName(firstName);
+                    }
+                    
+                    // Update profile picture if uploaded - use response URL if available
+                    if (data.profile_picture_url) {
+                        if (typeof updateCSRepHeaderAvatar === 'function') {
+                            updateCSRepHeaderAvatar(data.profile_picture_url);
+                        } else if (typeof updateHeaderAvatar === 'function') {
+                            updateHeaderAvatar(data.profile_picture_url);
+                        }
+                        // Also update the profile picture display in the form
+                        const profilePictureImg = document.getElementById('profilePictureImg');
+                        const profilePictureIcon = document.getElementById('profilePictureIcon');
+                        if (profilePictureImg) {
+                            profilePictureImg.src = data.profile_picture_url;
+                            profilePictureImg.style.display = 'block';
+                        }
+                        if (profilePictureIcon) {
+                            profilePictureIcon.style.display = 'none';
+                        }
+                    } else {
+                        // Fallback: use preview if file was uploaded
+                        const profilePictureInput = document.getElementById('profilePictureInput');
+                        if (profilePictureInput && profilePictureInput.files.length > 0) {
+                            const reader = new FileReader();
+                            reader.onload = function(e) {
+                                if (typeof updateCSRepHeaderAvatar === 'function') {
+                                    updateCSRepHeaderAvatar(e.target.result);
+                                } else if (typeof updateHeaderAvatar === 'function') {
+                                    updateHeaderAvatar(e.target.result);
+                                }
+                            };
+                            reader.readAsDataURL(profilePictureInput.files[0]);
+                        }
+                    }
+                    
+                    // Reload profile data to get updated CS-Rep ID and other fields
+                    if (typeof loadUserProfile === 'function') {
+                        loadUserProfile().catch(err => {
+                            console.error('Error reloading profile:', err);
+                        });
+                    }
+                    
+                    // Show success message
+                    if (typeof showToast === 'function') {
+                        showToast('Profile updated successfully!', 'success');
+                    } else {
+                        alert('Profile updated successfully!');
+                    }
+                } else {
+                    const errorMsg = data.error || data.message || 'Failed to update profile';
+                    if (typeof showToast === 'function') {
+                        showToast('Error: ' + errorMsg, 'error');
+                    } else {
+                        alert('Error: ' + errorMsg);
+                    }
+                }
+            } catch (error) {
+                console.error('Error updating profile:', error);
+                const errorMsg = error.message || 'An error occurred. Please try again.';
+                if (typeof showToast === 'function') {
+                    showToast('Error: ' + errorMsg, 'error');
+                } else {
+                    alert('Error: ' + errorMsg);
+                }
+            }
+        });
+    }
+
+    // Profile picture preview is handled by initializeProfilePicture() in cs_rep_dashboard.js
+    // No need for duplicate handler here - it will be initialized when the profile section loads
+
+    // Handle password change form submission
+    const passwordChangeForm = document.getElementById('passwordChangeForm');
+    if (passwordChangeForm) {
+        passwordChangeForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // Clear previous errors
+            document.getElementById('currentPasswordError').textContent = '';
+            document.getElementById('newPasswordError').textContent = '';
+            document.getElementById('confirmPasswordError').textContent = '';
+
+            // Validation
+            if (!currentPassword) {
+                document.getElementById('currentPasswordError').textContent = 'Current password is required';
+                return;
+            }
+
+            if (!newPassword || newPassword.length < 8) {
+                document.getElementById('newPasswordError').textContent = 'New password must be at least 8 characters';
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                document.getElementById('confirmPasswordError').textContent = 'Passwords do not match';
+                return;
+            }
+
+            try {
+                const csrftoken = getCsrfToken();
+                if (!csrftoken) {
+                    alert('Error: CSRF token not found. Please refresh the page and try again.');
+                    return;
+                }
+                const response = await fetch('/account/api/accounts/change-password/', {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken
+                    },
+                    body: JSON.stringify({
+                        current_password: currentPassword,
+                        new_password: newPassword,
+                        confirm_password: confirmPassword
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('Password changed successfully!');
+                    passwordChangeForm.reset();
+                } else {
+                    if (data.error) {
+                        if (data.error.includes('current')) {
+                            document.getElementById('currentPasswordError').textContent = data.error;
+                        } else if (data.error.includes('match')) {
+                            document.getElementById('confirmPasswordError').textContent = data.error;
+                        } else {
+                            document.getElementById('newPasswordError').textContent = data.error;
+                        }
+                    } else {
+                        alert('Error: Failed to change password');
+                    }
+                }
+            } catch (error) {
+                console.error('Error changing password:', error);
+                alert('Error: An error occurred. Please try again.');
+            }
+        });
+    }
+})();
+</script>
+{% endblock %}

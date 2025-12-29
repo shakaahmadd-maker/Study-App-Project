@@ -1,0 +1,131 @@
+{% extends "student/student_base.html" %}
+
+{% block content %}
+<section class="content-section" id="assignmentDetailSection" aria-labelledby="detailHeading">
+    <div class="detail-header">
+        <button class="back-btn" onclick="goBackToTracker()" aria-label="Back to Assignment Tracker">
+            <i class="fas fa-arrow-left"></i> Back to Tracker
+        </button>
+        <h1 class="section-title" id="detailHeading">Assignment Details</h1>
+    </div>
+
+    <div class="assignment-detail-container">
+        <!-- Assignment Overview Card -->
+        <div class="detail-card">
+            <div class="detail-card-header">
+                <h2 id="detailAssignmentTitle">Assignment Title</h2>
+                <span class="status-badge" id="detailStatusBadge">
+                    <i class="fas fa-star"></i> New Submitted
+                </span>
+            </div>
+            
+            <div class="detail-info-grid">
+                <div class="detail-info-item">
+                    <span class="detail-label">Assignment ID:</span>
+                    <span class="detail-value" id="detailAssignmentId">ASG-2025-001</span>
+                </div>
+                <div class="detail-info-item">
+                    <span class="detail-label">Service Type:</span>
+                    <span class="detail-value" id="detailServiceType">Assignment Solution</span>
+                </div>
+                <div class="detail-info-item">
+                    <span class="detail-label">Submitted Date:</span>
+                    <span class="detail-value" id="detailSubmittedDate">Jan 22, 2025</span>
+                </div>
+                <div class="detail-info-item">
+                    <span class="detail-label">Due/Exam Date:</span>
+                    <span class="detail-value" id="detailDueDate">Feb 10, 2025</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Assignment Description Card -->
+        <div class="detail-card">
+            <h3 class="detail-card-title">Assignment Description</h3>
+            <div class="detail-description" id="detailDescription">
+                <p>This is a comprehensive assignment that requires detailed analysis and solution. The student has provided specific requirements and guidelines for completion.</p>
+            </div>
+        </div>
+
+        <!-- Assigned Teacher Card (Initially Hidden) -->
+        <div class="detail-card" id="assignedTeacherCard" style="display: none;">
+            <h3 class="detail-card-title">
+                <i class="fas fa-chalkboard-teacher"></i> Assigned Teacher
+            </h3>
+            <div class="teacher-info-content" id="teacherInfoContent">
+                <!-- Teacher info will be dynamically populated -->
+            </div>
+        </div>
+
+        <!-- Additional Features Card -->
+        <div class="detail-card" id="additionalFeaturesCard" style="display: none;">
+            <h3 class="detail-card-title">
+                <i class="fas fa-star"></i> Additional Features
+            </h3>
+            <div class="features-list" id="featuresList" style="display: grid; gap: 12px;">
+                <!-- Features will be dynamically populated -->
+            </div>
+            <div id="noFeatures" style="display: none; text-align: center; padding: 20px; color: var(--muted);">
+                <i class="fas fa-info-circle" style="font-size: 2rem; margin-bottom: 10px;"></i>
+                <p>No additional features selected for this assignment.</p>
+            </div>
+        </div>
+
+        <!-- Attachments Card -->
+        <div class="detail-card">
+            <h3 class="detail-card-title">
+                <i class="fas fa-paperclip"></i> Attachments
+            </h3>
+            <div class="attachments-list" id="attachmentsList" style="display: grid; gap: 12px;">
+                <!-- Attachments will be dynamically populated -->
+            </div>
+            <div id="noAttachments" style="display: none; text-align: center; padding: 20px; color: var(--muted);">
+                <i class="fas fa-inbox" style="font-size: 2rem; margin-bottom: 10px;"></i>
+                <p>No attachments available for this assignment.</p>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="detail-actions">
+            <button class="action-btn-primary" onclick="goBackToTracker()">
+                <i class="fas fa-arrow-left"></i> Back to Tracker
+            </button>
+            <button class="action-btn-danger cancel-detail-btn" id="cancelDetailBtn" onclick="showCancelConfirmation()" style="display: none;">
+                <i class="fas fa-times"></i> Cancel Assignment
+            </button>
+        </div>
+    </div>
+
+    <!-- Cancel Confirmation Modal -->
+    <div id="cancelAssignmentModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content cancel-modal">
+            <div class="modal-header">
+                <h3>Cancel Assignment</h3>
+                <button class="modal-close" onclick="closeCancelModal()" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="warning-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <p class="cancel-warning-text">
+                    Are you sure you want to cancel this assignment?
+                </p>
+                <div class="payment-warning">
+                    <i class="fas fa-info-circle"></i>
+                    <p><strong>Important:</strong> If you cancel this assignment, any payment that has been made is <strong>not refundable</strong>.</p>
+                </div>
+                <p class="cancel-detail-text">
+                    This assignment will be moved to the cancelled section and cannot be restored.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeCancelModal()">Keep Assignment</button>
+                <button class="btn-danger" id="confirmCancelBtn" onclick="confirmCancelAssignment()">Yes, Cancel Assignment</button>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+

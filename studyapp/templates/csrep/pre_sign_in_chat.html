@@ -1,0 +1,341 @@
+{% extends "csrep/csrep_base.html" %}
+{% block content %}
+
+
+<section class="content-section" id="preSignInSection" aria-labelledby="preSignInHeading">
+    <header class="section-header">
+        <div>
+            <h1 class="section-title" id="preSignInHeading">Pre-Sign-in Live Chat</h1>
+            <p class="section-subtitle">Guide prospective students and track every conversation with session IDs.</p>
+        </div>
+    </header>
+
+    <div class="chat-layout">
+        <aside class="chat-sidebar">
+            <div class="sidebar-tabs" role="tablist" aria-label="Chat mode">
+                <button class="sidebar-tab active" id="liveChatsTab" role="tab" aria-selected="true" type="button">
+                    Live chats
+                </button>
+                <button class="sidebar-tab" id="backupRecordsTab" role="tab" aria-selected="false" type="button">
+                    Backup records
+                </button>
+            </div>
+            <div class="input-group">
+                <i class="fas fa-search"></i>
+                <input type="search" placeholder="Search chats..." id="preSignInSearchInput">
+            </div>
+            <div class="chat-list" id="preChatList">
+                <!-- Mock data removed. Populated by real-time data in the script below. -->
+            </div>
+        </aside>
+        <div class="chat-panel">
+            <header class="chat-header" id="preSignInChatHeader">
+                <div>
+                    <p class="chat-session" id="preSignInChatSession">Select a session</p>
+                    <p class="chat-student" id="preSignInChatStudent"></p>
+                </div>
+                <div class="chat-actions">
+                    <button class="ghost-button danger" id="preSignInCloseBtn" style="display: none;" type="button">
+                        Close chat
+                    </button>
+                </div>
+            </header>
+            <div class="chat-transcript" id="preSignInChatTranscript">
+                <div class="empty-chat-state"
+                    style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--muted-text); opacity: 0.6;">
+                    <i class="fas fa-comments" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                    <p>Select a chat session to start communicating</p>
+                </div>
+            </div>
+            <footer class="chat-composer" id="preSignInComposer">
+                <input type="text" id="preSignInMessageInput" placeholder="Type a message...">
+                <input type="file" id="preSignInFileInput" style="display: none;"
+                    accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt,.zip,.rar">
+                <div class="composer-actions">
+                    <button id="preSignInAttachmentBtn" title="Attach file" type="button" aria-label="Attach file">
+                        <i class="fas fa-paperclip"></i>
+                    </button>
+                    <button id="preSignInSendBtn" class="primary-button icon-only" title="Send" type="button"
+                        aria-label="Send message">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </footer>
+        </div>
+    </div>
+</section>
+
+<script>
+    (function () {
+        const chatList = document.getElementById('preChatList');
+        const transcript = document.getElementById('preSignInChatTranscript');
+        const messageInput = document.getElementById('preSignInMessageInput');
+        const sendBtn = document.getElementById('preSignInSendBtn');
+        const attachBtn = document.getElementById('preSignInAttachmentBtn');
+        const fileInput = document.getElementById('preSignInFileInput');
+        const headerSession = document.getElementById('preSignInChatSession');
+        const headerStudent = document.getElementById('preSignInChatStudent');
+        const composer = document.getElementById('preSignInComposer');
+        const searchInput = document.getElementById('preSignInSearchInput');
+        const closeChatBtn = document.getElementById('preSignInCloseBtn');
+        const liveChatsTab = document.getElementById('liveChatsTab');
+        const backupRecordsTab = document.getElementById('backupRecordsTab');
+
+        let activeSessionId = null;
+        let globalSocket = null;
+        let sessionSocket = null;
+        let currentMode = 'live'; // 'live' or 'backup'
+
+        function initGlobalSocket() {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            globalSocket = new WebSocket(`${protocol}//${window.location.host}/ws/presignin/`);
+
+            globalSocket.onmessage = function (e) {
+                const data = JSON.parse(e.data);
+                if (data.type === 'new_session_alert' && currentMode === 'live') {
+                    addSessionToList(data.session, true);
+                    showToast('New visitor chat initiated!', 'info');
+                } else if (data.type === 'session_assigned' && currentMode === 'live') {
+                    // Remove from list if assigned to someone else
+                    const item = document.querySelector(`.chat-item[data-session="${data.session_id}"]`);
+                    if (item && window.currentUserId !== data.assigned_to_id) {
+                        item.remove();
+                        if (activeSessionId === data.session_id) {
+                            showToast(`This chat has been picked up by ${data.assigned_to_name}`, 'warning');
+                            switchMode('live'); // Reset view
+                        }
+                    }
+                }
+            };
+        }
+
+        function loadSessions() {
+            const url = currentMode === 'live' ? '/pre-signin/api/sessions/' : '/pre-signin/api/sessions/backup/';
+            fetch(url)
+                .then(r => r.json())
+                .then(data => {
+                    chatList.innerHTML = '';
+                    data.forEach(s => addSessionToList(s));
+                });
+        }
+
+        function addSessionToList(session, atTop = false) {
+            const div = document.createElement('div');
+            div.className = 'chat-item';
+            div.dataset.session = session.id;
+            div.innerHTML = `
+                <div class="chat-avatar"><i class="fas fa-user"></i></div>
+                <div class="chat-info">
+                    <div class="chat-title">${session.visitor_name}</div>
+                    <div class="chat-preview">${session.visitor_concern || 'No concern specified'}</div>
+                    <div class="chat-meta">Ref #${session.ref_number}</div>
+                </div>
+                <div class="chat-status"><span class="status-dot ${currentMode === 'live' ? 'active' : ''}"></span></div>
+            `;
+            div.onclick = () => selectSession(session.id, session.visitor_name, session.ref_number);
+
+            if (atTop) chatList.prepend(div);
+            else chatList.appendChild(div);
+        }
+
+        function selectSession(sessionId, name, ref) {
+            activeSessionId = sessionId;
+            headerSession.textContent = `Ref #${ref}`;
+            headerStudent.textContent = name;
+
+            // Mark active in list
+            document.querySelectorAll('.chat-item').forEach(item => {
+                item.classList.toggle('active', item.dataset.session === sessionId);
+            });
+
+            // Load messages
+            fetch(`/pre-signin/api/sessions/${sessionId}/messages/`)
+                .then(r => r.json())
+                .then(data => {
+                    transcript.innerHTML = '';
+                    data.messages.forEach(m => addMessageToTranscript(m));
+                    transcript.scrollTop = transcript.scrollHeight;
+
+                    // Show/hide composer and close button based on session status
+                    if (data.session.is_active && currentMode === 'live') {
+                        composer.style.display = 'flex';
+                        closeChatBtn.style.display = 'block';
+                    } else {
+                        composer.style.display = 'none';
+                        closeChatBtn.style.display = 'none';
+                    }
+                });
+
+            // Switch session socket
+            if (sessionSocket) sessionSocket.close();
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            sessionSocket = new WebSocket(`${protocol}//${window.location.host}/ws/presignin/${sessionId}/`);
+
+            sessionSocket.onmessage = function (e) {
+                const data = JSON.parse(e.data);
+                if (data.type === 'chat_message') {
+                    addMessageToTranscript(data.message);
+                    transcript.scrollTop = transcript.scrollHeight;
+
+                    if (data.message.is_closed) {
+                        composer.style.display = 'none';
+                        closeChatBtn.style.display = 'none';
+                        if (currentMode === 'live') loadSessions(); // Refresh list to move session to backup
+                    }
+                }
+            };
+        }
+
+        function addMessageToTranscript(msg) {
+            // If the empty-state placeholder is present, remove it before rendering messages.
+            const emptyState = transcript.querySelector('.empty-chat-state');
+            if (emptyState) emptyState.remove();
+
+            const isMe = msg.sender_role === 'csrep';
+            // Attachment can be returned as a string URL or an object { url, name, ... } depending on serializer.
+            const attachmentUrl =
+                (typeof msg.attachment === 'string' ? msg.attachment : (msg.attachment && (msg.attachment.url || msg.attachment.path))) || '';
+            const attachmentName = (msg.attachment && msg.attachment.name)
+                ? msg.attachment.name
+                : (attachmentUrl ? decodeURIComponent(String(attachmentUrl).split('/').pop().split('?')[0]) : 'attachment');
+
+            const div = document.createElement('div');
+            div.className = `message ${isMe ? 'outbound' : 'inbound'}`;
+            if (msg.is_system) div.classList.add('system');
+
+            div.innerHTML = `
+                <span class="message-meta">${isMe ? 'You' : (msg.sender_name || 'Visitor')} · ${msg.created_at}</span>
+                <p class="message-text">${msg.content}</p>
+                ${attachmentUrl ? `
+                    <div class="attachment-actions" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:6px;">
+                        <a href="${attachmentUrl}" target="_blank" rel="noopener" class="attachment-link"
+                           style="display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;border:1px solid rgba(15,23,42,0.10);background:rgba(255,255,255,0.6);text-decoration:none;color:inherit;">
+                            <i class="fas fa-paperclip"></i> View
+                        </a>
+                        <a href="${attachmentUrl}" download="${attachmentName}" class="attachment-link"
+                           style="display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;border:1px solid rgba(15,23,42,0.10);background:rgba(255,255,255,0.6);text-decoration:none;color:inherit;">
+                            <i class="fas fa-download"></i> Download
+                        </a>
+                    </div>
+                ` : ''}
+            `;
+            transcript.appendChild(div);
+        }
+
+        function sendMessage() {
+            const content = messageInput.value.trim();
+            if (!content || !activeSessionId) return;
+
+            if (sessionSocket && sessionSocket.readyState === WebSocket.OPEN) {
+                sessionSocket.send(JSON.stringify({
+                    'type': 'chat_message',
+                    'content': content
+                }));
+                messageInput.value = '';
+            }
+        }
+
+        function closeChat() {
+            if (!activeSessionId || !confirm('Are you sure you want to close this chat?')) return;
+
+            fetch(`/pre-signin/api/sessions/${activeSessionId}/close/`, { method: 'POST' })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        showToast('Chat closed and moved to backup.', 'success');
+                        // WebSocket will handle the rest (hide composer, etc)
+                    }
+                });
+        }
+
+        function handleFileUpload(e) {
+            const file = e.target.files[0];
+            if (!file || !activeSessionId) return;
+
+            const formData = new FormData();
+            formData.append('attachment', file);
+            formData.append('content', 'Shared an attachment');
+
+            fetch(`/pre-signin/api/sessions/${activeSessionId}/send/`, {
+                method: 'POST',
+                body: formData
+            })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        fileInput.value = '';
+                        // Message (including attachment) is broadcast by the server via WebSocket.
+                        // As a fallback (in case WS is slow), also render immediately.
+                        if (data.message) {
+                            addMessageToTranscript(data.message);
+                            transcript.scrollTop = transcript.scrollHeight;
+                        }
+                    }
+                });
+        }
+
+        function switchMode(mode) {
+            currentMode = mode;
+            if (mode === 'live') {
+                liveChatsTab.classList.add('active');
+                liveChatsTab.setAttribute('aria-selected', 'true');
+                backupRecordsTab.classList.remove('active');
+                backupRecordsTab.setAttribute('aria-selected', 'false');
+                searchInput.placeholder = "Search chats...";
+            } else {
+                backupRecordsTab.classList.add('active');
+                backupRecordsTab.setAttribute('aria-selected', 'true');
+                liveChatsTab.classList.remove('active');
+                liveChatsTab.setAttribute('aria-selected', 'false');
+                searchInput.placeholder = "Search Ref #...";
+            }
+            activeSessionId = null;
+            headerSession.textContent = 'Select a session';
+            headerStudent.textContent = '';
+            transcript.innerHTML = `
+                <div class="empty-chat-state" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--muted-text); opacity: 0.6;">
+                    <i class="fas fa-comments" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                    <p>Select a ${mode === 'live' ? 'chat session' : 'backup record'} to view</p>
+                </div>
+            `;
+            composer.style.display = 'none';
+            closeChatBtn.style.display = 'none';
+            loadSessions();
+        }
+
+        sendBtn.onclick = sendMessage;
+        messageInput.onkeydown = (e) => { if (e.key === 'Enter') sendMessage(); };
+        attachBtn.onclick = () => fileInput.click();
+        fileInput.onchange = handleFileUpload;
+        closeChatBtn.onclick = closeChat;
+        liveChatsTab.onclick = () => switchMode('live');
+        backupRecordsTab.onclick = () => switchMode('backup');
+
+        searchInput.oninput = function () {
+            const q = this.value.toLowerCase();
+            if (currentMode === 'backup' && q.length > 2) {
+                fetch(`/pre-signin/api/sessions/backup/?q=${q}`)
+                    .then(r => r.json())
+                    .then(data => {
+                        chatList.innerHTML = '';
+                        data.forEach(s => addSessionToList(s));
+                    });
+            } else {
+                document.querySelectorAll('.chat-item').forEach(item => {
+                    const text = item.innerText.toLowerCase();
+                    item.style.display = text.includes(q) ? 'flex' : 'none';
+                });
+            }
+        };
+
+        loadSessions();
+        initGlobalSocket();
+
+        function showToast(msg, type = 'info') {
+            if (window.showToast) window.showToast(msg, type);
+            else alert(msg);
+        }
+    })();
+</script>
+
+{% endblock %}

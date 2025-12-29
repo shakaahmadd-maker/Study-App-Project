@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect" />
+    <link as="style"
+        href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B600%3B700&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900"
+        onload="this.rel='stylesheet'" rel="stylesheet" />
+    <title>EduConnect - Forgot Password</title>
+    <link href="data:image/x-icon;base64," rel="icon" type="image/x-icon" />
+    <link rel="stylesheet" href="public/static/css/forgot_pass.css">
+</head>
+
+<body>
+    <div class="page-container">
+        <main class="main-content">
+            <div class="form-container">
+                <div class="brand-section">
+                    <div class="logo-container">
+                        <img src="public/SVG/logo.svg" alt="Nano Problem Logo" class="logo-img">
+                        <h1 class="logo-text">Nano <strong>Problem</strong></h1>
+                    </div>
+                </div>
+                <div class="text-section">
+                    <h2 class="main-title">Forgot Your Password?</h2>
+                    <p class="description">
+                        No problem. Enter the email address you used to sign up and we'll send you a link to reset your
+                        password.
+                    </p>
+                </div>
+                <form action="#" class="forgot-form" method="POST">
+                    <div class="input-group">
+                        <label class="sr-only" for="email">Email address</label>
+                        <input autocomplete="email" class="email-input" id="email" name="email"
+                            placeholder="Enter your email address" required="" type="email" />
+                    </div>
+                    <div class="button-group">
+                        <button class="submit-button" type="submit">
+                            Send Reset Link
+                        </button>
+                    </div>
+                </form>
+                <div class="link-section">
+                    <a class="back-link" href="login.html">
+                        Back to Sign In
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+
+</body>
+
+</html>

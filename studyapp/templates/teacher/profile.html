@@ -1,0 +1,217 @@
+{% extends "teacher/teacher_base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="content-section active" id="profileSection">
+    <!-- Header Section -->
+    <div class="content-header">
+        <div class="header-left">
+            <h1 class="page-title">Profile</h1>
+            <p class="page-subtitle">
+                Manage your personal information and account details.
+                {% if teacher_id %}
+                <strong>Teacher ID: {{ teacher_id }}</strong>
+                {% endif %}
+            </p>
+        </div>
+        <div class="header-right">
+            <button type="button" class="cancel-btn" id="cancelProfileBtn">Cancel</button>
+            <button type="button" class="save-changes-btn" id="saveProfileBtn">
+                <i class="fas fa-save"></i>
+                Save Changes
+            </button>
+        </div>
+    </div>
+
+    <!-- Profile Picture Section -->
+    <div class="profile-picture-section">
+        <div class="profile-picture-container">
+            <div class="current-picture-wrapper">
+                {% if profile_picture_url %}
+                <img src="{{ profile_picture_url }}" alt="Profile Picture" id="currentProfilePicture"
+                    class="profile-picture-img">
+                {% else %}
+                <div class="profile-picture-placeholder" id="currentProfilePicture">
+                    <i class="fas fa-user"></i>
+                </div>
+                {% endif %}
+                <div class="picture-overlay">
+                    <i class="fas fa-camera"></i>
+                </div>
+            </div>
+            <input type="file" id="profilePictureInput" accept="image/*" style="display: none;">
+            <button type="button" class="upload-picture-btn" id="uploadPictureBtn">
+                <i class="fas fa-upload"></i>
+                Upload New Picture
+            </button>
+            <p class="file-size-info">Max file size: 5MB</p>
+        </div>
+    </div>
+
+    <!-- Profile Information Form -->
+    <form class="profile-form" id="profileForm" novalidate>
+        <!-- Basic Information Row -->
+        <div class="form-row">
+            <div class="form-column">
+                <div class="form-group">
+                    <label for="firstName" class="form-label">First Name <span class="required">*</span></label>
+                    <input type="text" id="firstName" name="firstName" class="form-input" value="{{ first_name }}"
+                        required>
+                </div>
+            </div>
+
+            <div class="form-column">
+                <div class="form-group">
+                    <label for="lastName" class="form-label">Last Name <span class="required">*</span></label>
+                    <input type="text" id="lastName" name="lastName" class="form-input" value="{{ last_name }}"
+                        required>
+                </div>
+            </div>
+
+
+            <div class="form-column">
+                <div class="form-group">
+                    <label for="email" class="form-label">Email Address <span class="required">*</span></label>
+                    <input type="email" id="email" name="email" class="form-input" value="{{ email }}" required>
+                </div>
+            </div>
+
+            <div class="form-column">
+                <div class="form-group">
+                    <label for="teacherPhone" class="form-label">Phone Number</label>
+                    <input type="tel" id="teacherPhone" name="teacherPhone" class="form-input" value="{{ phone }}"
+                        placeholder="+1 (555) 123-4567">
+                </div>
+            </div>
+        </div>
+
+        <!-- Professional Information Row -->
+        <div class="form-row">
+            <div class="form-column">
+                <div class="form-group">
+                    <label for="teacherTitle" class="form-label">Title</label>
+                    <input type="text" id="teacherTitle" name="teacherTitle" class="form-input" value="{{ title }}"
+                        placeholder="e.g., Dr., Prof., Mr., Ms.">
+                </div>
+            </div>
+
+            <div class="form-column">
+                <div class="form-group">
+                    <label for="teacherDegree" class="form-label">Degree/Qualifications</label>
+                    <input type="text" id="teacherDegree" name="teacherDegree" class="form-input" value="{{ qualifications }}"
+                        placeholder="e.g., Ph.D. in Mathematics, M.Ed.">
+                </div>
+            </div>
+
+            <div class="form-column">
+                <div class="form-group">
+                    <label for="teacherSubject" class="form-label">Primary Subject</label>
+                    <input type="text" id="teacherSubject" name="teacherSubject" class="form-input" value="{{ primary_subject }}"
+                        placeholder="e.g., Mathematics, Science, English">
+                </div>
+            </div>
+
+            <div class="form-column">
+                <div class="form-group">
+                    <label for="teacherExperience" class="form-label">Years of Experience</label>
+                    <input type="number" id="teacherExperience" name="teacherExperience" class="form-input" value="{{ years_of_experience }}"
+                        placeholder="0" min="0" max="100">
+                </div>
+            </div>
+        </div>
+
+        <!-- Bio Row -->
+        <div class="form-row">
+            <div class="form-column full-width">
+                <div class="form-group">
+                    <label for="teacherBio" class="form-label">Short Bio</label>
+                    <textarea id="teacherBio" name="teacherBio" class="form-input" rows="4"
+                        placeholder="Write a brief bio about yourself...">{{ bio }}</textarea>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <!-- Change Password Section -->
+    <div class="change-password-section">
+        <div class="password-section-header">
+            <div class="password-header-info">
+                <h3 class="password-section-title">Password</h3>
+                <p class="password-section-subtitle">Change your account password</p>
+            </div>
+            <button type="button" class="change-password-toggle-btn" id="changePasswordToggleBtn">
+                <i class="fas fa-key"></i>
+                <span>Change Password</span>
+            </button>
+        </div>
+
+        <div class="change-password-form-container" id="changePasswordFormContainer" style="display: none;">
+            <form class="change-password-form" id="changePasswordForm" novalidate>
+                <div class="form-row">
+                    <div class="form-column full-width">
+                        <div class="form-group">
+                            <label for="currentPassword" class="form-label">Current Password <span
+                                    class="required">*</span></label>
+                            <div class="password-input-wrapper">
+                                <input type="password" id="currentPassword" name="currentPassword" class="form-input"
+                                    placeholder="Enter your current password" required>
+                                <button type="button" class="password-toggle-btn" data-target="currentPassword">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-column full-width">
+                        <div class="form-group">
+                            <label for="newPassword" class="form-label">New Password <span
+                                    class="required">*</span></label>
+                            <div class="password-input-wrapper">
+                                <input type="password" id="newPassword" name="newPassword" class="form-input"
+                                    placeholder="Enter your new password" required minlength="8">
+                                <button type="button" class="password-toggle-btn" data-target="newPassword">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <p class="form-hint">Password must be at least 8 characters long</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-column full-width">
+                        <div class="form-group">
+                            <label for="confirmPassword" class="form-label">Confirm New Password <span
+                                    class="required">*</span></label>
+                            <div class="password-input-wrapper">
+                                <input type="password" id="confirmPassword" name="confirmPassword" class="form-input"
+                                    placeholder="Confirm your new password" required minlength="8">
+                                <button type="button" class="password-toggle-btn" data-target="confirmPassword">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <div class="password-match-indicator" id="passwordMatchIndicator" style="display: none;">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Passwords match</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="password-form-actions">
+                    <button type="button" class="cancel-btn" id="cancelPasswordBtn">Cancel</button>
+                    <button type="submit" class="save-changes-btn" id="submitPasswordChangeBtn">
+                        <i class="fas fa-save"></i>
+                        Update Password
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Profile JavaScript -->
+<script src="{% static 'java/teacher_profile.js' %}"></script>
+{% endblock %}

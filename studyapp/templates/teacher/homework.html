@@ -1,0 +1,716 @@
+{% extends "teacher/teacher_base.html" %}
+
+{% block content %}
+            <div class="content-section" id="homeworkSection" style="display: none;">
+                <div class="content-header">
+                    <div class="header-left">
+                        <h1 class="page-title">Homework</h1>
+                        <p class="page-subtitle">Create, track, and grade homework.</p>
+                    </div>
+                </div>
+
+                <!-- Homework Tabs -->
+                <div class="homework-tabs">
+                    <button class="homework-tab-btn active" data-tab="createHomework">
+                        <i class="fas fa-pen"></i>
+                        <span>Create</span>
+                    </button>
+                    <button class="homework-tab-btn" data-tab="reviewHomework">
+                        <i class="fas fa-list"></i>
+                        <span>Review</span>
+                    </button>
+                </div>
+
+                <!-- Create Homework Content -->
+                <div class="homework-tab-content active" id="createHomeworkContent">
+                    <div class="homework-card">
+                        <h3 class="card-title">Create Homework</h3>
+                        <div class="form-row">
+                            <div class="form-column">
+                                <label for="hwStudentSelect" class="form-label">Target Student</label>
+                                <select id="hwStudentSelect" class="form-select">
+                                    <option value="">Choose a student...</option>
+                                    <!-- Options will be populated via API -->
+                                </select>
+                            </div>
+                            <div class="form-column">
+                                <label for="hwAssignmentSelect" class="form-label">Target Assignment (Optional)</label>
+                                <select id="hwAssignmentSelect" class="form-select" disabled>
+                                    <option value="">First select a student...</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-column">
+                                <label for="hwTitle" class="form-label">Title</label>
+                                <input type="text" id="hwTitle" class="form-input" placeholder="Enter homework title" />
+                            </div>
+                            <div class="form-column">
+                                <label for="hwDueDate" class="form-label">Due Date</label>
+                                <input type="datetime-local" id="hwDueDate" class="form-input" />
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-column full-width">
+                                <label for="hwDescription" class="form-label">Description</label>
+                                <div id="hwDescription" class="rich-text" contenteditable="true"
+                                    data-placeholder="Write homework details..."></div>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="cancel-btn" id="resetHomeworkFormBtn">Clear</button>
+                            <button type="button" class="save-changes-btn" id="assignHomeworkBtn">Assign
+                                Homework</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review Homework Content -->
+                <div class="homework-tab-content" id="reviewHomeworkContent">
+                    <div class="homework-card">
+                        <h3 class="card-title">Homework Tracker</h3>
+                        <div class="homework-filters">
+                            <input type="text" id="hwSearch" class="form-input"
+                                placeholder="Search by title or student" />
+                            <select id="hwStatusFilter" class="form-select">
+                                <option value="all">All</option>
+                                <option value="pending">Pending Submission</option>
+                                <option value="submitted">Awaiting Grading</option>
+                                <option value="graded">Graded</option>
+                            </select>
+                        </div>
+
+                        <div class="hw-columns">
+                            <div class="hw-column">
+                                <div class="hw-col-header">
+                                    <span>Pending Submission</span>
+                                </div>
+                                <div id="hwPendingList" class="hw-list"></div>
+                            </div>
+                            <div class="hw-column">
+                                <div class="hw-col-header">
+                                    <span>Awaiting Grading</span>
+                                </div>
+                                <div id="hwAwaitingList" class="hw-list"></div>
+                            </div>
+                            <div class="hw-column">
+                                <div class="hw-col-header">
+                                    <span>Graded</span>
+                                </div>
+                                <div id="hwGradedList" class="hw-list"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modals moved INSIDE section to prevent them being stripped by AJAX loader -->
+
+                <!-- Grading Modal -->
+                <div class="modal-overlay" id="hwGradingModal" style="display: none;">
+                    <div class="modal-card">
+                        <div class="modal-header">
+                            <div>
+                                <h2 class="modal-title" id="gradingModalTitle">Grade Homework</h2>
+                                <p class="section-subtitle" style="margin: 4px 0 0 0; font-size: 0.875rem;" id="gradingModalSubtitle">Review submission and provide grade</p>
+                            </div>
+                            <button class="modal-close" onclick="window.closeGradingModal()" aria-label="Close">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Homework Assignment Info -->
+                            <div id="gradingAssignmentInfo" class="homework-detail-section" style="background: rgba(17, 88, 229, 0.03); padding: 20px; border-radius: 12px; border-left: 3px solid var(--primary); margin-bottom: 20px;">
+                                <h3 class="detail-section-title"><i class="fas fa-book"></i> Homework Assignment</h3>
+                                <div class="detail-row">
+                                    <span class="detail-label">Title:</span>
+                                    <span id="gradingHwTitle" style="font-weight: 600;"></span>
+                                </div>
+                                <div class="detail-row" style="margin-top: 12px;">
+                                    <span class="detail-label">Student:</span>
+                                    <span id="gradingStudentName"></span>
+                                </div>
+                                <div class="detail-row" style="margin-top: 12px;">
+                                    <span class="detail-label">Due Date:</span>
+                                    <span id="gradingDueDate"></span>
+                                </div>
+                                <div id="gradingDescriptionRow" class="detail-row" style="margin-top: 12px; display: none;">
+                                    <span class="detail-label">Description:</span>
+                                    <div id="gradingDescription" style="margin-top: 8px; padding: 12px; background: var(--surface); border-radius: 8px; line-height: 1.6;"></div>
+                                </div>
+                            </div>
+
+                            <!-- Student Submission View -->
+                            <div class="homework-detail-section" style="border-top: 2px solid var(--divider); padding-top: 24px; margin-bottom: 20px;">
+                                <h3 class="detail-section-title" style="color: var(--primary);"><i class="fas fa-user-graduate"></i> Student Submission</h3>
+                                <div id="hwSubmissionView" style="margin-top: 16px;">
+                                    <!-- Submission content will be loaded here -->
+                                </div>
+                            </div>
+
+                            <!-- Grading Form -->
+                            <div class="homework-detail-section">
+                                <h3 class="detail-section-title"><i class="fas fa-star"></i> Provide Grade</h3>
+                                <form id="gradingForm">
+                                    <div class="form-row" style="margin-top: 16px;">
+                                        <div class="form-column">
+                                            <label for="hwGradeScore" class="form-label">Grade/Score <span style="color: var(--error);">*</span></label>
+                                            <select id="hwGradeScore" class="form-select" required>
+                                                <option value="">Select grade...</option>
+                                                <option value="A+">A+ (97-100%)</option>
+                                                <option value="A">A (93-96%)</option>
+                                                <option value="A-">A- (90-92%)</option>
+                                                <option value="B+">B+ (87-89%)</option>
+                                                <option value="B">B (83-86%)</option>
+                                                <option value="B-">B- (80-82%)</option>
+                                                <option value="C+">C+ (77-79%)</option>
+                                                <option value="C">C (73-76%)</option>
+                                                <option value="C-">C- (70-72%)</option>
+                                                <option value="D+">D+ (67-69%)</option>
+                                                <option value="D">D (63-66%)</option>
+                                                <option value="D-">D- (60-62%)</option>
+                                                <option value="F">F (Below 60%)</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-column">
+                                            <label for="hwGradePercentage" class="form-label">Percentage (Optional)</label>
+                                            <input type="number" id="hwGradePercentage" class="form-input" min="0" max="100" placeholder="e.g., 92" />
+                                        </div>
+                                    </div>
+                                    <div class="form-row" style="margin-top: 16px;">
+                                        <div class="form-column full-width">
+                                            <label for="hwGradeFeedback" class="form-label">Feedback/Comments</label>
+                                            <textarea id="hwGradeFeedback" class="form-input" rows="6" placeholder="Provide detailed feedback to the student..."></textarea>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="action-btn cancel-btn" onclick="window.closeGradingModal()">
+                                <i class="fas fa-times"></i> Cancel
+                            </button>
+                            <button type="button" class="primary-button" id="hwSubmitGradeBtn">
+                                <i class="fas fa-check"></i> Submit Grade
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- View Homework Modal -->
+                <div class="modal-overlay" id="hwViewModal" style="display: none;">
+                    <div class="modal-card" style="max-width: 900px;">
+                        <div class="modal-header">
+                            <div>
+                                <h2 class="modal-title" id="viewModalTitle">Homework Details</h2>
+                                <p class="section-subtitle" style="margin: 4px 0 0 0; font-size: 0.875rem;" id="viewModalSubtitle"></p>
+                            </div>
+                            <button class="modal-close" onclick="window.closeViewModal()" aria-label="Close">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div id="viewModalContent">
+                                <!-- Content will be dynamically loaded -->
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="primary-button" onclick="window.closeViewModal()">
+                                <i class="fas fa-check"></i> Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+<script>
+// 1. Global Functions (Exported First)
+window.closeGradingModal = () => { 
+    const m = document.getElementById('hwGradingModal');
+    if (m) { m.style.display = 'none'; m.classList.remove('active'); }
+    document.body.style.overflow = 'auto'; 
+};
+
+window.closeViewModal = () => { 
+    const m = document.getElementById('hwViewModal');
+    if (m) { m.style.display = 'none'; m.classList.remove('active'); }
+    document.body.style.overflow = 'auto'; 
+};
+
+// Download homework attachment function
+window.downloadHomeworkAttachment = function(url, filename) {
+    try {
+        // Create a temporary anchor element to trigger download
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename || 'attachment';
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Show toast notification if available
+        if (typeof window.showToast === 'function') {
+            window.showToast(`Downloading ${filename || 'file'}...`, 'info');
+        }
+    } catch (error) {
+        console.error('Error downloading attachment:', error);
+        // Fallback: open in new tab if download fails
+        window.open(url, '_blank');
+    }
+};
+
+window.openGradingModal = (item) => {
+    if (typeof window.ensureModalsInBody === 'function') window.ensureModalsInBody();
+    const modal = document.getElementById('hwGradingModal');
+    if (!modal) {
+        console.error('Grading modal not found');
+        return;
+    }
+
+    document.getElementById('gradingHwTitle').textContent = item.title;
+    document.getElementById('gradingStudentName').textContent = item.student;
+    document.getElementById('gradingDueDate').textContent = new Date(item.due).toLocaleString();
+    
+    const descRow = document.getElementById('gradingDescriptionRow');
+    const descEl = document.getElementById('gradingDescription');
+    if (item.description) { descEl.innerHTML = item.description; descRow.style.display = 'block'; }
+    else descRow.style.display = 'none';
+
+    const submissionView = document.getElementById('hwSubmissionView');
+    if (item.submission) {
+        // Build escapeHtml helper
+        const escapeHtml = (text) => {
+            const div = document.createElement('div');
+            div.innerText = text || '';
+            return div.innerHTML;
+        };
+
+        submissionView.innerHTML = `
+            <div class="detail-row" style="margin-bottom: 16px;"><span class="detail-label">Submitted:</span> <span>${item.submission.submitted_at}</span></div>
+            ${item.submission.notes ? `<div style="margin-bottom: 16px;"><h4>Notes</h4><div style="padding: 12px; background: var(--surface); border-radius: 8px;">${escapeHtml(item.submission.notes)}</div></div>` : ''}
+            ${item.submission.attachments && item.submission.attachments.length > 0 ? `
+                <div><h4>Attachments</h4><div class="attachments-list">
+                    ${item.submission.attachments.map(f => `
+                        <div class="attachment-item" style="display: flex; align-items: center; padding: 12px; background: var(--surface); border-radius: 8px; margin-bottom: 8px;">
+                            <i class="fas fa-file" style="margin-right: 12px; color: var(--primary);"></i>
+                            <div style="flex: 1;"><div style="font-weight: 600;">${escapeHtml(f.name)}</div></div>
+                            <div style="display: flex; gap: 8px;">
+                                <a href="${f.url}" class="action-btn view-btn" target="_blank" title="View in Browser" style="margin-right: 4px;"><i class="fas fa-eye"></i> View</a>
+                                <a href="${f.url}" class="action-btn view-btn" download="${escapeHtml(f.name)}" title="Download File" onclick="event.preventDefault(); window.downloadHomeworkAttachment('${f.url}', '${escapeHtml(f.name)}');"><i class="fas fa-download"></i> Download</a>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div></div>
+            ` : ''}
+        `;
+    } else submissionView.innerHTML = 'No submission details.';
+
+    const submitBtn = document.getElementById('hwSubmitGradeBtn');
+    if (submitBtn) {
+        submitBtn.onclick = () => window.handleSubmitGrade(item.id);
+    }
+
+    modal.style.display = 'flex';
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+};
+
+window.openViewModal = async function(homeworkId) {
+    if (typeof window.ensureModalsInBody === 'function') window.ensureModalsInBody();
+    const modal = document.getElementById('hwViewModal');
+    if (!modal) return;
+
+    try {
+        const response = await apiClient.get(`/homework/details/${homeworkId}/`);
+        if (response.success) {
+            const item = response.homework;
+            const content = document.getElementById('viewModalContent');
+            const title = document.getElementById('viewModalTitle');
+            const subtitle = document.getElementById('viewModalSubtitle');
+
+            if (title) title.textContent = item.title;
+            if (subtitle) subtitle.textContent = item.submission ? (item.status === 'graded' ? 'Submission & Grade' : 'Awaiting Grading') : 'Pending Submission';
+
+            // Build escapeHtml helper
+            const escapeHtml = (text) => {
+                const div = document.createElement('div');
+                div.innerText = text || '';
+                return div.innerHTML;
+            };
+
+            let html = `
+                <div class="homework-detail-section" style="background: rgba(17, 88, 229, 0.03); padding: 20px; border-radius: 12px; border-left: 3px solid var(--primary); margin-bottom: 20px;">
+                    <h3 class="detail-section-title"><i class="fas fa-book"></i> Homework Assignment</h3>
+                    <div class="detail-row"><span class="detail-label">Title:</span> <span style="font-weight: 600;">${escapeHtml(item.title)}</span></div>
+                    <div class="detail-row" style="margin-top: 12px;"><span class="detail-label">Student:</span> <span>${escapeHtml(item.student)}</span></div>
+                    <div class="detail-row" style="margin-top: 12px;"><span class="detail-label">Due Date:</span> <span>${item.due_display}</span></div>
+                    ${item.description ? `<div class="detail-row" style="margin-top: 12px;"><span class="detail-label">Description:</span><div style="margin-top: 8px; padding: 12px; background: var(--surface); border-radius: 8px;">${item.description}</div></div>` : ''}
+                </div>
+            `;
+
+            if (item.submission) {
+                html += `
+                    <div class="homework-detail-section" style="border-top: 2px solid var(--divider); padding-top: 24px; margin-bottom: 20px;">
+                        <h3 class="detail-section-title" style="color: var(--primary);"><i class="fas fa-user-graduate"></i> Student Submission</h3>
+                        <div class="detail-row" style="margin-top: 12px;"><span class="detail-label">Submitted:</span> <span>${item.submission.submitted_at}</span></div>
+                        ${item.submission.notes ? `<div style="margin-top: 16px;"><h4>Notes</h4><div style="padding: 12px; background: var(--surface); border-radius: 8px;">${escapeHtml(item.submission.notes)}</div></div>` : ''}
+                        ${item.submission.attachments && item.submission.attachments.length > 0 ? `
+                            <div style="margin-top: 16px;"><h4>Attachments (${item.submission.attachments.length})</h4><div class="attachments-list">
+                                ${item.submission.attachments.map(f => `
+                                    <div class="attachment-item" style="display: flex; align-items: center; padding: 12px; background: var(--surface); border-radius: 8px; margin-bottom: 8px;">
+                                        <i class="fas fa-file" style="margin-right: 12px; color: var(--primary);"></i>
+                                        <div style="flex: 1;"><div style="font-weight: 600;">${escapeHtml(f.name)}</div><div style="font-size: 0.875rem; color: var(--muted);">${f.size}</div></div>
+                                        <div style="display: flex; gap: 8px;">
+                                            <a href="${f.url}" class="action-btn view-btn" target="_blank" title="View in Browser" style="margin-right: 4px;"><i class="fas fa-eye"></i> View</a>
+                                            <a href="${f.url}" class="action-btn view-btn" download="${escapeHtml(f.name)}" title="Download File" onclick="event.preventDefault(); window.downloadHomeworkAttachment('${f.url}', '${escapeHtml(f.name)}');"><i class="fas fa-download"></i> Download</a>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div></div>
+                        ` : ''}
+                    </div>
+                `;
+            }
+
+            if (item.status === 'graded') {
+                html += `
+                    <div class="homework-detail-section grade-section" style="border-top: 2px solid var(--divider); padding-top: 24px;">
+                        <h3 class="detail-section-title"><i class="fas fa-star"></i> Grade & Feedback</h3>
+                        <div style="margin-top: 16px;">
+                            <div style="font-size: 2rem; font-weight: 700; color: var(--primary);">${escapeHtml(item.grade)}${item.grade_percentage ? ` (${item.grade_percentage}%)` : ''}</div>
+                            ${item.feedback ? `<div style="padding: 12px; background: var(--surface); border-radius: 8px; margin-top: 12px;">${escapeHtml(item.feedback)}</div>` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+
+            content.innerHTML = html;
+            modal.style.display = 'flex';
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+    } catch (error) {
+        if (typeof window.showToast === 'function') window.showToast('Error loading homework details', 'error');
+    }
+};
+
+// 2. Functional IIFE
+(function() {
+    // State
+    let assignedStudents = [];
+    let homeworkItems = [];
+
+    // Helper for toast notifications with fallback
+    function safeToast(message, type = 'info') {
+        if (typeof window.showToast === 'function') {
+            window.showToast(message, type);
+        } else if (typeof window.showTemporaryMessage === 'function') {
+            window.showTemporaryMessage(message);
+        } else {
+            console.log(`[${type.toUpperCase()}] ${message}`);
+            if (type === 'error') alert(message);
+        }
+    }
+
+    async function initializeHomework() {
+        console.log('=== INITIALIZING TEACHER HOMEWORK SECTION ===');
+        ensureModalsInBody();
+        await fetchAssignedStudents();
+        await fetchHomeworkList();
+
+        // 4. Tab Switching Listeners
+        const hwTabs = document.querySelectorAll('.homework-tab-btn');
+        hwTabs.forEach(tab => {
+            tab.removeEventListener('click', onTabClick);
+            tab.addEventListener('click', onTabClick);
+        });
+
+        const hwStudentSelect = document.getElementById('hwStudentSelect');
+        if (hwStudentSelect) {
+            hwStudentSelect.removeEventListener('change', onStudentChange);
+            hwStudentSelect.addEventListener('change', onStudentChange);
+        }
+
+        setupModalHandlers();
+
+        // 5. Form Action Listeners
+        const resetBtn = document.getElementById('resetHomeworkFormBtn');
+        if (resetBtn) {
+            resetBtn.removeEventListener('click', resetHomeworkForm);
+            resetBtn.addEventListener('click', resetHomeworkForm);
+        }
+
+        const assignBtn = document.getElementById('assignHomeworkBtn');
+        if (assignBtn) {
+            assignBtn.removeEventListener('click', handleAssignHomework);
+            assignBtn.addEventListener('click', handleAssignHomework);
+        }
+    }
+
+    function onTabClick(e) {
+        e.preventDefault();
+        const tabName = this.getAttribute('data-tab');
+        switchHomeworkTab(tabName);
+    }
+
+    function onStudentChange(e) {
+        const studentId = e.target.value;
+        updateAssignmentDropdown(studentId);
+    }
+
+    async function fetchAssignedStudents() {
+        try {
+            const response = await apiClient.get('/homework/teacher/assigned-students/');
+            if (response.success) {
+                assignedStudents = response.students;
+                populateStudentDropdown();
+            }
+        } catch (error) {
+            console.error('Error fetching assigned students:', error);
+        }
+    }
+
+    function populateStudentDropdown() {
+        const select = document.getElementById('hwStudentSelect');
+        if (!select) return;
+        
+        select.innerHTML = '<option value="">Choose a student...</option>';
+        assignedStudents.forEach(student => {
+            const opt = document.createElement('option');
+            opt.value = student.id;
+            opt.textContent = `${student.name} (${student.student_id})`;
+            select.appendChild(opt);
+        });
+    }
+
+    function updateAssignmentDropdown(studentId) {
+        const select = document.getElementById('hwAssignmentSelect');
+        if (!select) return;
+
+        if (!studentId) {
+            select.disabled = true;
+            select.innerHTML = '<option value="">First select a student...</option>';
+            return;
+        }
+
+        select.disabled = false;
+        select.innerHTML = '<option value="">Choose an assignment (Optional)...</option>';
+        
+        const student = assignedStudents.find(s => s.id === studentId);
+        if (student && student.assignments) {
+            student.assignments.forEach(asg => {
+                const opt = document.createElement('option');
+                opt.value = asg.id;
+                opt.textContent = `${asg.title} (${asg.code})`;
+                select.appendChild(opt);
+            });
+        }
+    }
+
+    async function fetchHomeworkList() {
+        try {
+            const response = await apiClient.get('/homework/teacher/list/');
+            if (response.success) {
+                homeworkItems = response.homeworks;
+                renderHomeworkLists();
+            }
+        } catch (error) {
+            console.error('Error fetching homework list:', error);
+        }
+    }
+
+    async function handleAssignHomework() {
+        const studentId = document.getElementById('hwStudentSelect')?.value;
+        const assignmentId = document.getElementById('hwAssignmentSelect')?.value;
+        const title = document.getElementById('hwTitle')?.value?.trim();
+        const description = getRichTextHtml('hwDescription');
+        const dueDate = document.getElementById('hwDueDate')?.value;
+
+        if (!studentId) { safeToast('Please select a student', 'error'); return; }
+        if (!title) { safeToast('Please enter a title', 'error'); return; }
+        if (!dueDate) { safeToast('Please select a due date', 'error'); return; }
+
+        try {
+            const response = await apiClient.post('/homework/teacher/create/', {
+                student_id: studentId,
+                assignment_id: assignmentId || '',
+                title,
+                description,
+                due_date: dueDate
+            });
+
+            if (response.success) {
+                safeToast(response.message, 'success');
+                resetHomeworkForm();
+                await fetchHomeworkList();
+                // Switch to review tab
+                switchHomeworkTab('reviewHomework');
+            } else {
+                safeToast(response.error || 'Failed to assign homework', 'error');
+            }
+        } catch (error) {
+            safeToast('Error assigning homework', 'error');
+        }
+    }
+
+    function renderHomeworkLists() {
+        const search = document.getElementById('hwSearch')?.value?.toLowerCase() || '';
+        const statusFilter = document.getElementById('hwStatusFilter')?.value || 'all';
+
+        const pendingList = document.getElementById('hwPendingList');
+        const awaitingList = document.getElementById('hwAwaitingList');
+        const gradedList = document.getElementById('hwGradedList');
+
+        if (!pendingList || !awaitingList || !gradedList) return;
+
+        pendingList.innerHTML = '';
+        awaitingList.innerHTML = '';
+        gradedList.innerHTML = '';
+
+        const filtered = homeworkItems.filter(item => {
+            const matchesSearch = !search || item.title.toLowerCase().includes(search) || item.student.toLowerCase().includes(search);
+            const matchesStatus = statusFilter === 'all' || item.status === statusFilter;
+            return matchesSearch && matchesStatus;
+        });
+
+        filtered.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'hw-card';
+            
+            // Format date for display
+            const dueDate = new Date(item.due).toLocaleString();
+            
+            const escapeHtml = (text) => {
+                const div = document.createElement('div');
+                div.innerText = text || '';
+                return div.innerHTML;
+            };
+
+            card.innerHTML = `
+                <div class="hw-card-title">${escapeHtml(item.title)}</div>
+                <div class="hw-card-meta">
+                    <span>${escapeHtml(item.student)}</span>
+                    <span>Due: ${dueDate}</span>
+                </div>
+                <div class="hw-card-actions">
+                    ${item.status === 'submitted' ? '<button class="action-btn view-btn action-grade">Grade</button>' : ''}
+                    <button class="action-btn view-btn action-view">View</button>
+                </div>
+            `;
+
+            if (item.status === 'pending') pendingList.appendChild(card);
+            if (item.status === 'submitted') awaitingList.appendChild(card);
+            if (item.status === 'graded') {
+                const gradeBadge = document.createElement('div');
+                gradeBadge.className = 'hw-grade-badge';
+                gradeBadge.textContent = `Grade: ${item.grade || '-'}`;
+                card.appendChild(gradeBadge);
+                gradedList.appendChild(card);
+            }
+
+            // Listeners
+            const gradeBtn = card.querySelector('.action-grade');
+            const viewBtn = card.querySelector('.action-view');
+            
+            if (gradeBtn) gradeBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.openGradingModal(item);
+            });
+            if (viewBtn) viewBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.openViewModal(item.id);
+            });
+        });
+    }
+
+    window.handleSubmitGrade = async function(homeworkId) {
+        const score = document.getElementById('hwGradeScore').value;
+        const percentage = document.getElementById('hwGradePercentage').value;
+        const feedback = document.getElementById('hwGradeFeedback').value.trim();
+
+        if (!score) { safeToast('Please select a grade', 'error'); return; }
+
+        try {
+            const response = await apiClient.post('/homework/teacher/grade/', {
+                homework_id: homeworkId,
+                grade: score,
+                percentage: percentage || null,
+                feedback
+            });
+
+            if (response.success) {
+                safeToast(response.message, 'success');
+                window.closeGradingModal();
+                await fetchHomeworkList();
+            } else {
+                safeToast(response.error || 'Failed to submit grade', 'error');
+            }
+        } catch (error) {
+            safeToast('Error submitting grade', 'error');
+        }
+    };
+
+    // Helper functions
+    function switchHomeworkTab(tabName) {
+        document.querySelectorAll('.homework-tab-btn').forEach(t => t.classList.remove('active'));
+        document.querySelector(`[data-tab="${tabName}"]`)?.classList.add('active');
+        document.querySelectorAll('.homework-tab-content').forEach(c => c.classList.remove('active'));
+        document.getElementById(`${tabName}Content`)?.classList.add('active');
+    }
+
+    function getRichTextHtml(elementId) {
+        const el = document.getElementById(elementId);
+        return (el && el.innerHTML.trim()) || '';
+    }
+
+    function resetHomeworkForm() {
+        ['hwStudentSelect', 'hwAssignmentSelect', 'hwTitle', 'hwDueDate'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = '';
+        });
+        const desc = document.getElementById('hwDescription');
+        if (desc) desc.innerHTML = '';
+        document.getElementById('hwAssignmentSelect').disabled = true;
+    }
+
+    function ensureModalsInBody() {
+        const dynamicContainer = document.getElementById('dynamicContentContainer');
+        if (!dynamicContainer) return;
+
+        ['hwGradingModal', 'hwViewModal'].forEach(id => {
+            const modalInContainer = dynamicContainer.querySelector(`#${id}`);
+            if (modalInContainer) {
+                const existingInBody = document.querySelector(`body > #${id}`);
+                if (existingInBody && existingInBody !== modalInContainer) existingInBody.remove();
+                
+                if (!document.body.contains(modalInContainer)) {
+                    document.body.appendChild(modalInContainer);
+                    console.log(`✅ Moved fresh ${id} to document body`);
+                }
+            }
+        });
+    }
+    window.ensureModalsInBody = ensureModalsInBody;
+
+    function setupModalHandlers() {
+        ['hwGradingModal', 'hwViewModal'].forEach(id => {
+            const modal = document.getElementById(id);
+            if (modal && !modal.dataset.handlerSetup) {
+                modal.addEventListener('click', (e) => { if (e.target === modal) {
+                    modal.style.display = 'none'; 
+                    modal.classList.remove('active');
+                    document.body.style.overflow = 'auto'; 
+                }});
+                modal.dataset.handlerSetup = 'true';
+            }
+        });
+    }
+
+    // Export to window
+    window.initializeHomework = initializeHomework;
+
+    // Initial run
+    initializeHomework();
+})();
+</script>
+{% endblock %}

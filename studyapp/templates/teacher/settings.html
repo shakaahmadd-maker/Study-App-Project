@@ -1,0 +1,429 @@
+{% extends "teacher/teacher_base.html" %}
+
+{% block content %}
+{% csrf_token %}
+            <div class="content-section" id="settingsSection">
+                <!-- Header -->
+                <div class="content-header">
+                    <div class="header-left">
+                        <h1 class="page-title">Settings</h1>
+                        <p class="page-subtitle">Manage your notification preferences and appearance settings.</p>
+                    </div>
+                </div>
+
+                <!-- Settings Tabs -->
+                <div class="settings-tabs">
+                    <button class="settings-tab-btn active" data-tab="notifications">
+                        <i class="fas fa-bell"></i>
+                        <span>Notifications</span>
+                    </button>
+                    <button class="settings-tab-btn" data-tab="reminders">
+                        <i class="fas fa-clock"></i>
+                        <span>Reminders</span>
+                    </button>
+                </div>
+
+                <!-- Settings Content -->
+                <div class="settings-content">
+                    <!-- Notifications Tab -->
+                    <div class="settings-tab-content active" id="notificationsTab">
+                        <div class="notification-settings-section">
+                            <h3 class="section-title">Notification Settings</h3>
+                            <div class="notification-options">
+                                <div class="notification-option">
+                                    <div class="notification-info">
+                                        <h4 class="notification-title">New Student Messages</h4>
+                                        <p class="notification-description">Get notified when a student sends you a
+                                            message.</p>
+                                    </div>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="studentMessages" class="toggle-input" checked>
+                                        <label for="studentMessages" class="toggle-label">
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="notification-option">
+                                    <div class="notification-info">
+                                        <h4 class="notification-title">New Announcements</h4>
+                                        <p class="notification-description">Get notified for new school-wide
+                                            announcements.</p>
+                                    </div>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="announcements" class="toggle-input">
+                                        <label for="announcements" class="toggle-label">
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="notification-option">
+                                    <div class="notification-info">
+                                        <h4 class="notification-title">Assignment Submissions</h4>
+                                        <p class="notification-description">Get notified when students submit
+                                            assignments.</p>
+                                    </div>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="assignmentSubmissions" class="toggle-input" checked>
+                                        <label for="assignmentSubmissions" class="toggle-label">
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="notification-option">
+                                    <div class="notification-info">
+                                        <h4 class="notification-title">Meeting Reminders</h4>
+                                        <p class="notification-description">Get notified before scheduled meetings.</p>
+                                    </div>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="meetingReminders" class="toggle-input" checked>
+                                        <label for="meetingReminders" class="toggle-label">
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="notification-option">
+                                    <div class="notification-info">
+                                        <h4 class="notification-title">Grade Submissions</h4>
+                                        <p class="notification-description">Get notified when grades need to be
+                                            submitted.</p>
+                                    </div>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="gradeSubmissions" class="toggle-input" checked>
+                                        <label for="gradeSubmissions" class="toggle-label">
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reminders Tab -->
+                    <div class="settings-tab-content" id="remindersTab">
+                        <div class="reminder-settings-section">
+                            <h3 class="section-title">Reminder Settings</h3>
+                            <div class="reminder-options">
+                                <div class="reminder-option">
+                                    <div class="reminder-info">
+                                        <h4 class="reminder-title">Assignment Due Date Reminders</h4>
+                                        <p class="reminder-description">Receive reminders for upcoming assignment due
+                                            dates.</p>
+                                    </div>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="assignmentDueReminders" class="toggle-input" checked>
+                                        <label for="assignmentDueReminders" class="toggle-label">
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="reminder-option">
+                                    <div class="reminder-info">
+                                        <h4 class="reminder-title">Meeting Reminders</h4>
+                                        <p class="reminder-description">Receive reminders before scheduled meetings.</p>
+                                    </div>
+                                    <div class="reminder-options-sub">
+                                        <div class="reminder-time-option">
+                                            <label class="reminder-time-label">Remind me</label>
+                                            <select class="reminder-time-select" id="meetingReminderTime">
+                                                <option value="15">15 minutes before</option>
+                                                <option value="30" selected>30 minutes before</option>
+                                                <option value="60">1 hour before</option>
+                                                <option value="1440">1 day before</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="reminder-option">
+                                    <div class="reminder-info">
+                                        <h4 class="reminder-title">Grade Submission Reminders</h4>
+                                        <p class="reminder-description">Receive reminders for grade submission
+                                            deadlines.</p>
+                                    </div>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="gradeSubmissionReminders" class="toggle-input"
+                                            checked>
+                                        <label for="gradeSubmissionReminders" class="toggle-label">
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Actions -->
+                <div class="settings-actions">
+                    <button type="button" class="ghost-button" onclick="resetTeacherSettings()">
+                        <i class="fas fa-undo"></i> Reset to Defaults
+                    </button>
+                    <button type="button" class="primary-button" onclick="saveTeacherSettings()">
+                        <i class="fas fa-save"></i> Save Settings
+                    </button>
+                </div>
+            </div>
+
+            <script>
+                // Teacher Settings JavaScript
+                let teacherSettings = {};
+
+                // Initialize settings tabs
+                function initializeSettingsTabs() {
+                    const settingsTabs = document.querySelectorAll('.settings-tab-btn');
+                    
+                    if (settingsTabs.length === 0) {
+                        console.log('No settings tabs found');
+                        return;
+                    }
+
+                    console.log(`Found ${settingsTabs.length} settings tabs`);
+
+                    settingsTabs.forEach(tab => {
+                        tab.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            const tabName = this.getAttribute('data-tab');
+                            switchSettingsTab(tabName);
+                        });
+                    });
+                }
+
+                function switchSettingsTab(tabName) {
+                    console.log(`Switching to ${tabName} tab`);
+
+                    // Remove active class from all tabs
+                    document.querySelectorAll('.settings-tab-btn').forEach(tab => {
+                        tab.classList.remove('active');
+                    });
+
+                    // Hide all tab content
+                    document.querySelectorAll('.settings-tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+
+                    // Add active class to clicked tab
+                    const activeTab = document.querySelector(`.settings-tab-btn[data-tab="${tabName}"]`);
+                    if (activeTab) {
+                        activeTab.classList.add('active');
+                    }
+
+                    // Show corresponding content
+                    const activeContent = document.getElementById(`${tabName}Tab`);
+                    if (activeContent) {
+                        activeContent.classList.add('active');
+                    }
+                }
+
+                // Initialize toggle switches
+                function initializeToggleSwitches() {
+                    const toggleSwitches = document.querySelectorAll('.toggle-input');
+                    
+                    if (toggleSwitches.length === 0) {
+                        console.log('No toggle switches found');
+                        return;
+                    }
+
+                    console.log(`Found ${toggleSwitches.length} toggle switches`);
+
+                    toggleSwitches.forEach(toggle => {
+                        // Remove any existing listeners to avoid duplicates
+                        const newToggle = toggle.cloneNode(true);
+                        toggle.parentNode.replaceChild(newToggle, toggle);
+                        
+                        newToggle.addEventListener('change', function() {
+                            const settingName = this.id;
+                            const isEnabled = this.checked;
+                            console.log(`${settingName} setting changed to: ${isEnabled}`);
+                        });
+                    });
+                }
+
+                // Initialize when DOM is ready or immediately if already loaded
+                function initSettingsPage() {
+                    initializeSettingsTabs();
+                    initializeToggleSwitches();
+                    loadTeacherSettings();
+                }
+
+                // Load settings on page load
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initSettingsPage);
+                } else {
+                    // DOM already loaded, initialize immediately
+                    initSettingsPage();
+                }
+
+                // Also initialize after a short delay to handle dynamic loading
+                setTimeout(initSettingsPage, 100);
+
+                async function loadTeacherSettings() {
+                    try {
+                        const response = await fetch('/account/api/accounts/settings/', {
+                            method: 'GET',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value
+                            }
+                        });
+
+                        if (response.ok) {
+                            const data = await response.json();
+                            if (data.success) {
+                                teacherSettings = data.settings;
+                                // Update UI with loaded settings
+                                updateTeacherUI();
+                            }
+                        } else {
+                            console.error('Failed to load settings');
+                        }
+                    } catch (error) {
+                        console.error('Error loading settings:', error);
+                    }
+                }
+
+                function updateTeacherUI() {
+                    try {
+                        // Notifications tab
+                        const studentMessagesEl = document.getElementById('studentMessages');
+                        const announcementsEl = document.getElementById('announcements');
+                        const assignmentSubmissionsEl = document.getElementById('assignmentSubmissions');
+                        const meetingRemindersEl = document.getElementById('meetingReminders');
+                        const gradeSubmissionsEl = document.getElementById('gradeSubmissions');
+
+                        if (studentMessagesEl) studentMessagesEl.checked = teacherSettings.teacher_messages !== undefined ? teacherSettings.teacher_messages : true;
+                        if (announcementsEl) announcementsEl.checked = teacherSettings.new_announcements !== undefined ? teacherSettings.new_announcements : false;
+                        if (assignmentSubmissionsEl) assignmentSubmissionsEl.checked = teacherSettings.assignment_submissions !== undefined ? teacherSettings.assignment_submissions : true;
+                        if (meetingRemindersEl) meetingRemindersEl.checked = teacherSettings.meeting_reminders_teacher !== undefined ? teacherSettings.meeting_reminders_teacher : true;
+                        if (gradeSubmissionsEl) gradeSubmissionsEl.checked = teacherSettings.grade_submissions !== undefined ? teacherSettings.grade_submissions : true;
+
+                        // Reminders tab
+                        const assignmentDueRemindersEl = document.getElementById('assignmentDueReminders');
+                        const meetingReminderTimeEl = document.getElementById('meetingReminderTime');
+                        const gradeSubmissionRemindersEl = document.getElementById('gradeSubmissionReminders');
+
+                        if (assignmentDueRemindersEl) assignmentDueRemindersEl.checked = teacherSettings.assignment_due_reminders !== undefined ? teacherSettings.assignment_due_reminders : true;
+                        if (meetingReminderTimeEl) meetingReminderTimeEl.value = teacherSettings.meeting_reminder_time || 30;
+                        if (gradeSubmissionRemindersEl) gradeSubmissionRemindersEl.checked = teacherSettings.grade_submission_reminders !== undefined ? teacherSettings.grade_submission_reminders : true;
+                    } catch (error) {
+                        console.error('Error updating UI:', error);
+                    }
+                }
+
+                async function saveTeacherSettings() {
+                    try {
+                        // Get all setting values with error handling
+                        const getElementValue = (id, type = 'checked') => {
+                            const el = document.getElementById(id);
+                            if (!el) {
+                                console.warn(`Element with id '${id}' not found`);
+                                return type === 'checked' ? false : (type === 'value' ? '' : 0);
+                            }
+                            return type === 'checked' ? el.checked : (type === 'value' ? el.value : parseInt(el.value) || 0);
+                        };
+
+                        const settings = {
+                            // Notifications
+                            teacher_messages: getElementValue('studentMessages', 'checked'),
+                            new_announcements: getElementValue('announcements', 'checked'),
+                            assignment_submissions: getElementValue('assignmentSubmissions', 'checked'),
+                            meeting_reminders_teacher: getElementValue('meetingReminders', 'checked'),
+                            grade_submissions: getElementValue('gradeSubmissions', 'checked'),
+                            // Reminders
+                            assignment_due_reminders: getElementValue('assignmentDueReminders', 'checked'),
+                            meeting_reminder_time: getElementValue('meetingReminderTime', 'number'),
+                            grade_submission_reminders: getElementValue('gradeSubmissionReminders', 'checked'),
+                        };
+
+                        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || 
+                                        document.querySelector('input[name="csrfmiddlewaretoken"]')?.value;
+                        
+                        if (!csrfToken) {
+                            throw new Error('CSRF token not found');
+                        }
+
+                        const response = await fetch('/account/api/accounts/settings/', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': csrfToken
+                            },
+                            body: JSON.stringify(settings)
+                        });
+
+                        if (!response.ok) {
+                            const errorText = await response.text();
+                            throw new Error(`HTTP ${response.status}: ${errorText}`);
+                        }
+
+                        const data = await response.json();
+
+                        if (data.success) {
+                            // Update local settings
+                            teacherSettings = { ...teacherSettings, ...settings };
+                            
+                            // Show success message
+                            if (typeof showToast === 'function') {
+                                showToast('Settings saved successfully!', 'success');
+                            } else {
+                                alert('Settings saved successfully!');
+                            }
+                        } else {
+                            throw new Error(data.error || 'Failed to save settings');
+                        }
+                    } catch (error) {
+                        console.error('Error saving settings:', error);
+                        if (typeof showToast === 'function') {
+                            showToast('Failed to save settings: ' + error.message, 'error');
+                        } else {
+                            alert('Failed to save settings: ' + error.message);
+                        }
+                    }
+                }
+
+                function resetTeacherSettings() {
+                    if (confirm('Are you sure you want to reset all settings to default values?')) {
+                        try {
+                            // Reset to defaults
+                            const setElementValue = (id, value, type = 'checked') => {
+                                const el = document.getElementById(id);
+                                if (el) {
+                                    if (type === 'checked') {
+                                        el.checked = value;
+                                    } else {
+                                        el.value = value;
+                                    }
+                                }
+                            };
+
+                            setElementValue('studentMessages', true);
+                            setElementValue('announcements', false);
+                            setElementValue('assignmentSubmissions', true);
+                            setElementValue('meetingReminders', true);
+                            setElementValue('gradeSubmissions', true);
+                            setElementValue('assignmentDueReminders', true);
+                            setElementValue('meetingReminderTime', 30, 'value');
+                            setElementValue('gradeSubmissionReminders', true);
+                            
+                            // Save the reset values
+                            saveTeacherSettings();
+                        } catch (error) {
+                            console.error('Error resetting settings:', error);
+                            if (typeof showToast === 'function') {
+                                showToast('Error resetting settings', 'error');
+                            } else {
+                                alert('Error resetting settings');
+                            }
+                        }
+                    }
+                }
+
+                // Make functions globally available
+                window.saveTeacherSettings = saveTeacherSettings;
+                window.resetTeacherSettings = resetTeacherSettings;
+            </script>
+{% endblock %}

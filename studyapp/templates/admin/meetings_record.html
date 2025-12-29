@@ -1,0 +1,251 @@
+<section class="content-section" id="meetings-recordSection" aria-labelledby="meetingsRecordHeading">
+    <div class="section-header-modern">
+        <div class="header-left">
+            <h1 class="section-title" id="meetingsRecordHeading">Meetings Record</h1>
+            <p class="section-subtitle">View and download recordings of past meetings for review and tracking.</p>
+        </div>
+        <div class="header-right">
+            <div class="filter-container">
+                <select id="studentFilter" class="filter-select" onchange="filterMeetingsRecord()">
+                    <option value="">All Students</option>
+                    {% for student in students %}
+                    <option value="{{ student }}">{{ student }}</option>
+                    {% endfor %}
+                </select>
+                <select id="teacherFilter" class="filter-select" onchange="filterMeetingsRecord()">
+                    <option value="">All Teachers</option>
+                    {% for teacher in teachers %}
+                    <option value="{{ teacher }}">{{ teacher }}</option>
+                    {% endfor %}
+                </select>
+                <div class="search-container-improved">
+                    <div class="search-input-wrapper">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" id="meetingRecordSearch" class="search-input"
+                            placeholder="Search by Meeting ID or Title..." oninput="filterMeetingsRecord()">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-card-modern">
+        <div class="table-header-inline">
+            <div class="header-with-badge">
+                <h3 class="table-title">Past Meetings</h3>
+                <span class="table-badge warning">{{ meetings_record|length }} Total</span>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="modern-table" id="meetingsRecordTable">
+                <thead>
+                    <tr>
+                        <th>Meeting ID</th>
+                        <th>Meeting Details</th>
+                        <th>Student Details</th>
+                        <th>Teacher Details</th>
+                        <th>Status</th>
+                        <th>Duration</th>
+                        <th>Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for meeting in meetings_record %}
+                    <tr>
+                        <td>
+                            <span class="meeting-id-badge"
+                                title="{{ meeting.id }}">{{meeting.id|truncatechars:10}}</span>
+                            <!-- ai please do not make changes or adjust it to the next line, it is correct -->
+                        </td>
+                        <td>
+                            <div class="meeting-info">
+                                <span class="meeting-title-text">{{ meeting.title }}</span>
+                                <span class="meeting-agenda">{{
+                                    meeting.agenda|default:"Noagenda"|truncatechars:30}}</span>
+                                <!-- ai please do not make changes or adjust it to the next line, it is correct -->
+                            </div>
+                        </td>
+                        <td>
+                            <div class="user-info">
+                                <span
+                                    class="user-name">{{meeting.student.get_full_name|default:meeting.student.username}}</span>
+                                <!-- ai please do not make changes or adjust it to the next line, it is correct -->
+                                <span class="user-email">{{ meeting.student.email }}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="user-info">
+                                <span
+                                    class="user-name">{{meeting.teacher.get_full_name|default:meeting.teacher.username}}</span>
+                                <!-- ai please do not make changes or adjust it to the next line, it is correct -->
+                                <span class="user-email">{{ meeting.teacher.email }}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="status-badge {{ meeting.status }}">
+                                <i
+                                    class="fas {% if meeting.status == 'completed' %}fa-check-circle{% elif meeting.status == 'in_progress' %}fa-spinner fa-spin{% else %}fa-calendar-alt{% endif %}"></i>
+                                {{ meeting.get_status_display }}
+                            </span>
+                        </td>
+                        <td class="text-center">{{ meeting.duration_minutes|default:"0" }} mins</td>
+                        <!-- ai please do not make changes or adjust it to the next line, it is correct -->
+                        <td>
+                            <div style="display: flex; flex-direction: column;">
+                                <span style="font-weight: 500;">{{ meeting.scheduled_at|date:"M d, Y" }}</span>
+                                <!-- ai please do not make changes or adjust it to the next line, it is correct -->
+                                <span
+                                    style="font-size: 0.75rem; color: var(--text-muted);">{{meeting.scheduled_at|date:"H:i"}}</span>
+                                <!-- ai please do not make changes or adjust it to the next line, it is correct -->
+                            </div>
+                        </td>
+                        <td>
+                            <div class="action-buttons-group">
+                                {% if meeting.recording %}
+                                <a href="{% url 'meeting:download_recording' meeting.id %}"
+                                    class="btn-primary-modern small" title="Download Recording">
+                                    <i class="fas fa-download"></i>
+                                    Download
+                                </a>
+                                {% else %}
+                                <span class="no-recording">
+                                    <i class="fas fa-video-slash"></i> No Recording
+                                </span>
+                                {% endif %}
+                                <button class="action-btn delete-btn" onclick="deleteMeetingRecord('{{ meeting.id }}')"
+                                    title="Delete Record">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8">
+                            <div class="empty-table">
+                                <i class="fas fa-calendar-times"
+                                    style="font-size: 3rem; color: var(--border-color); margin-bottom: 1rem; display: block;"></i>
+                                <h3>No meeting records found</h3>
+                                <p>Past meeting recordings will appear here once they are available.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<script>
+    function filterMeetingsRecord() {
+        const searchText = document.getElementById('meetingRecordSearch').value.toLowerCase();
+        const studentFilter = document.getElementById('studentFilter').value.toLowerCase();
+        const teacherFilter = document.getElementById('teacherFilter').value.toLowerCase();
+        const table = document.getElementById('meetingsRecordTable');
+        const tr = table.getElementsByTagName('tr');
+
+        let visibleCount = 0;
+
+        for (let i = 1; i < tr.length; i++) {
+            const row = tr[i];
+            const cells = row.getElementsByTagName('td');
+            if (cells.length < 4) continue;
+
+            const id = cells[0].textContent.toLowerCase();
+            const details = cells[1].textContent.toLowerCase();
+            const student = cells[2].textContent.toLowerCase();
+            const teacher = cells[3].textContent.toLowerCase();
+
+            const matchesSearch = id.includes(searchText) || details.includes(searchText);
+            const matchesStudent = studentFilter === "" || student.includes(studentFilter);
+            const matchesTeacher = teacherFilter === "" || teacher.includes(teacherFilter);
+
+            if (matchesSearch && matchesStudent && matchesTeacher) {
+                row.style.display = "";
+                visibleCount++;
+            } else {
+                row.style.display = "none";
+            }
+        }
+
+        // Update count badge if needed (optional, just for visual feedback)
+        const countBadge = document.querySelector('.table-badge.warning');
+        if (countBadge) {
+            countBadge.textContent = `${visibleCount} Filtered / {{ meetings_record|length }} Total`;
+        }
+    }
+
+    async function deleteMeetingRecord(meetingId) {
+        if (!confirm('Are you sure you want to delete this meeting record? This action cannot be undone.')) {
+            return;
+        }
+
+        // Get CSRF token helper function
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        const csrfToken = '{{ csrf_token }}' || getCookie('csrftoken');
+
+        try {
+            console.log('Attempting to delete meeting:', meetingId);
+            const response = await fetch(`/meeting/api/${meetingId}/delete/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ error: 'Network response was not ok' }));
+                throw new Error(errorData.error || `Server returned ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            if (data.success) {
+                if (window.toastNotifications) {
+                    toastNotifications.success('Meeting record deleted successfully');
+                } else {
+                    alert('Meeting record deleted successfully');
+                }
+
+                // Refresh the section by clearing cache first
+                if (window.showSection) {
+                    if (window.loadedSections && window.loadedSections['meetings-record']) {
+                        delete window.loadedSections['meetings-record'];
+                    }
+                    window.showSection('meetings-record');
+                } else {
+                    location.reload();
+                }
+            } else {
+                throw new Error(data.error || 'Failed to delete record');
+            }
+        } catch (error) {
+            console.error('Error deleting meeting record:', error);
+            if (window.toastNotifications) {
+                toastNotifications.error('Error: ' + error.message);
+            } else {
+                alert('Error: ' + error.message);
+            }
+        }
+    }
+
+    // Export to window to ensure global availability
+    window.deleteMeetingRecord = deleteMeetingRecord;
+</script>

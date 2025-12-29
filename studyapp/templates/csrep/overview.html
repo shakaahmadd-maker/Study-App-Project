@@ -1,0 +1,58 @@
+{% extends "csrep/csrep_base.html" %}
+{% block content %}
+
+<section class="content-section active" id="overviewSection" aria-labelledby="overviewHeading">
+    <header class="section-header">
+        <div>
+            <h1 class="section-title" id="overviewHeading">Daily Pulse</h1>
+            <p class="section-subtitle">Monitor live conversations, invoice momentum, and student
+                onboarding.</p>
+        </div>
+        <div class="header-filters">
+            <button class="filter-chip active" type="button" data-range="today">Today</button>
+            <button class="filter-chip" type="button" data-range="7d">7 Days</button>
+            <button class="filter-chip" type="button" data-range="30d">30 Days</button>
+        </div>
+    </header>
+
+    <div class="metric-grid">
+        <div class="metric-card" role="button" tabindex="0" data-open-section="preSignIn" title="Open pre-sign-in chat">
+            <div class="metric-icon"><i class="fas fa-headset"></i></div>
+            <div>
+                <p class="metric-label">Live Chats</p>
+                <p class="metric-value" id="liveChatsCount">—</p>
+            </div>
+        </div>
+        <div class="metric-card" role="button" tabindex="0" data-open-section="invoices" title="Open invoices">
+            <div class="metric-icon"><i class="fas fa-file-invoice-dollar"></i></div>
+            <div>
+                <p class="metric-label">Invoices Created</p>
+                <p class="metric-value" id="invoicesCreatedCount">—</p>
+            </div>
+        </div>
+        <div class="metric-card" role="button" tabindex="0" data-open-section="threads" title="Open threads">
+            <div class="metric-icon"><i class="fas fa-comments"></i></div>
+            <div>
+                <p class="metric-label">Active Threads</p>
+                <p class="metric-value" id="activeThreadsCount">—</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="overview-grid">
+        <article class="panel">
+            <header class="panel-header">
+                <div>
+                    <h2 class="panel-title">Notifications & New Chat Alerts</h2>
+                    <p class="panel-subtitle">Latest activity across chats, invoices, and reminders</p>
+                </div>
+                <button class="ghost-button" data-open-section="notifications"><i class="fas fa-bell"></i>
+                    Open notifications</button>
+            </header>
+            <ul class="alert-list" id="notificationsAlertsList">
+                <li style="text-align: center; padding: 2rem; color: var(--muted-text);">Loading notifications...</li>
+            </ul>
+        </article>
+    </div>
+</section>
+{% endblock %}

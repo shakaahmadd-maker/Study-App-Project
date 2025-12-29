@@ -1,0 +1,177 @@
+{% extends "teacher/teacher_base.html" %}
+
+{% block content %}
+<section class="content-section" id="student_managementSection" aria-labelledby="studentManagementHeading">
+    <div class="section-header">
+        <div class="header-left">
+            <h1 class="section-title" id="studentManagementHeading">Student Management</h1>
+            <p class="section-subtitle">View and manage your assigned students and their assignments.</p>
+        </div>
+    </div>
+
+    <!-- Search and Filter Container -->
+    <div class="search-filter-container">
+        <div class="search-container-improved">
+            <div class="search-input-wrapper">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-input" placeholder="Search students or assignments..."
+                    id="studentManagementSearchInput">
+            </div>
+        </div>
+        <div class="filter-container">
+            <select class="filter-select" id="studentManagementFilter">
+                <option value="all">All Students</option>
+                <option value="online">Online</option>
+                <option value="offline">Offline</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Students Cards Grid -->
+    <div class="students-cards-container">
+        <div class="students-cards-grid">
+            {% for student in assigned_students %}
+            <div class="student-card"
+                data-student-id="{{ student.id }}"
+                data-user-id="{{ student.user.id }}">
+                <div class="student-card-header">
+                    <div class="student-card-identity">
+                        <div class="student-card-avatar">
+                            {% if student.user.profile_picture %}
+                            <img src="{{ student.user.profile_picture.url }}" alt="{{ student.user.get_full_name }}"
+                                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            {% else %}
+                            <img src="" alt="{{ student.user.get_full_name }}" style="display:none;">
+                            {% endif %}
+                            <div class="avatar-fallback-circle" style="{% if student.user.profile_picture %}display:none;{% endif %}">👤</div>
+                        </div>
+                        <div class="student-card-info">
+                            <div class="student-card-id">ID: {{ student.student_id|stringformat:"04d" }}</div>
+                            <h3 class="student-card-name">{{ student.user.get_full_name|default:"Student" }}</h3>
+                            <div class="student-card-email" style="font-size: 12px; color: #6b7280; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                {{ student.user.email }}
+                            </div>
+                            <div class="assignment-title-text" style="display:none;">
+                                Assignments: {{ student.assignment_count|default:0 }}
+                            </div>
+                        </div>
+                    </div>
+                    {% if student.is_online %}
+                    <span class="status-pill online"><span class="status-dot"></span>Online</span>
+                    {% else %}
+                    <span class="status-pill offline"><span class="status-dot"></span>Offline</span>
+                    {% endif %}
+                </div>
+
+                <div style="font-size: 12px; color: #6b7280;">
+                    Assigned assignments: <strong style="color:#111827;">{{ student.assignment_count|default:0 }}</strong>
+                </div>
+
+                <div class="student-card-actions">
+                    <button class="action-icon-btn chat-btn" onclick="openChatWithStudent('{{ student.user.id }}')"
+                        title="Chat with Student">
+                        <i class="fas fa-comment"></i>
+                    </button>
+                    <button class="action-icon-btn assignments-btn" onclick="showStudentAssignments({{ student.id }})"
+                        title="Show Assignments">
+                        <i class="fas fa-list"></i>
+                    </button>
+                    <button class="action-icon-btn meeting-btn" onclick="scheduleMeeting('{{ student.user.id }}')"
+                        title="Schedule Meeting">
+                        <i class="fas fa-calendar-plus"></i>
+                    </button>
+                    <button class="action-icon-btn feedback-btn" onclick="openFeedback({{ student.id }})" title="Feedback">
+                        <i class="fas fa-comment-dots"></i>
+                    </button>
+                    <button class="action-icon-btn report-btn" onclick="openReport({{ student.id }})" title="Report">
+                        <i class="fas fa-file-alt"></i>
+                    </button>
+                </div>
+            </div>
+            {% empty %}
+            <div class="announcements-empty" style="grid-column: 1 / -1;">
+                <div class="empty-state">
+                    <i class="fas fa-users"></i>
+                    <h3>No assigned students</h3>
+                    <p>You don’t have any students assigned yet.</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<script>
+// Student Management Functionality
+(function() {
+    if (window.studentManagementInitialized) return;
+
+    function initializeStudentManagement() {
+        const searchInput = document.getElementById('studentManagementSearchInput');
+        const filterSelect = document.getElementById('studentManagementFilter');
+
+        // Search functionality
+        if (searchInput) {
+            searchInput.addEventListener('input', function () {
+                filterStudentTable(this.value.toLowerCase(), filterSelect?.value || 'all');
+            });
+        }
+
+        // Filter functionality
+        if (filterSelect) {
+            filterSelect.addEventListener('change', function () {
+                filterStudentTable(searchInput?.value.toLowerCase() || '', this.value);
+            });
+        }
+    }
+
+    function filterStudentTable(searchQuery, filterValue) {
+        const rows = document.querySelectorAll('#student_managementSection .student-card, #student_managementSection .student-row');
+        let visibleCount = 0;
+
+        rows.forEach(row => {
+            const studentName = row.querySelector('.student-card-name, .student-name')?.textContent.toLowerCase() || '';
+            const studentEmail = row.querySelector('.student-card-email, .student-email')?.textContent.toLowerCase() || '';
+            const assignmentTitle = row.querySelector('.assignment-title-text')?.textContent.toLowerCase() || '';
+            const statusBadge = row.querySelector('.status-pill, .status-badge');
+            const statusText = statusBadge?.textContent.toLowerCase().trim() || '';
+            const statusClass = statusBadge?.classList.contains('online') ? 'online' : 
+                               statusBadge?.classList.contains('offline') ? 'offline' : '';
+
+            // Check if row matches search query
+            const matchesSearch = !searchQuery ||
+                studentName.includes(searchQuery) ||
+                studentEmail.includes(searchQuery) ||
+                assignmentTitle.includes(searchQuery);
+
+            // Check if row matches filter (by online/offline status)
+            let matchesFilter = true;
+            if (filterValue !== 'all') {
+                if (filterValue === 'online') {
+                    matchesFilter = statusClass === 'online' || statusText.includes('online');
+                } else if (filterValue === 'offline') {
+                    matchesFilter = statusClass === 'offline' || statusText.includes('offline');
+                }
+            }
+
+            // Show/hide row based on matches
+            if (matchesSearch && matchesFilter) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeStudentManagement);
+    } else {
+        initializeStudentManagement();
+    }
+
+    window.studentManagementInitialized = true;
+})();
+</script>
+{% endblock %}

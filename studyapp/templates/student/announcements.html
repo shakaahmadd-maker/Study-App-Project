@@ -1,0 +1,131 @@
+{% extends "student/student_base.html" %}
+
+{% block content %}
+<section class="content-section" id="announcementsSection" aria-labelledby="announcementsHeading">
+    <h1 class="section-title" id="announcementsHeading">Announcements</h1>
+    <p class="section-subtitle">View important announcements from teachers and administrators.</p>
+
+    <!-- Announcements List -->
+    <div class="announcements-container" id="announcementsList">
+        <div class="announcement-item has-important">
+            <div class="announcement-header">
+                <div class="announcement-author">
+                    <div class="author-avatar">
+                        <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=48&h=48&fit=crop&crop=face"
+                            alt="Dr. Amelia Harper"
+                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                        <div class="avatar-fallback" style="display: none;"><i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                    <div class="author-info">
+                        <div class="author-name">Dr. Amelia Harper</div>
+                        <div class="announcement-date">2 hours ago</div>
+                    </div>
+                </div>
+                <div class="announcement-badge important">
+                    <i class="fas fa-star"></i> Important
+                </div>
+            </div>
+            <div class="announcement-content">
+                <h3 class="announcement-title">Final Exam Schedule Update</h3>
+                <p class="announcement-text">Please note that the final exam schedule has been updated. The
+                    Mathematics exam has been moved to Friday, December 20th at 2:00 PM. Please check your
+                    student portal for the complete updated schedule.</p>
+            </div>
+            <div class="announcement-footer">
+                <div class="announcement-tags">
+                    <span class="tag">Exams</span>
+                    <span class="tag">Mathematics</span>
+                </div>
+            </div>
+        </div>
+        <div class="announcement-item">
+            <div class="announcement-header">
+                <div class="announcement-author">
+                    <div class="author-avatar">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=48&h=48&fit=crop&crop=face"
+                            alt="Administration"
+                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                        <div class="avatar-fallback" style="display: none;"><i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                    <div class="author-info">
+                        <div class="author-name">Administration</div>
+                        <div class="announcement-date">1 day ago</div>
+                    </div>
+                </div>
+                <div class="announcement-badge general">
+                    <i class="fas fa-info-circle"></i> General
+                </div>
+            </div>
+            <div class="announcement-content">
+                <h3 class="announcement-title">Library Hours Extended</h3>
+                <p class="announcement-text">The library will now be open until 10:00 PM on weekdays during
+                    exam week. Extended hours will be available from December 15th to December 22nd.</p>
+            </div>
+            <div class="announcement-footer">
+                <div class="announcement-tags">
+                    <span class="tag">Library</span>
+                    <span class="tag">General</span>
+                </div>
+            </div>
+        </div>
+        <div class="announcement-item">
+            <div class="announcement-header">
+                <div class="announcement-author">
+                    <div class="author-avatar">
+                        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=48&h=48&fit=crop&crop=face"
+                            alt="Dr. Sarah Chen"
+                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                        <div class="avatar-fallback" style="display: none;"><i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                    <div class="author-info">
+                        <div class="author-name">Dr. Sarah Chen</div>
+                        <div class="announcement-date">3 days ago</div>
+                    </div>
+                </div>
+                <div class="announcement-badge general">
+                    <i class="fas fa-info-circle"></i> General
+                </div>
+            </div>
+            <div class="announcement-content">
+                <h3 class="announcement-title">Physics Lab Safety Reminder</h3>
+                <p class="announcement-text">All students must complete the safety certification before
+                    participating in the upcoming physics lab sessions. Please ensure you have completed the
+                    online safety module.</p>
+            </div>
+            <div class="announcement-footer">
+                <div class="announcement-tags">
+                    <span class="tag">Physics</span>
+                    <span class="tag">Safety</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="announcements-empty" style="display: none;">
+        <div class="empty-state">
+            <i class="fas fa-bullhorn"></i>
+            <h3>No Announcements</h3>
+            <p>There are no announcements at this time.</p>
+        </div>
+    </div>
+</section>
+
+<script>
+    (function () {
+        function initAnnouncements() {
+            if (typeof window.loadAnnouncements === 'function') {
+                console.log('Initializing Student Announcements...');
+                window.loadAnnouncements();
+            } else {
+                console.log('loadAnnouncements not found, retrying...');
+                setTimeout(initAnnouncements, 100);
+            }
+        }
+        initAnnouncements();
+    })();
+</script>
+{% endblock %}

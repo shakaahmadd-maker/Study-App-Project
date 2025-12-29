@@ -1,0 +1,89 @@
+{% extends "teacher/teacher_base.html" %}
+
+{% block content %}
+            <section class="content-section" id="adminFeedbackSection" aria-labelledby="adminFeedbackHeading">
+                <div class="section-header">
+                    <div class="header-left">
+                        <h1 class="section-title" id="adminFeedbackHeading">Feedback from Admin</h1>
+                        <p class="section-subtitle">View feedback and reviews from administrators regarding your
+                            submissions.</p>
+                    </div>
+                </div>
+
+                <!-- Filter Container -->
+                <div class="search-filter-container">
+                    <div class="search-container-improved">
+                        <div class="search-input-wrapper">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" class="search-input" placeholder="Search feedback..."
+                                id="feedbackSearchInput">
+                        </div>
+                    </div>
+                    <div class="filter-container">
+                        <select class="filter-select" id="feedbackPriorityFilter" onchange="filterFeedback()">
+                            <option value="all">All Priorities</option>
+                            <option value="normal">Normal</option>
+                            <option value="high">High</option>
+                            <option value="urgent">Urgent</option>
+                        </select>
+                    </div>
+                    <div class="filter-container">
+                        <select class="filter-select" id="feedbackTypeFilter" onchange="filterFeedback()">
+                            <option value="all">All Types</option>
+                            <option value="assignment">Assignment</option>
+                            <option value="exam">Exam</option>
+                            <option value="homework">Homework</option>
+                            <option value="project">Project</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Feedback List -->
+                <div class="feedback-list-container" id="feedbackListContainer">
+                    {% for fb in feedbacks %}
+                    <div class="feedback-item" data-priority="{{ fb.priority }}" data-type="{{ fb.assignment.service_type }}" data-feedback-id="{{ fb.id }}" data-assignment-id="{{ fb.assignment.assignment_code }}">
+                        <div class="feedback-header">
+                            <div class="feedback-content-info">
+                                <div class="feedback-icon">
+                                    <i class="fas fa-file-alt"></i>
+                                </div>
+                                <div class="feedback-content-details">
+                                    <h3 class="feedback-content-title">{{ fb.assignment.title }}</h3>
+                                    <div class="feedback-meta">
+                                        <span class="feedback-type-badge {{ fb.assignment.service_type }}">{{ fb.assignment.get_service_type_display }}</span>
+                                        <span class="feedback-date">{{ fb.created_at|date:"M d, Y" }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="feedback-priority-badge {{ fb.priority }}">
+                                <i class="fas {% if fb.priority == 'urgent' %}fa-exclamation-triangle{% elif fb.priority == 'high' %}fa-exclamation-circle{% else %}fa-info-circle{% endif %}"></i>
+                                {{ fb.priority|title }} Priority
+                            </div>
+                        </div>
+                        <div class="feedback-message">
+                            <p>{{ fb.message }}</p>
+                        </div>
+                        <div class="feedback-footer">
+                            <div class="feedback-student-info">
+                                <i class="fas fa-user-graduate"></i>
+                                <span>Student: {{ fb.assignment.student.user.get_full_name }}</span>
+                            </div>
+                            <button class="feedback-action-btn" onclick="viewRelatedContent('{{ fb.assignment.id }}', '{{ fb.assignment.service_type }}')">
+                                <i class="fas fa-eye"></i>
+                                View Only
+                            </button>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <!-- Empty State -->
+                    <div class="feedback-empty" id="feedbackEmpty">
+                        <div class="empty-state">
+                            <i class="fas fa-comments" style="font-size: 3rem; color: var(--text-muted); margin-bottom: 1rem;"></i>
+                            <h3>No Feedback</h3>
+                            <p>You haven't received any feedback from administrators yet.</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+{% endblock %}

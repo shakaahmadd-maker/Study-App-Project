@@ -1,0 +1,303 @@
+{% extends "admin/admin_base.html" %}
+
+{% block content %}
+            <section class="content-section" id="content-reviewSection" aria-labelledby="contentReviewHeading">
+                <h1 class="section-title" id="contentReviewHeading">Content Review</h1>
+                <p class="section-subtitle">Review and audit submitted assignments and exam content for quality
+                    assurance.</p>
+
+                <!-- Search and Filter Container -->
+                <div class="search-filter-container">
+                    <div class="search-container-improved">
+                        <div class="search-input-wrapper">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" class="search-input" placeholder="Search content..."
+                                id="contentReviewSearchInput" onkeyup="filterContentReview()">
+                        </div>
+                    </div>
+                    <div class="filter-container">
+                        <select class="filter-select" id="contentReviewFilter" onchange="filterContentReview()">
+                            <option value="all">All Statuses</option>
+                            <option value="pending">Pending Review</option>
+                            <option value="approved">Approved</option>
+                            <option value="rejected">Rejected</option>
+                            <option value="needs-revision">Needs Revision</option>
+                        </select>
+                    </div>
+                    <div class="filter-container">
+                        <select class="filter-select" id="contentTypeFilter" onchange="filterContentReview()">
+                            <option value="all">All Types</option>
+                            <option value="assignment">Assignments</option>
+                            <option value="mcq">MCQ Exams</option>
+                            <option value="qa">Q&A Exams</option>
+                            <option value="homework">Homework</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Assignments Table -->
+                <h3 class="card-title" style="margin-top: 32px; margin-bottom: 16px;">Assignments Review</h3>
+                <div class="content-review-table-container">
+                    <table class="content-review-table">
+                        <thead>
+                            <tr>
+                                <th>CONTENT</th>
+                                <th>STUDENT</th>
+                                <th>TEACHER</th>
+                                <th>TYPE</th>
+                                <th>SUBMITTED</th>
+                                <th>ACTIONS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for assignment in completed_assignments %}
+                            <tr class="content-review-row" data-status="pending" data-type="{{ assignment.service_type }}"
+                                data-content-id="{{ assignment.id }}"
+                                data-student-id="{{ assignment.student.student_id|stringformat:'04d' }}"
+                                data-student-email="{{ assignment.student.user.email }}"
+                                {% with task=assignment.teacher_assignments.all.0 %}
+                                data-teacher-email="{{ task.teacher.user.email|default:'' }}"
+                                {% endwith %}>
+                                <td class="content-info-cell">
+                                    <div class="content-info-list">
+                                        <div class="content-icon">
+                                            <i class="fas fa-file-alt"></i>
+                                        </div>
+                                        <div class="content-details-list">
+                                            <div class="content-title">{{ assignment.title }}</div>
+                                            <div class="content-meta">Code: {{ assignment.assignment_code }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="student-info">
+                                    <div class="student-info-compact">
+                                        <div class="student-avatar-small">
+                                            {% if assignment.student.user.profile_picture %}
+                                            <img src="{{ assignment.student.user.profile_picture.url }}" alt="{{ assignment.student.user.get_full_name }}">
+                                            {% else %}
+                                            <div class="avatar-fallback">👤</div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="student-details-compact">
+                                            <div class="student-name">{{ assignment.student.user.get_full_name }}</div>
+                                            <div class="student-id-small">ID: {{ assignment.student.student_id|stringformat:"04d" }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="teacher-info">
+                                    {% with task=assignment.teacher_assignments.filter.first %}
+                                    <div class="teacher-name">{{ task.teacher.user.get_full_name|default:"Unassigned" }}</div>
+                                    {% endwith %}
+                                </td>
+                                <td class="content-type">
+                                    <span class="type-badge {{ assignment.service_type }}">{{ assignment.get_service_type_display }}</span>
+                                </td>
+                                <td class="content-submitted">{{ assignment.completed_at|date:"M d, Y" }}</td>
+                                <td class="review-actions-cell">
+                                    <div class="action-buttons-group">
+                                        <button class="action-btn view-btn"
+                                            onclick="viewContentDetails('{{ assignment.id }}', '{{ assignment.service_type }}')" title="View Content">
+                                            <i class="fas fa-eye"></i>
+                                            View
+                                        </button>
+                                        <button class="action-btn feedback-btn"
+                                            onclick="openFeedbackModal('{{ assignment.id }}', '{{ assignment.service_type }}', '{% with task=assignment.teacher_assignments.filter.first %}{{ task.teacher.user.get_full_name|escapejs }}{% endwith %}')"
+                                            title="Send Feedback to Teacher">
+                                            <i class="fas fa-comment-dots"></i>
+                                            Feedback
+                                        </button>
+                                        <button class="action-btn delete-btn"
+                                            onclick="deleteContentReview('{{ assignment.id }}', 'assignment')" title="Delete Record">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center">No completed assignments pending review.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Homework & Exams Table -->
+                <h3 class="card-title" style="margin-top: 48px; margin-bottom: 16px;">Homework & Exams Review</h3>
+                <div class="content-review-table-container">
+                    <table class="content-review-table">
+                        <thead>
+                            <tr>
+                                <th>CONTENT</th>
+                                <th>STUDENT</th>
+                                <th>TEACHER</th>
+                                <th>TYPE</th>
+                                <th>SUBMITTED (GRADED)</th>
+                                <th>ACTIONS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for attempt in graded_exams %}
+                            <tr class="content-review-row" data-status="pending" data-type="{{ attempt.exam.exam_type }}"
+                                data-content-id="{{ attempt.id }}"
+                                data-student-id="{{ attempt.student.student_id|stringformat:'04d' }}"
+                                data-student-email="{{ attempt.student.user.email }}"
+                                data-teacher-email="{{ attempt.exam.teacher.user.email }}">
+                                <td class="content-info-cell">
+                                    <div class="content-info-list">
+                                        <div class="content-icon">
+                                            <i class="fas fa-graduation-cap"></i>
+                                        </div>
+                                        <div class="content-details-list">
+                                            <div class="content-title">{{ attempt.exam.title }}</div>
+                                            <div class="content-meta">Exam ID: {{ attempt.exam.id|stringformat:".8s" }}...</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="student-info">
+                                    <div class="student-info-compact">
+                                        <div class="student-avatar-small">
+                                            {% if attempt.student.user.profile_picture %}
+                                            <img src="{{ attempt.student.user.profile_picture.url }}" alt="{{ attempt.student.user.get_full_name }}">
+                                            {% else %}
+                                            <div class="avatar-fallback">👤</div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="student-details-compact">
+                                            <div class="student-name">{{ attempt.student.user.get_full_name }}</div>
+                                            <div class="student-id-small">ID: {{ attempt.student.student_id|stringformat:"04d" }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="teacher-info">
+                                    <div class="teacher-name">{{ attempt.exam.teacher.user.get_full_name }}</div>
+                                </td>
+                                <td class="content-type">
+                                    <span class="type-badge {{ attempt.exam.exam_type }}">{{ attempt.exam.get_exam_type_display }}</span>
+                                </td>
+                                <td class="content-submitted">{{ attempt.exam.updated_at|date:"M d, Y" }}</td>
+                                <td class="review-actions-cell">
+                                    <div class="action-buttons-group">
+                                        <button class="action-btn view-btn"
+                                            onclick="viewAttemptDetails('{{ attempt.id }}')" title="View Exam Details">
+                                            <i class="fas fa-eye"></i>
+                                            View
+                                        </button>
+                                        <button class="action-btn feedback-btn"
+                                            onclick="openFeedbackModal('{{ attempt.exam.assignment.id }}', 'exam', '{{ attempt.exam.teacher.user.get_full_name|escapejs }}')"
+                                            title="Send Feedback to Teacher">
+                                            <i class="fas fa-comment-dots"></i>
+                                            Feedback
+                                        </button>
+                                        <button class="action-btn delete-btn"
+                                            onclick="deleteContentReview('{{ attempt.id }}', 'exam_attempt')" title="Delete Record">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+                            {% for hw in graded_homeworks %}
+                            <tr class="content-review-row" data-status="pending" data-type="homework"
+                                data-content-id="{{ hw.id }}"
+                                data-student-id="{{ hw.student.student_id|stringformat:'04d' }}"
+                                data-student-email="{{ hw.student.user.email }}"
+                                data-teacher-email="{{ hw.teacher.user.email }}">
+                                <td class="content-info-cell">
+                                    <div class="content-info-list">
+                                        <div class="content-icon">
+                                            <i class="fas fa-book"></i>
+                                        </div>
+                                        <div class="content-details-list">
+                                            <div class="content-title">{{ hw.title }}</div>
+                                            <div class="content-meta">HW ID: {{ hw.id|stringformat:".8s" }}...</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="student-info">
+                                    <div class="student-info-compact">
+                                        <div class="student-avatar-small">
+                                            {% if hw.student.user.profile_picture %}
+                                            <img src="{{ hw.student.user.profile_picture.url }}" alt="{{ hw.student.user.get_full_name }}">
+                                            {% else %}
+                                            <div class="avatar-fallback">👤</div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="student-details-compact">
+                                            <div class="student-name">{{ hw.student.user.get_full_name }}</div>
+                                            <div class="student-id-small">ID: {{ hw.student.student_id|stringformat:"04d" }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="teacher-info">
+                                    <div class="teacher-name">{{ hw.teacher.user.get_full_name }}</div>
+                                </td>
+                                <td class="content-type">
+                                    <span class="type-badge homework">Homework</span>
+                                </td>
+                                <td class="content-submitted">{{ hw.graded_at|date:"M d, Y" }}</td>
+                                <td class="review-actions-cell">
+                                    <div class="action-buttons-group">
+                                        <button class="action-btn view-btn"
+                                            onclick="viewHomeworkDetails('{{ hw.id }}')" title="View Homework Details">
+                                            <i class="fas fa-eye"></i>
+                                            View
+                                        </button>
+                                        <button class="action-btn feedback-btn"
+                                            onclick="openFeedbackModal('{% if hw.assignment %}{{ hw.assignment.id }}{% endif %}', 'homework', '{{ hw.teacher.user.get_full_name|escapejs }}')"
+                                            title="Send Feedback to Teacher">
+                                            <i class="fas fa-comment-dots"></i>
+                                            Feedback
+                                        </button>
+                                        <button class="action-btn delete-btn"
+                                            onclick="deleteContentReview('{{ hw.id }}', 'homework')" title="Delete Record">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+                            {% if not graded_exams and not graded_homeworks %}
+                            <tr>
+                                <td colspan="6" class="text-center">No graded exams or homework pending review.</td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+<style>
+    .action-btn.delete-btn {
+        color: #dc3545;
+        background: transparent;
+        border: 1px solid #dc3545;
+        padding: 0.5rem 0.75rem;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+
+    .action-btn.delete-btn:hover {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .action-btn.delete-btn:active {
+        transform: scale(0.95);
+    }
+
+    .action-buttons-group {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .content-review-row {
+        transition: opacity 0.3s ease;
+    }
+</style>
+{% endblock %}

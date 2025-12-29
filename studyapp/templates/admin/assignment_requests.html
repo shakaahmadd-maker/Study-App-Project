@@ -1,0 +1,144 @@
+{% extends "admin/admin_base.html" %}
+
+{% block content %}
+            <section class="content-section" id="assignment-requestsSection"
+                aria-labelledby="assignmentRequestsHeading">
+                <h1 class="section-title" id="assignmentRequestsHeading">Assignment Requests</h1>
+                <p class="section-subtitle">Review and manage new student assignment requests.</p>
+
+                <div class="filter-dropdown">
+                    <select class="filter-select" id="assignmentStatusFilter" onchange="filterAssignmentsByStatus()">
+                        <option value="all">All Requests</option>
+                        <option value="pending">Pending</option>
+                        <option value="assigned">Assigned</option>
+                        <option value="in-process">In Process</option>
+                        <option value="completed">Completed</option>
+                        <option value="cancelled">Cancelled</option>
+                        <option value="deleted">Deleted</option>
+                    </select>
+                </div>
+
+                <!-- Retention Alert for Deleted Section -->
+                <div id="deletedRetentionAlert" class="retention-info-box" style="display: none; margin-bottom: 1.5rem;">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Deleted assignments are retained in the database for record-keeping purposes. They will always remain visible in this section.</span>
+                </div>
+
+                <!-- Assignment Requests Cards -->
+                <div class="assignment-cards">
+                    {% for assignment in all_assignments %}
+                    <div class="assignment-card" data-student-id="{{ assignment.student.id }}" data-assignment-id="{{ assignment.id }}" data-status="{{ assignment.status }}">
+                        <div class="card-main">
+                            <div class="card-left">
+                                <div class="student-avatar-small">
+                                    {% if assignment.student.user.profile_picture %}
+                                    <img src="{{ assignment.student.user.profile_picture.url }}" alt="{{ assignment.student.user.get_full_name }}">
+                                    {% else %}
+                                    <div class="avatar-fallback">👤</div>
+                                    {% endif %}
+                                </div>
+                                <div class="student-details">
+                                    <div class="student-id-label">ID: <code>{{ assignment.student.student_id|stringformat:"04d" }}</code></div>
+                                    <div class="student-name">{{ assignment.student.user.get_full_name }}</div>
+                                    <div class="student-email">{{ assignment.student.user.email }}</div>
+                                </div>
+                            </div>
+
+                            <div class="card-middle">
+                                <div class="assignment-id">{{ assignment.assignment_code }}</div>
+                                <div class="assignment-title">{{ assignment.title }}</div>
+                                <div class="meta-row">
+                                    <span class="pill service-pill">{{ assignment.get_service_type_display }}{% if assignment.num_pages %} · {{ assignment.num_pages }} pages{% endif %}</span>
+                                    <span class="pill priority-pill {{ assignment.priority }}">{{ assignment.priority|title }}</span>
+                                    <span class="meta-label">Submit:</span><span class="meta-value">{{ assignment.created_at|date:"M d, Y" }}</span>
+                                    <span class="meta-label">Deadline:</span><span class="meta-value">{{ assignment.due_date|date:"M d, Y" }}</span>
+                                    <span class="pill status-pill {{ assignment.status }}">
+                                        {% if assignment.status == 'pending' %}
+                                            <i class="fas fa-clock"></i>
+                                        {% elif assignment.status == 'assigned' %}
+                                            <i class="fas fa-user-check"></i>
+                                        {% elif assignment.status == 'in-process' %}
+                                            <i class="fas fa-spinner fa-spin"></i>
+                                        {% elif assignment.status == 'completed' %}
+                                            <i class="fas fa-check-circle"></i>
+                                        {% elif assignment.status == 'cancelled' %}
+                                            <i class="fas fa-times-circle"></i>
+                                        {% elif assignment.status == 'deleted' %}
+                                            <i class="fas fa-trash-alt"></i>
+                                        {% else %}
+                                            <i class="fas fa-info-circle"></i>
+                                        {% endif %}
+                                        {{ assignment.get_status_display }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="card-right">
+                                <div class="teacher-assignment-section">
+                                    <label class="teacher-label">Primary</label>
+                                    <select class="teacher-select-compact" onchange="assignTeacher(this, '{{ assignment.id }}')" data-assignment-id="{{ assignment.id }}" {% if assignment.status == 'completed' or assignment.status == 'cancelled' or assignment.status == 'deleted' %}disabled{% endif %}>
+                                        <option value="">Primary Teacher</option>
+                                        {% for teacher in teachers %}
+                                        <option value="{{ teacher.id }}" 
+                                            {% for ta in assignment.teacher_assignments.all %}{% if not ta.is_helper and ta.teacher.id == teacher.id %}selected{% endif %}{% endfor %}>
+                                            {{ teacher.user.get_full_name }} - {{ teacher.expertise|default:"" }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="teacher-assignment-section helper-teacher">
+                                    <label class="teacher-label">Helper (optional)</label>
+                                    <select class="teacher-select-compact" onchange="assignHelperTeacher(this, '{{ assignment.id }}')" data-assignment-id="{{ assignment.id }}" {% if assignment.status == 'completed' or assignment.status == 'cancelled' or assignment.status == 'deleted' %}disabled{% endif %}>
+                                        <option value="">Optional Helper Teacher</option>
+                                        {% for teacher in teachers %}
+                                        <option value="{{ teacher.id }}"
+                                            {% for ta in assignment.teacher_assignments.all %}{% if ta.is_helper and ta.teacher.id == teacher.id %}selected{% endif %}{% endfor %}>
+                                            {{ teacher.user.get_full_name }} - {{ teacher.expertise|default:"" }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="action-buttons-group card-actions">
+                                    <button class="action-pill view" onclick="viewAssignmentDetails('{{ assignment.id }}')" title="View">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="action-pill chat" onclick="chatWithStudentFromRequest('{{ assignment.student.user.id }}')" title="Chat">
+                                        <i class="fas fa-comment"></i>
+                                    </button>
+                                    
+                                    {% if assignment.status == 'completed' %}
+                                    <button class="action-pill download" onclick="downloadAssignmentZip('{{ assignment.id }}')" title="Download ZIP">
+                                        <i class="fas fa-file-archive"></i>
+                                    </button>
+                                    {% endif %}
+                                    
+                                    {% if assignment.status != 'cancelled' and assignment.status != 'deleted' and assignment.status != 'completed' %}
+                                    <button class="action-pill cancel" onclick="cancelAssignment('{{ assignment.id }}', '{{ assignment.status }}')" title="Cancel Request">
+                                        <i class="fas fa-ban"></i>
+                                    </button>
+                                    {% endif %}
+
+                                    {% if assignment.status == 'cancelled' %}
+                                    <button class="action-pill delete" onclick="deleteAssignment('{{ assignment.id }}')" title="Move to Deleted">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="empty-state" id="noRequestsMessage" style="display: none;">
+                        <i class="fas fa-clipboard-list" style="font-size: 3rem; color: var(--text-muted); margin-bottom: 1rem;"></i>
+                        <h3>No Requests Found</h3>
+                        <p>No assignments found for the selected status.</p>
+                    </div>
+                    {% empty %}
+                    <div class="empty-state">
+                        <i class="fas fa-clipboard-list" style="font-size: 3rem; color: var(--text-muted); margin-bottom: 1rem;"></i>
+                        <h3>No Assignments</h3>
+                        <p>There are no assignment requests in the system.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+{% endblock %}

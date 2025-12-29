@@ -1,0 +1,10 @@
+<svg width="1000" height="1000" viewBox="0 0 1000 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Stylized 'N' in black -->
+  <path d="M160 220V760H290V430L450 760H580V220H450V550L290 220H160Z" fill="black" />
+  <!-- The sharp downward point on the right side of 'N' -->
+  <path d="M580 760V850L450 630V760H580Z" fill="black" />
+  <!-- Stylized 'P' in orange -->
+  <path d="M580 220C820 220 880 390 880 500C880 610 820 780 580 780V640C720 640 740 560 740 500C740 440 720 360 580 360V220Z" fill="#D97324" />
+</svg>
+
+

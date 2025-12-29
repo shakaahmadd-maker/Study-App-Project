@@ -1,0 +1,898 @@
+{% extends "teacher/teacher_base.html" %}
+
+{% block content %}
+            <div class="content-section" id="online_examSection">
+                <!-- Header -->
+                <div class="content-header">
+                    <div class="header-left">
+                        <h1 class="page-title">Online Exams</h1>
+                        <p class="page-subtitle">Create and manage exams for students.</p>
+                    </div>
+                </div>
+
+                <!-- Exam Management Tabs -->
+                <div class="exam-tabs">
+                    <button class="exam-tab-btn active" data-tab="createExam">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>Create Exam</span>
+                    </button>
+                    <button class="exam-tab-btn" data-tab="manageExams">
+                        <i class="fas fa-list"></i>
+                        <span>Manage Exams</span>
+                    </button>
+                    <button class="exam-tab-btn" data-tab="examResults">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Results</span>
+                    </button>
+                </div>
+
+                <!-- Create Exam Tab Content -->
+                <div class="exam-tab-content active" id="createExamContent">
+                    <!-- Student and Assignment Selection -->
+                    <div class="exam-creation-card">
+                        <h3 class="card-title">Exam Setup</h3>
+                        <div class="form-row">
+                            <div class="form-column">
+                                <label for="studentSelect" class="form-label">Select Student</label>
+                                <select id="studentSelect" class="form-select" required onchange="handleStudentSelection()">
+                                    <option value="">Choose a student...</option>
+                                    {% for data in assigned_students_data %}
+                                        <option value="{{ data.id }}" data-assignments='{{ data.assignments|json_script:"assignments_json"|safe }}'>{{ data.name }} ({{ data.student_id }})</option>
+                                    {% endfor %}
+                                </select>
+                                {# Alternative way to pass JSON data safely #}
+                                <script id="student_assignments_data" type="application/json">
+                                    {{ assigned_students_data|json_script:"assigned_students_json" }}
+                                </script>
+                            </div>
+                            <div class="form-column">
+                                <label for="assignmentSelect" class="form-label">Select Assignment</label>
+                                <select id="assignmentSelect" class="form-select" disabled required onchange="handleAssignmentSelection()">
+                                    <option value="">First select a student...</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-column">
+                                <label for="examType" class="form-label">Exam Type</label>
+                                <select id="examType" class="form-select" disabled required onchange="handleExamTypeChange()">
+                                    <option value="">First select an assignment...</option>
+                                    <option value="mcq">Multiple Choice Questions (MCQ)</option>
+                                    <option value="qa">Question & Answer (Q&A)</option>
+                                </select>
+                            </div>
+                            <div class="form-column">
+                                <label for="examDeadline" class="form-label">Exam Deadline</label>
+                                <input type="datetime-local" id="examDeadline" class="form-input" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-column">
+                                <label class="form-label">
+                                    <input type="checkbox" id="timeSensitiveExam" class="time-sensitive-checkbox"
+                                        onchange="toggleTimeSensitiveFields()">
+                                    <span>Time Sensitive Exam (Optional)</span>
+                                </label>
+                                <p class="form-hint">Enable per-question time limits</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- MCQ Exam Form -->
+                    <div class="exam-form-card" id="mcqExamForm" style="display: none;">
+                        <h3 class="card-title">MCQ Exam Creation</h3>
+                        <div class="form-row">
+                            <div class="form-column">
+                                <label for="numQuestions" class="form-label">Number of Questions</label>
+                                <div class="question-counter">
+                                    <button type="button" class="counter-btn counter-decrement" onclick="decrementQuestions('numQuestions', 1, 20)">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <input type="number" id="numQuestions" class="counter-input" value="5" min="1" max="20" onchange="updateMCQQuestionsFromCounter()">
+                                    <button type="button" class="counter-btn counter-increment" onclick="incrementQuestions('numQuestions', 1, 20)">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="mcqQuestionsContainer">
+                            <!-- MCQ questions will be generated here -->
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="cancel-btn" onclick="resetExamForm()">Cancel</button>
+                            <button type="button" class="save-changes-btn" onclick="saveMCQExam()">Create MCQ Exam</button>
+                        </div>
+                    </div>
+
+                    <!-- Q&A Exam Form -->
+                    <div class="exam-form-card" id="qaExamForm" style="display: none;">
+                        <h3 class="card-title">Q&A Exam Creation</h3>
+                        <div class="form-row">
+                            <div class="form-column">
+                                <label for="numQAQuestions" class="form-label">Number of Questions</label>
+                                <div class="question-counter">
+                                    <button type="button" class="counter-btn counter-decrement" onclick="decrementQuestions('numQAQuestions', 1, 20)">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <input type="number" id="numQAQuestions" class="counter-input" value="1" min="1" max="20" onchange="updateQAQuestionsFromCounter()">
+                                    <button type="button" class="counter-btn counter-increment" onclick="incrementQuestions('numQAQuestions', 1, 20)">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="qaQuestionsContainer">
+                            <!-- Q&A questions will be generated here -->
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="cancel-btn" onclick="resetExamForm()">Cancel</button>
+                            <button type="button" class="save-changes-btn" onclick="saveQAExam()">Create Q&A Exam</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Manage Exams Tab Content -->
+                <div class="exam-tab-content" id="manageExamsContent" style="display: none;">
+                    <div class="exam-management-card">
+                        <h3 class="card-title">Created Exams</h3>
+                        <div class="exams-list">
+                            <div id="examsListContainer">
+                                <!-- Exams will be dynamically loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- View Exam Page -->
+                <div class="exam-tab-content" id="viewExamPage" style="display: none;">
+                    <div class="exam-management-card">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+                            <h3 class="card-title" id="viewExamPageTitle">Exam Details</h3>
+                            <button class="action-btn" onclick="goBackToManageExams()" style="display: inline-flex; align-items: center; gap: 8px;">
+                                <i class="fas fa-arrow-left"></i>
+                                Back to Manage Exams
+                            </button>
+                        </div>
+                        <div id="viewExamPageContent">
+                            <!-- Exam details will be populated here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Edit Exam Page -->
+                <div class="exam-tab-content" id="editExamPage" style="display: none;">
+                    <div class="exam-management-card">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+                            <h3 class="card-title">Edit Exam</h3>
+                            <button class="action-btn" onclick="goBackToManageExams()" style="display: inline-flex; align-items: center; gap: 8px;">
+                                <i class="fas fa-arrow-left"></i>
+                                Back to Manage Exams
+                            </button>
+                        </div>
+                        <div id="editExamPageContent">
+                            <!-- Edit form will be populated here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- View Results Page -->
+                <div class="exam-tab-content" id="viewResultsPage" style="display: none;">
+                    <div class="exam-management-card">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+                            <h3 class="card-title" id="viewResultsPageTitle">Exam Results</h3>
+                            <button class="action-btn" id="viewResultsBackBtn" onclick="goBackFromResultsPage()" style="display: inline-flex; align-items: center; gap: 8px;">
+                                <i class="fas fa-arrow-left"></i>
+                                <span id="viewResultsBackBtnText">Back</span>
+                            </button>
+                        </div>
+                        <div id="viewResultsPageContent">
+                            <!-- Results will be populated here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Exam Results Tab Content -->
+                <div class="exam-tab-content" id="examResultsContent" style="display: none;">
+                    <div class="results-overview-card">
+                        <h3 class="card-title">Exam Results Overview</h3>
+                        <div class="results-stats" id="resultsStatsContainer">
+                            <!-- Stats will be dynamically loaded -->
+                        </div>
+                    </div>
+
+                    <div class="results-list-card">
+                        <h3 class="card-title">Detailed Results</h3>
+                        <div class="results-table-container">
+                            <table class="results-table">
+                                <thead>
+                                    <tr>
+                                        <th>Student</th>
+                                        <th>Exam</th>
+                                        <th>Type</th>
+                                        <th>Score</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="resultsTableBody">
+                                    <!-- Results will be dynamically loaded -->
+                                </tbody>
+                            </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+// Online Exams Functionality - Refactored for Backend Integration
+(function() {
+    // Avoid double initialization
+    if (window.onlineExamsInitialized) return;
+
+    // Use the data passed from the view
+    const assignedStudentsData = {{ assigned_students_data|safe }};
+
+    function initializeOnlineExams() {
+        initializeExamTabs();
+        initializeExamForms();
+
+        // Initial load of exams
+        loadAndDisplayExams();
+    }
+
+    function initializeExamTabs() {
+        const examTabs = document.querySelectorAll('.exam-tab-btn');
+        examTabs.forEach(tab => {
+            tab.addEventListener('click', function (e) {
+                e.preventDefault();
+                const tabName = this.getAttribute('data-tab');
+                switchExamTab(tabName);
+            });
+        });
+    }
+
+    function switchExamTab(tabName) {
+        document.querySelectorAll('.exam-tab-btn').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.exam-tab-content').forEach(content => {
+            content.classList.remove('active');
+            content.style.display = 'none';
+        });
+
+        const activeTab = document.querySelector(`[data-tab="${tabName}"]`);
+        if (activeTab) activeTab.classList.add('active');
+
+        const activeContent = document.getElementById(`${tabName}Content`);
+        if (activeContent) {
+            activeContent.classList.add('active');
+            activeContent.style.display = 'block';
+        }
+
+        if (tabName === 'manageExams') {
+            loadAndDisplayExams();
+        } else if (tabName === 'examResults') {
+            loadResultsTab();
+        }
+    }
+
+    window.handleStudentSelection = function() {
+        const studentSelect = document.getElementById('studentSelect');
+        const assignmentSelect = document.getElementById('assignmentSelect');
+        const examTypeSelect = document.getElementById('examType');
+
+        const selectedStudentId = studentSelect.value;
+        const studentData = assignedStudentsData.find(s => s.id === selectedStudentId);
+
+        if (studentData) {
+            assignmentSelect.disabled = false;
+            assignmentSelect.innerHTML = '<option value="">Choose an assignment...</option>';
+            studentData.assignments.forEach(asg => {
+                const opt = document.createElement('option');
+                opt.value = asg.id;
+                opt.textContent = `${asg.title} (${asg.code})`;
+                assignmentSelect.appendChild(opt);
+            });
+        } else {
+            assignmentSelect.disabled = true;
+            assignmentSelect.innerHTML = '<option value="">First select a student...</option>';
+                examTypeSelect.disabled = true;
+                examTypeSelect.value = '';
+        }
+        
+        document.getElementById('mcqExamForm').style.display = 'none';
+        document.getElementById('qaExamForm').style.display = 'none';
+    };
+
+    window.handleAssignmentSelection = function() {
+        const assignmentSelect = document.getElementById('assignmentSelect');
+        const examTypeSelect = document.getElementById('examType');
+        
+        if (assignmentSelect.value) {
+            examTypeSelect.disabled = false;
+        } else {
+            examTypeSelect.disabled = true;
+            examTypeSelect.value = '';
+        }
+    };
+
+    window.handleExamTypeChange = function() {
+        const examType = document.getElementById('examType').value;
+        const mcqForm = document.getElementById('mcqExamForm');
+        const qaForm = document.getElementById('qaExamForm');
+
+        mcqForm.style.display = examType === 'mcq' ? 'block' : 'none';
+        qaForm.style.display = examType === 'qa' ? 'block' : 'none';
+
+        if (examType === 'mcq') generateMCQQuestions();
+        else if (examType === 'qa') generateQAQuestions();
+    };
+
+    // MCQ Generation
+    function generateMCQQuestions() {
+        const num = parseInt(document.getElementById('numQuestions').value) || 5;
+        const container = document.getElementById('mcqQuestionsContainer');
+        container.innerHTML = '';
+        for (let i = 1; i <= num; i++) {
+            container.appendChild(createMCQQuestionElement(i));
+        }
+    }
+
+    function createMCQQuestionElement(n) {
+        const div = document.createElement('div');
+        div.className = 'mcq-question';
+        const timeSensitive = document.getElementById('timeSensitiveExam').checked;
+        
+        div.innerHTML = `
+            <div class="question-header">
+                <span class="question-number">Question ${n}</span>
+                ${n > 1 ? `<button type="button" class="remove-question-btn" onclick="this.closest('.mcq-question').remove(); renumberQuestions('.mcq-question')">Remove</button>` : ''}
+            </div>
+            <input type="text" class="question-text-input" placeholder="Enter your question here..." required>
+            ${timeSensitive ? `
+            <div class="form-row time-limit-row">
+                <div class="form-column">
+                    <label class="form-label">Time Limit</label>
+                    <div class="time-input-group">
+                        <input type="number" class="time-input minutes-input" value="0" min="0" max="59"> :
+                        <input type="number" class="time-input seconds-input" value="30" min="0" max="59">
+                    </div>
+                </div>
+            </div>` : ''}
+            <div class="options-container">
+                ${[1,2,3,4].map(i => `
+                <div class="option-row">
+                    <input type="text" class="option-input" placeholder="Option ${String.fromCharCode(64+i)}" required>
+                    <input type="checkbox" class="correct-checkbox" id="q${n}_opt${i}">
+                    <label for="q${n}_opt${i}" class="correct-label">Correct</label>
+                </div>`).join('')}
+            </div>
+        `;
+        return div;
+    }
+
+    // Q&A Generation
+    function generateQAQuestions() {
+        const num = parseInt(document.getElementById('numQAQuestions').value) || 1;
+        const container = document.getElementById('qaQuestionsContainer');
+        container.innerHTML = '';
+        for (let i = 1; i <= num; i++) {
+            container.appendChild(createQAQuestionElement(i));
+        }
+    }
+
+    function createQAQuestionElement(n) {
+        const div = document.createElement('div');
+        div.className = 'qa-question';
+        div.innerHTML = `
+            <div class="question-header">
+                <span class="question-number">Question ${n}</span>
+                ${n > 1 ? `<button type="button" class="remove-question-btn" onclick="this.closest('.qa-question').remove(); renumberQuestions('.qa-question')">Remove</button>` : ''}
+            </div>
+            <textarea class="qa-question-input" placeholder="Enter your open-ended question here..." required></textarea>
+        `;
+        return div;
+    }
+
+    window.renumberQuestions = function(selector) {
+        document.querySelectorAll(selector).forEach((q, i) => {
+            q.querySelector('.question-number').textContent = `Question ${i + 1}`;
+        });
+    };
+
+    // API Calls
+    async function loadAndDisplayExams() {
+        try {
+            const response = await fetch('/exam/teacher/list/');
+            const data = await response.json();
+            if (data.success) {
+                renderExamsList(data.exams);
+            }
+        } catch (e) {
+            console.error("Failed to load exams", e);
+        }
+    }
+
+    function renderExamsList(exams) {
+        const container = document.getElementById('examsListContainer');
+        if (!container) return;
+
+        if (exams.length === 0) {
+            container.innerHTML = '<p class="text-center p-4">No exams created yet.</p>';
+            return;
+        }
+
+        container.innerHTML = exams.map(exam => `
+            <div class="exam-item">
+                <div class="exam-info">
+                    <h4 class="exam-title">${exam.title}</h4>
+                    <div class="exam-details">
+                        <span>Student: ${exam.student}</span>
+                        <span>Type: ${exam.type.toUpperCase()}</span>
+                        <span>Deadline: ${new Date(exam.deadline).toLocaleDateString()}</span>
+                        <span class="exam-status ${exam.status}">${exam.status}</span>
+                            </div>
+                            </div>
+                <div class="exam-actions">
+                    <button class="action-btn" onclick="viewExam('${exam.id}')"><i class="fas fa-eye"></i> View</button>
+                    ${exam.status === 'pending' ? `
+                        <button class="action-btn" onclick="editExam('${exam.id}')"><i class="fas fa-edit"></i> Edit</button>
+                        <button class="action-btn delete-btn" onclick="deleteExam('${exam.id}')"><i class="fas fa-trash"></i> Delete</button>
+                    ` : ''}
+                    ${exam.results ? `<button class="action-btn results-btn" onclick="viewExamResults('${exam.id}')"><i class="fas fa-chart-bar"></i> Results</button>` : ''}
+                        </div>
+                        </div>
+        `).join('');
+    }
+
+    window.saveMCQExam = async function() {
+        const examData = gatherExamData('mcq');
+        if (!examData) return;
+
+        try {
+            const response = await fetch('/exam/teacher/create/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+                body: JSON.stringify(examData)
+            });
+            const res = await response.json();
+            if (res.success) {
+                showToast("MCQ Exam created successfully!", "success");
+                resetExamForm();
+                switchExamTab('manageExams');
+            } else {
+                showToast(res.error, "error");
+            }
+        } catch (e) {
+            showToast("Failed to create exam", "error");
+        }
+    };
+
+    window.saveQAExam = async function() {
+        const examData = gatherExamData('qa');
+        if (!examData) return;
+
+        try {
+            const response = await fetch('/exam/teacher/create/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+                body: JSON.stringify(examData)
+            });
+            const res = await response.json();
+            if (res.success) {
+                showToast("Q&A Exam created successfully!", "success");
+                resetExamForm();
+                switchExamTab('manageExams');
+        } else {
+                showToast(res.error, "error");
+            }
+        } catch (e) {
+            showToast("Failed to create exam", "error");
+        }
+    };
+
+    function gatherExamData(type) {
+        const studentId = document.getElementById('studentSelect').value;
+        const assignmentId = document.getElementById('assignmentSelect').value;
+        const deadline = document.getElementById('examDeadline').value;
+        const isTimeSensitive = document.getElementById('timeSensitiveExam').checked;
+
+        if (!studentId || !assignmentId || !deadline) {
+            showToast("Please fill all basic setup fields", "error");
+            return null;
+        }
+
+        const questions = [];
+        if (type === 'mcq') {
+            const questionDivs = document.querySelectorAll('.mcq-question');
+            for (const div of questionDivs) {
+                const text = div.querySelector('.question-text-input').value;
+                const options = Array.from(div.querySelectorAll('.option-input')).map(i => i.value);
+                const correctAnswers = Array.from(div.querySelectorAll('.correct-checkbox'))
+                    .map((c, i) => c.checked ? i : -1)
+                    .filter(i => i !== -1);
+                
+                if (!text || options.some(o => !o) || correctAnswers.length === 0) {
+                    showToast("Please complete all questions and options", "error");
+                    return null;
+                }
+                
+                questions.push({
+                    question: text,
+                    options: options,
+                    correctAnswers: correctAnswers,
+                    minutes: div.querySelector('.minutes-input')?.value || 0,
+                    seconds: div.querySelector('.seconds-input')?.value || 30
+                });
+            }
+        } else {
+            const questionDivs = document.querySelectorAll('.qa-question');
+            for (const div of questionDivs) {
+                const text = div.querySelector('.qa-question-input').value;
+                if (!text) {
+                    showToast("Please enter question text", "error");
+                    return null;
+                }
+                questions.push({ question: text });
+            }
+        }
+
+        return { studentId, assignmentId, deadline, is_time_sensitive: isTimeSensitive, type, questions };
+    }
+
+    window.deleteExam = async function(id) {
+        if (!confirm("Are you sure you want to delete this exam?")) return;
+        try {
+            const response = await fetch(`/exam/teacher/delete/${id}/`, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': getCookie('csrftoken') }
+            });
+            const res = await response.json();
+            if (res.success) {
+                showToast("Exam deleted", "success");
+            loadAndDisplayExams();
+            }
+        } catch (e) {
+            showToast("Delete failed", "error");
+        }
+    };
+
+    window.viewExam = async function(id) {
+        try {
+            const response = await fetch(`/exam/teacher/get/${id}/`);
+            const data = await response.json();
+            if (data.success) {
+                const exam = data.exam;
+                document.getElementById('manageExamsContent').style.display = 'none';
+                const viewPage = document.getElementById('viewExamPage');
+                const content = document.getElementById('viewExamPageContent');
+                
+                document.getElementById('viewExamPageTitle').textContent = exam.title;
+                
+                let qHtml = exam.questions.map((q, i) => `
+                    <div class="view-question-item">
+                        <h5>Q${i+1}: ${q.question}</h5>
+                        ${exam.type === 'mcq' ? `
+                            <ul>
+                                ${q.options.map((opt, oi) => `
+                                    <li class="${q.correctAnswers.includes(oi) ? 'text-success font-weight-bold' : ''}">
+                                        ${String.fromCharCode(65+oi)}: ${opt} ${q.correctAnswers.includes(oi) ? '✓' : ''}
+                                    </li>
+                                `).join('')}
+                            </ul>
+                        ` : ''}
+                    </div>
+                `).join('');
+
+                content.innerHTML = `
+                    <div class="exam-summary mb-4">
+                        <p><strong>Student:</strong> ${exam.student}</p>
+                        <p><strong>Deadline:</strong> ${new Date(exam.deadline).toLocaleString()}</p>
+                        <p><strong>Type:</strong> ${exam.type.toUpperCase()}</p>
+                    </div>
+                    <div class="questions-view">
+                        ${qHtml}
+                    </div>
+                `;
+                viewPage.style.display = 'block';
+            }
+        } catch (e) {
+            showToast("Failed to load details", "error");
+        }
+    };
+
+    window.goBackToManageExams = function() {
+        document.getElementById('viewExamPage').style.display = 'none';
+        document.getElementById('editExamPage').style.display = 'none';
+        document.getElementById('viewResultsPage').style.display = 'none';
+        document.getElementById('manageExamsContent').style.display = 'block';
+    };
+
+    window.viewExamResults = async function(examId) {
+        try {
+            const response = await fetch(`/exam/teacher/list/`); // We'll get attempt from list or separate api
+            const listData = await response.json();
+            const exam = listData.exams.find(e => e.id === examId);
+            
+            if (!exam || !exam.results) {
+                showToast("No results found for this exam", "info");
+            return;
+        }
+
+            const attemptId = exam.results.id;
+            const resResp = await fetch(`/exam/student/results/${attemptId}/`);
+            const resData = await resResp.json();
+            
+            if (resData.success) {
+                renderResultsPage(resData.results);
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    };
+
+    function renderResultsPage(results) {
+        document.getElementById('manageExamsContent').style.display = 'none';
+        document.getElementById('examResultsContent').style.display = 'none';
+        const page = document.getElementById('viewResultsPage');
+        const content = document.getElementById('viewResultsPageContent');
+        
+        page.style.display = 'block';
+        
+        if (results.type === 'mcq') {
+            content.innerHTML = `
+                <div class="results-header-box text-center p-5 mb-4" style="background: linear-gradient(135deg, rgba(17, 88, 229, 0.1) 0%, rgba(17, 88, 229, 0.05) 100%); border-radius: 16px;">
+                    <div style="font-size: 3rem; font-weight: 800; color: var(--primary); margin-bottom: 8px;">${results.score}%</div>
+                    <h3 style="font-weight: 600; color: var(--text);">Score: ${results.score >= 80 ? 'Excellent' : results.score >= 60 ? 'Good' : 'Needs Improvement'}</h3>
+                    <p style="color: var(--muted); margin-top: 8px;">
+                        <i class="fas fa-user-graduate"></i> Student: <strong>${results.studentName}</strong> | 
+                        <i class="fas fa-calendar-alt"></i> Submitted: ${new Date(results.submittedAt).toLocaleString()}
+                    </p>
+                </div>
+                <div class="answers-list" style="max-height: 600px; overflow-y: auto; padding-right: 10px;">
+                    ${results.answers.map((ans, i) => `
+                        <div class="result-item p-4 mb-3 border rounded-xl ${ans.isCorrect ? 'border-success' : 'border-danger'}" style="background: ${ans.isCorrect ? 'rgba(16, 185, 129, 0.03)' : 'rgba(239, 68, 68, 0.03)'}; transition: all 0.2s;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                                <h5 style="margin: 0; font-weight: 700; color: var(--text);">Question ${i+1}</h5>
+                                <span style="padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; background: ${ans.isCorrect ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)'}; color: ${ans.isCorrect ? '#10b981' : '#ef4444'};">
+                                    <i class="fas fa-${ans.isCorrect ? 'check' : 'times'}-circle"></i> ${ans.isCorrect ? 'Correct' : 'Incorrect'}
+                                </span>
+                            </div>
+                            <p style="font-size: 1.05rem; margin-bottom: 16px; color: var(--text);">${ans.questionText}</p>
+                            <div style="background: white; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--divider);">
+                                <div style="margin-bottom: 8px;">
+                                    <span style="font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">Student Chose:</span>
+                                    <div style="font-weight: 600; color: ${ans.isCorrect ? '#10b981' : '#ef4444'};">${ans.selectedOption || 'None'}</div>
+                                    </div>
+                                ${!ans.isCorrect ? `
+                                <div>
+                                    <span style="font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">Correct Answer:</span>
+                                    <div style="font-weight: 600; color: #10b981;">${ans.correctOptionText}</div>
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `).join('')}
+                        </div>
+                    `;
+        } else {
+            // Q&A Review/Grade interface - Enhanced Layout
+            content.innerHTML = `
+                <div class="results-header-box p-4 mb-4" style="background: linear-gradient(135deg, rgba(17, 88, 229, 0.1) 0%, rgba(17, 88, 229, 0.05) 100%); border-radius: 12px; border-left: 5px solid var(--primary);">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h3 style="margin: 0; color: var(--text);">Reviewing: <strong>${results.studentName}</strong></h3>
+                            <p style="margin: 5px 0 0 0; color: var(--muted); font-size: 14px;">
+                                <i class="fas fa-clock"></i> Submitted: ${new Date(results.submittedAt).toLocaleString()} | 
+                                <i class="fas fa-history"></i> Time Spent: ${results.timeSpent || 'N/A'}
+                            </p>
+                    </div>
+                        <div style="text-align: right;">
+                            <span class="status-badge submitted" style="padding: 8px 16px; border-radius: 20px; font-weight: 700;">PENDING REVIEW</span>
+                </div>
+                        </div>
+                        </div>
+
+                <form id="qaGradeForm" onsubmit="saveGrades(event, '${results.id}')" class="modern-form">
+                    <div style="max-height: 600px; overflow-y: auto; padding-right: 15px; margin-bottom: 24px;">
+                        ${results.answers.map((ans, i) => `
+                            <div class="qa-review-item p-4 mb-4 border rounded-xl shadow-sm bg-white" style="border: 1px solid var(--divider);">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                                    <h4 style="margin: 0; font-size: 1.1rem; font-weight: 700; color: var(--primary);">Question ${i+1}</h4>
+                                    <span style="font-size: 13px; color: var(--muted);">Open-ended Response</span>
+                </div>
+
+                                <div style="background: rgba(0,0,0,0.02); padding: 15px; border-radius: 10px; margin-bottom: 20px; border: 1px dashed var(--divider);">
+                                    <div style="font-size: 12px; color: var(--muted); margin-bottom: 8px; text-transform: uppercase; font-weight: 700;">Question Text:</div>
+                                    <p style="margin: 0; font-weight: 500; color: var(--text);">${ans.questionText}</p>
+                    </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                                    <div style="font-size: 12px; color: var(--muted); margin-bottom: 8px; text-transform: uppercase; font-weight: 700;">Student's Answer:</div>
+                                    <div style="padding: 20px; background: #fafafa; border-radius: 12px; border-left: 4px solid var(--divider); line-height: 1.7; white-space: pre-wrap; color: var(--text); font-size: 15px;">${ans.answerText}</div>
+                        </div>
+                        
+                                <div class="row" style="display: flex; gap: 20px; flex-wrap: wrap;">
+                                    <div style="flex: 0 0 180px;">
+                                        <label style="display: block; font-size: 13px; font-weight: 700; margin-bottom: 8px; color: var(--text);">Grade (0-100)</label>
+                                        <div style="position: relative;">
+                                            <input type="number" class="form-control q-grade" data-idx="${i}" min="0" max="100" value="${ans.grade || ''}" required 
+                                                style="width: 100%; padding: 12px 15px; border-radius: 8px; border: 2px solid var(--divider); font-weight: 700; font-size: 16px; transition: border-color 0.2s;"
+                                                onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--divider)'">
+                                            <span style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--muted); font-weight: 700;">%</span>
+                        </div>
+                            </div>
+                                    <div style="flex: 1; min-width: 300px;">
+                                        <label style="display: block; font-size: 13px; font-weight: 700; margin-bottom: 8px; color: var(--text);">Specific Feedback</label>
+                                        <textarea class="form-control q-feedback" data-idx="${i}" rows="2" placeholder="Great explanation, but missing key details about..."
+                                            style="width: 100%; padding: 12px 15px; border-radius: 8px; border: 2px solid var(--divider); resize: vertical; min-height: 80px; transition: border-color 0.2s;"
+                                            onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--divider)'">${ans.feedback || ''}</textarea>
+                            </div>
+                        </div>
+                    </div>
+                        `).join('')}
+                </div>
+                
+                    <div class="overall-grading p-4 border rounded-xl" style="background: var(--bg-primary); border: 2px solid var(--primary);">
+                        <h4 style="margin: 0 0 20px 0; display: flex; align-items: center; gap: 10px; color: var(--primary);">
+                            <i class="fas fa-award"></i> Final Assessment
+                        </h4>
+                        <div class="row" style="display: flex; gap: 24px; flex-wrap: wrap;">
+                            <div style="flex: 0 0 220px;">
+                                <label style="display: block; font-size: 14px; font-weight: 700; margin-bottom: 8px;">Final Total Grade (%)</label>
+                                <input type="number" id="finalTotalGrade" min="0" max="100" value="${results.totalGrade || ''}" required 
+                                    style="width: 100%; padding: 15px; border-radius: 10px; border: 2px solid var(--primary); font-size: 24px; font-weight: 800; text-align: center; color: var(--primary);">
+                            </div>
+                            <div style="flex: 1; min-width: 300px;">
+                                <label style="display: block; font-size: 14px; font-weight: 700; margin-bottom: 8px;">Overall Feedback & Closing Remarks</label>
+                                <textarea id="finalOverallFeedback" rows="3" placeholder="Provide general feedback on the student's performance..."
+                                    style="width: 100%; padding: 15px; border-radius: 10px; border: 2px solid var(--divider); resize: vertical; font-size: 15px;">${results.overallFeedback || ''}</textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: flex-end; gap: 15px; margin-top: 32px; padding-bottom: 20px;">
+                        <button type="button" class="action-btn" onclick="goBackToManageExams()" style="background: var(--divider); color: var(--text); padding: 12px 24px;">Cancel</button>
+                        <button type="submit" class="save-changes-btn" style="min-width: 220px; font-size: 16px; font-weight: 700; box-shadow: 0 4px 15px rgba(17, 88, 229, 0.2);">
+                            <i class="fas fa-check-circle"></i> Save Grades & Complete
+                        </button>
+                    </div>
+                </form>
+            `;
+        }
+    }
+
+    window.saveGrades = async function(e, attemptId) {
+        e.preventDefault();
+        const grades = Array.from(document.querySelectorAll('.q-grade')).map(i => parseInt(i.value));
+        const feedbacks = Array.from(document.querySelectorAll('.q-feedback')).map(i => i.value);
+        const total = parseInt(document.getElementById('finalTotalGrade').value);
+        const overall = document.getElementById('finalOverallFeedback').value;
+
+        try {
+            const response = await fetch(`/exam/teacher/grade/${attemptId}/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+                body: JSON.stringify({ questionGrades: grades, questionFeedback: feedbacks, totalGrade: total, overallFeedback: overall })
+            });
+            const data = await response.json();
+            if (data.success) {
+                showToast("Grades saved successfully!", "success");
+                switchExamTab('examResults');
+            }
+        } catch (e) {
+            showToast("Failed to save grades", "error");
+        }
+    };
+
+    async function loadResultsTab() {
+        try {
+            const response = await fetch('/exam/teacher/list/');
+            const data = await response.json();
+            if (data.success) {
+                const exams = data.exams;
+                const submitted = exams.filter(e => e.results);
+                
+                const tableBody = document.getElementById('resultsTableBody');
+                if (!tableBody) return;
+
+                if (submitted.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="6" class="text-center p-4">No results available yet.</td></tr>';
+            } else {
+                    tableBody.innerHTML = submitted.map(e => `
+                        <tr>
+                            <td>${e.student}</td>
+                            <td>${e.title}</td>
+                            <td>${e.type.toUpperCase()}</td>
+                            <td>${e.results.score !== null ? e.results.score + '%' : (e.results.totalGrade !== null ? e.results.totalGrade + '%' : 'Pending Review')}</td>
+                            <td><span class="status-badge ${e.results.status}">${e.results.status}</span></td>
+                            <td>
+                                <button class="action-btn" onclick="viewExamResults('${e.id}')">
+                                    ${e.results.status === 'submitted' && e.type === 'qa' ? '<i class="fas fa-edit"></i> Grade' : '<i class="fas fa-eye"></i> View'}
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+
+                document.getElementById('resultsStatsContainer').innerHTML = `
+                    <div class="stat-box">
+                        <div class="stat-number">${exams.length}</div>
+                        <div class="stat-label">Total Exams</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number">${submitted.length}</div>
+                        <div class="stat-label">Results Available</div>
+                    </div>
+                `;
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    // Helper: CSRF Cookie
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function showToast(msg, type) {
+        if (window.showToast) window.showToast(msg, type);
+        else alert(msg);
+    }
+
+    window.resetExamForm = function() {
+        document.getElementById('studentSelect').value = '';
+        document.getElementById('assignmentSelect').value = '';
+        document.getElementById('assignmentSelect').disabled = true;
+        document.getElementById('examType').value = '';
+        document.getElementById('examType').disabled = true;
+        document.getElementById('mcqExamForm').style.display = 'none';
+        document.getElementById('qaExamForm').style.display = 'none';
+    };
+
+    window.initializeOnlineExams = initializeOnlineExams;
+    window.onlineExamsInitialized = true;
+            initializeOnlineExams();
+})();
+</script>
+
+<style>
+/* Additional styles for the exam management */
+.view-question-item {
+    background: var(--bg-primary);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    border: 1px solid var(--border-color);
+}
+.view-question-item h5 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+.view-question-item ul {
+    list-style: none;
+    padding-left: 0;
+}
+.view-question-item li {
+    padding: 0.5rem 1rem;
+    background: white;
+    border: 1px solid var(--border-color);
+    margin-bottom: 0.5rem;
+    border-radius: 4px;
+}
+.bg-light-success { background-color: #d4edda !important; }
+.bg-light-danger { background-color: #f8d7da !important; }
+.text-success { color: #28a745 !important; }
+</style>
+{% endblock %}

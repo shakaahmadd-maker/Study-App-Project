@@ -1,0 +1,65 @@
+{% extends "csrep/csrep_base.html" %}
+{% block content %}
+
+<section class="content-section" id="paymentSection" aria-labelledby="paymentHeading">
+    <header class="section-header">
+        <div>
+            <h1 class="section-title" id="paymentHeading">Payment Confirmation</h1>
+            <p class="section-subtitle">Log payments without processing them and trigger tutor assignment
+                workflows.</p>
+        </div>
+        <button class="primary-button"><i class="fas fa-check"></i> Confirm selected</button>
+    </header>
+
+    <div class="payment-grid">
+        <article class="payment-card" data-invoice="INV-2478">
+            <header>
+                <h2>INV-2478 · Maya Chen</h2>
+                <span class="status-pill warm">Awaiting confirmation</span>
+            </header>
+            <p class="payment-amount">$540.00</p>
+            <p class="payment-meta">Issued Jan 14 · Due Jan 21 · Chemistry weekly sessions</p>
+            <div class="payment-actions">
+                <button class="ghost-button">Request proof</button>
+                <button class="primary-button confirm-payment">Mark as paid</button>
+            </div>
+        </article>
+        <article class="payment-card" data-invoice="INV-2472">
+            <header>
+                <h2>INV-2472 · Imani Wright</h2>
+                <span class="status-pill followup">Overdue</span>
+            </header>
+            <p class="payment-amount">$360.00</p>
+            <p class="payment-meta">Issued Jan 8 · Due Jan 15 · Math essentials bundle</p>
+            <div class="payment-actions">
+                <button class="ghost-button">Send reminder</button>
+                <button class="ghost-button">Escalate to admin</button>
+            </div>
+        </article>
+        <article class="payment-card paid" data-invoice="INV-2469">
+            <header>
+                <h2>INV-2469 · Amara Singh</h2>
+                <span class="status-pill converted">Paid</span>
+            </header>
+            <p class="payment-amount">$420.00</p>
+            <p class="payment-meta">Confirmed Jan 10 · Tutor: Carlos Mendes assigned</p>
+            <div class="payment-actions">
+                <button class="ghost-button">View timeline</button>
+                <button class="ghost-button">Download receipt</button>
+            </div>
+        </article>
+        <article class="payment-card" data-invoice="INV-2025-045">
+            <header>
+                <h2>INV-2025-045 · Emma Wilson</h2>
+                <span class="status-pill warm">Awaiting confirmation</span>
+            </header>
+            <p class="payment-amount">$420.00</p>
+            <p class="payment-meta">Issued Jan 15 · Due Jan 22 · Physics tutoring sessions</p>
+            <div class="payment-actions">
+                <button class="ghost-button">Request proof</button>
+                <button class="primary-button confirm-payment">Mark as paid</button>
+            </div>
+        </article>
+    </div>
+</section>
+{% endblock %}

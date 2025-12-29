@@ -1,0 +1,559 @@
+/* Threads App Styles */
+
+.thread-participants-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.participant-tag {
+    background: var(--surface, #fff);
+    border: 1px solid var(--divider, #eee);
+    padding: 4px 12px;
+    border-radius: 99px;
+    font-size: 0.85rem;
+    color: var(--muted-text, #666);
+}
+
+.thread-messages-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    background: rgba(255, 255, 255, 0.3);
+    min-height: 400px;
+    max-height: 60vh;
+    border-radius: 12px;
+}
+
+.thread-message {
+    display: flex;
+    gap: 12px;
+    max-width: 80%;
+}
+
+.message-me {
+    align-self: flex-end;
+    flex-direction: row-reverse;
+}
+
+.message-other {
+    align-self: flex-start;
+}
+
+.message-avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 32px;
+    color: var(--muted-text, #999);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.message-bubble {
+    padding: 12px 16px;
+    border-radius: 18px;
+    background: var(--surface, #fff);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    font-size: 0.95rem;
+    position: relative;
+    word-break: break-word;
+}
+
+.message-me .message-bubble {
+    background: var(--primary, #1158e5);
+    color: #fff;
+    border-bottom-right-radius: 4px;
+}
+
+.message-other .message-bubble {
+    border-bottom-left-radius: 4px;
+}
+
+.message-sender {
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: var(--muted-text, #666);
+}
+
+.message-me .message-sender {
+    text-align: right;
+}
+
+.message-time {
+    font-size: 0.7rem;
+    margin-top: 4px;
+    color: var(--muted-text, #999);
+    opacity: 0.7;
+}
+
+.message-attachments {
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+/* Attachments: View + Download actions */
+.attachment-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.attachment-item .attachment-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 999px;
+    font-size: 0.85rem;
+    color: inherit;
+    text-decoration: none;
+}
+
+.message-me .attachment-item .attachment-link {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.mention {
+    font-weight: 700;
+    color: var(--primary, #1158e5);
+}
+
+.message-me .mention {
+    color: #fff;
+    text-decoration: underline;
+}
+
+/* Mention Popup */
+.mention-popup {
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+
+.voice-message {
+    display: flex;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.05);
+    padding: 8px;
+    border-radius: 12px;
+    margin-top: 4px;
+}
+
+.message-me .voice-message {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.voice-message audio::-webkit-media-controls-panel {
+    background-color: transparent;
+}
+
+.voice-record-btn.recording {
+    color: var(--danger, #ff5c5c);
+    animation: thread-pulse 1.5s infinite;
+}
+
+@keyframes thread-pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+.system-message {
+    align-self: center;
+    max-width: 100%;
+}
+
+.system-message .message-bubble {
+    background: rgba(0,0,0,0.05);
+    color: var(--muted-text);
+    font-style: italic;
+    border-radius: 8px;
+    padding: 4px 12px;
+    font-size: 0.85rem;
+}
+
+.sender-role {
+    font-weight: normal;
+    font-size: 0.7rem;
+    opacity: 0.8;
+}
+
+/* Recipient Selection */
+.recipient-selection-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+    margin-top: 10px;
+    max-height: 250px;
+    overflow-y: auto;
+    padding: 8px;
+    border: 1px solid var(--divider, #eee);
+    border-radius: 8px;
+    background: #fafafa;
+}
+
+.recipient-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    background: #fff;
+    border: 1.5px solid var(--divider, #eee);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+    position: relative;
+}
+
+.recipient-card:hover {
+    border-color: var(--primary, #1158e5);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.recipient-card.selected {
+    border-color: var(--primary, #1158e5);
+    background: var(--primary-light, #f0f7ff);
+}
+
+.recipient-card .recipient-avatar {
+    width: 32px;
+    height: 32px;
+    background: #eef2ff;
+    color: var(--primary, #1158e5);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}
+
+.recipient-card .recipient-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.recipient-card .recipient-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-main, #333);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+}
+
+.recipient-card .recipient-role {
+    font-size: 0.7rem;
+    color: var(--muted-text, #666);
+    display: block;
+}
+
+.recipient-card .selection-tick {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 20px;
+    height: 20px;
+    background: var(--primary, #1158e5);
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    opacity: 0;
+    transform: scale(0.5);
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 2px solid #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.recipient-card.selected .selection-tick {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Thread Composer Layout Update */
+.thread-composer {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 18px 18px 22px;
+    background: #fff;
+    border-top: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.thread-composer textarea {
+    width: 100%;
+    min-height: 110px;
+    padding: 14px 14px;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    border-radius: 14px;
+    resize: vertical;
+    font-family: inherit;
+    font-size: 0.95rem;
+    background: #fff;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+
+.thread-composer textarea:focus {
+    outline: none;
+    border-color: rgba(17, 88, 229, 0.35);
+    box-shadow: 0 0 0 4px rgba(17, 88, 229, 0.12);
+}
+
+.composer-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 2px;
+}
+
+.composer-actions .icon-btn, 
+.composer-actions .voice-record-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: #f1f5f9;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.85rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.composer-actions .icon-btn:hover, 
+.composer-actions .voice-record-btn:hover {
+    background: #e2e8f0;
+    color: var(--primary, #1158e5);
+    transform: translateY(-1px);
+}
+
+.composer-actions .voice-record-btn.recording {
+    background: rgba(239, 68, 68, 0.12);
+    color: #ef4444;
+}
+
+.composer-actions .primary-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 20px;
+    border-radius: 100px;
+    background: var(--primary, #1158e5);
+    color: #fff;
+    border: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 4px;
+    box-shadow: 0 2px 4px rgba(17, 88, 229, 0.15);
+}
+
+.composer-actions .primary-button:hover {
+    background: #0d47bc;
+    box-shadow: 0 4px 12px rgba(17, 88, 229, 0.2);
+}
+
+.composer-actions .primary-button i {
+    font-size: 0.8rem;
+}
+
+/* Floating actions inside composer textarea area (Admin requested) */
+.composer-input-wrapper {
+    position: relative;
+}
+
+.composer-input-wrapper textarea {
+    /* leave room for the floating action row */
+    padding-right: 220px;
+    padding-bottom: 64px;
+}
+
+.composer-floating-actions {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.composer-floating-actions .icon-btn,
+.composer-floating-actions .voice-record-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: none;
+    background: #f1f5f9;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+.composer-floating-actions .icon-btn:hover,
+.composer-floating-actions .voice-record-btn:hover {
+    background: #e2e8f0;
+    color: var(--primary, #1158e5);
+    transform: translateY(-1px);
+}
+
+.composer-floating-actions .voice-record-btn.recording {
+    background: rgba(239, 68, 68, 0.12);
+    color: #ef4444;
+}
+
+.composer-floating-actions .primary-button {
+    height: 34px;
+    padding: 0 14px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    background: var(--primary, #1158e5);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(17, 88, 229, 0.15);
+    transition: all 0.2s ease;
+}
+
+.composer-floating-actions .primary-button:hover {
+    background: #0d47bc;
+    box-shadow: 0 4px 12px rgba(17, 88, 229, 0.2);
+}
+
+/* Composer attachment preview */
+.composer-attachments-preview {
+    margin-top: 10px;
+    padding: 10px 12px;
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    border-radius: 14px;
+    background: #f8fafc;
+}
+
+.composer-attachments-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 8px;
+}
+
+.composer-attachments-clear {
+    border: none;
+    background: transparent;
+    color: var(--primary, #1158e5);
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 8px;
+}
+
+.composer-attachments-clear:hover {
+    background: rgba(17, 88, 229, 0.10);
+}
+
+.composer-attachments-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.composer-attachment-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    max-width: 100%;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: #fff;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+
+.composer-attachment-name {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #0f172a;
+    max-width: 220px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.composer-attachment-size {
+    font-size: 0.75rem;
+    color: #64748b;
+}
+
+.composer-attachment-remove {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(239, 68, 68, 0.10);
+    color: #ef4444;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    font-size: 14px;
+}
+
+.composer-attachment-remove:hover {
+    background: rgba(239, 68, 68, 0.18);
+}
+
+/* Thread status action buttons (Admin/CS-Rep) */
+.thread-status-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.thread-status-actions .danger-button {
+    background: rgba(239, 68, 68, 0.12);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.thread-status-actions .danger-button:hover {
+    background: rgba(239, 68, 68, 0.18);
+}
+
+.thread-status-actions button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+

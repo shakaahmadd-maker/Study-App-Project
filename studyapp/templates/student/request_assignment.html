@@ -1,0 +1,635 @@
+{% extends "student/student_base.html" %}
+
+{% block content %}
+<section class="content-section" id="assignmentSection" aria-labelledby="assignmentHeading">
+    <h1 class="section-title" id="assignmentHeading">Request New Assignment</h1>
+    <div class="modern-form-container">
+        <form id="assignmentRequestForm" class="modern-form" enctype="multipart/form-data">
+            <!-- Service Selection -->
+            <div class="form-field-group">
+                <label class="form-label" for="serviceType">Select Service Type <span class="required">*</span></label>
+                <div class="custom-select-wrapper">
+                    <select id="serviceType" name="serviceType" class="modern-select" required>
+                        <option value="">Choose a service...</option>
+                        <option value="assignment">Assignment Solution</option>
+                        <option value="solve-paper">Solve Online Paper</option>
+                        <option value="do-exam">Do My Exam</option>
+                        <option value="it-projects">IT Projects (Web, App, Game Development, or other)</option>
+                        <option value="writing">Writing (All Types)</option>
+                    </select>
+                    <i class="fas fa-chevron-down select-arrow"></i>
+                </div>
+            </div>
+
+            <!-- Conditional: Writing Type -->
+            <div class="form-field-group conditional-field" id="writingField" style="display: none;">
+                <div class="form-row">
+                    <div class="form-field">
+                        <label class="form-label" for="writingType">Select Writing Type <span class="required">*</span></label>
+                        <div class="custom-select-wrapper">
+                            <select id="writingType" name="writingType" class="modern-select">
+                                <option value="">Choose writing type...</option>
+                                <option value="analytical-essay">Analytical Essay</option>
+                                <option value="annotated-bibliography">Annotated Bibliography</option>
+                                <option value="application-essay">Application/Admission Essay</option>
+                                <option value="argumentative-essay">Argumentative Essay</option>
+                                <option value="article-critique">Article Critique</option>
+                                <option value="book-review">Book/Movie Review</option>
+                                <option value="business-plan">Business Plan</option>
+                                <option value="case-study">Case Study</option>
+                                <option value="cause-effect-essay">Cause and Effect Essay</option>
+                                <option value="compare-contrast">Compare and Contrast Essay</option>
+                                <option value="coursework">Coursework</option>
+                                <option value="creative-writing">Creative Writing</option>
+                                <option value="critique-review">Critique/Article Review</option>
+                                <option value="descriptive-essay">Descriptive Essay</option>
+                                <option value="discussion-post">Discussion Post</option>
+                                <option value="dissertation">Dissertation</option>
+                                <option value="essay-any">Essay (Any type)</option>
+                                <option value="expository-essay">Expository Essay</option>
+                                <option value="infographic">Infographic</option>
+                                <option value="lab-report">Lab Report</option>
+                                <option value="literary-analysis">Literary Analysis</option>
+                                <option value="literature-review">Literature Review</option>
+                                <option value="memo">Memo (Memorandum)</option>
+                                <option value="narrative-essay">Narrative Essay</option>
+                                <option value="persuasive-essay">Persuasive Essay</option>
+                                <option value="policy-paper">Policy Paper</option>
+                                <option value="powerpoint">Powerpoint</option>
+                                <option value="press-release">Press Release</option>
+                                <option value="question-answer">Question-Answer</option>
+                                <option value="reflection-paper">Reflection Paper</option>
+                                <option value="report">Report (General)</option>
+                                <option value="research-paper">Research Paper</option>
+                                <option value="research-proposal">Research Proposal</option>
+                                <option value="response-paper">Response Paper</option>
+                                <option value="speech">Speech</option>
+                                <option value="systematic-review">Systematic Review</option>
+                                <option value="term-paper">Term Paper</option>
+                                <option value="thesis">Thesis</option>
+                            </select>
+                            <i class="fas fa-chevron-down select-arrow"></i>
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label" for="numPages">Number of Pages <span class="required">*</span></label>
+                        <input type="number" id="numPages" name="numPages" class="modern-input" min="1" placeholder="e.g., 5">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Conditional: Assignment Solution Type -->
+            <div class="form-field-group conditional-field" id="assignmentField" style="display: none;">
+                <label class="form-label" for="assignmentType">Select Assignment Type <span class="required">*</span></label>
+                <div class="custom-select-wrapper">
+                    <select id="assignmentType" name="assignmentType" class="modern-select">
+                        <option value="">Choose assignment type...</option>
+                        <option value="university">University Assignments</option>
+                        <option value="online">Online Assignments</option>
+                        <option value="high-school">High School Online Assignments</option>
+                        <option value="final-year">Final Year Project</option>
+                        <option value="group">Group Project</option>
+                        <option value="research">Research Project</option>
+                        <option value="coursework-assignments">Coursework Assignments</option>
+                        <option value="take-home">Take-home Assignments</option>
+                        <option value="lab-based">Lab-Based Assignments</option>
+                        <option value="practical">Practical Assessments</option>
+                        <option value="classroom">Classroom Assignment</option>
+                        <option value="term-paper-solution">Term Paper Solution</option>
+                        <option value="mid-term">Mid-Term Examination Papers</option>
+                        <option value="semester">Semester Project</option>
+                        <option value="field-study">Field Study Assignments</option>
+                        <option value="project-report">Project Report Writing</option>
+                        <option value="interactive">Interactive Online Assignments</option>
+                    </select>
+                    <i class="fas fa-chevron-down select-arrow"></i>
+                </div>
+            </div>
+
+            <!-- Conditional: Solve Online Paper Type -->
+            <div class="form-field-group conditional-field" id="solvePaperField" style="display: none;">
+                <div class="form-row">
+                    <div class="form-field">
+                        <label class="form-label" for="solvePaperType">Select Online Paper Type <span class="required">*</span></label>
+                        <div class="custom-select-wrapper">
+                            <select id="solvePaperType" name="solvePaperType" class="modern-select">
+                                <option value="">Choose paper type...</option>
+                                <option value="online-quizzes">Online Quizzes</option>
+                                <option value="mcq">Multiple Choice Questions (MCQs)</option>
+                                <option value="online-exams">Online Exams</option>
+                                <option value="timed">Timed Assessments</option>
+                                <option value="interactive-problem">Interactive Problem-Solving Tasks</option>
+                                <option value="practice-papers">Online Practice Papers</option>
+                                <option value="digital-case">Digital Case Studies</option>
+                                <option value="peer-reviewed">Peer-reviewed Online Assignments</option>
+                                <option value="multiple-answer">Online Multiple Answer Tasks</option>
+                                <option value="virtual-lab">Virtual Lab Exercises</option>
+                                <option value="subject-specific">Subject-Specific Online Tests</option>
+                                <option value="immediate-grading">Online Assignment with Immediate Grading</option>
+                                <option value="problem-sets">Online Problem Sets</option>
+                                <option value="essay-exams">Online Essay Exams</option>
+                                <option value="group-tasks">Online Group Tasks</option>
+                                <option value="project-assessment">Project-Based Online Assessment</option>
+                                <option value="formative">Online Formative Assessments</option>
+                                <option value="summative">Online Summative Exams</option>
+                                <option value="web-learning">Web-based Learning Activities</option>
+                                <option value="remote-proctored">Remote Proctored Exams</option>
+                                <option value="math-science">Online Math/Science Problems</option>
+                                <option value="coding">Online Coding Challenges</option>
+                                <option value="simulation">Simulation-Based Online Papers</option>
+                                <option value="other">Other</option>
+                            </select>
+                            <i class="fas fa-chevron-down select-arrow"></i>
+                        </div>
+                    </div>
+                    <div class="form-field" id="otherPaperField" style="display: none;">
+                        <label class="form-label" for="otherPaperInput">Specify Other Type <span class="required">*</span></label>
+                        <input type="text" id="otherPaperInput" name="otherPaperInput" class="modern-input" placeholder="Enter custom type">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Basic Fields -->
+            <div class="form-field-group">
+                <div class="form-row">
+                    <div class="form-field">
+                        <label class="form-label" for="assignmentTitle">Assignment Title <span class="required">*</span></label>
+                        <input type="text" id="assignmentTitle" name="assignmentTitle" class="modern-input" placeholder="e.g., Research Paper on AI Ethics" required>
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label" for="dueDate">Due Date <span class="required">*</span></label>
+                        <input type="date" id="dueDate" name="dueDate" class="modern-input modern-date" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Priority -->
+            <div class="form-field-group">
+                <label class="form-label" for="priority">Priority <span class="required">*</span></label>
+                <div class="custom-select-wrapper">
+                    <select id="priority" name="priority" class="modern-select" required>
+                        <option value="low">Low</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                    <i class="fas fa-chevron-down select-arrow"></i>
+                </div>
+            </div>
+
+            <!-- Conditional: Exam Date -->
+            <div class="form-field-group conditional-field" id="examDateField" style="display: none;">
+                <label class="form-label" for="examDate">Exam Date <span class="required">*</span></label>
+                <input type="datetime-local" id="examDate" name="examDate" class="modern-input modern-datetime">
+            </div>
+
+            <!-- Description -->
+            <div class="form-field-group">
+                <label class="form-label" for="serviceDetails">Service Details / Description <span class="required">*</span></label>
+                <textarea id="serviceDetails" name="serviceDetails" class="modern-textarea" rows="6" placeholder="Provide detailed information about your requirements..." required></textarea>
+            </div>
+
+            <!-- Optional: Additional Features -->
+            <div class="form-field-group">
+                <label class="form-label">Additional Features <span class="optional">(optional)</span></label>
+                <div class="modern-checkbox-grid" role="group" aria-label="Additional features">
+                    <label class="modern-checkbox-item">
+                        <input type="checkbox" class="modern-checkbox" name="features" value="abstract">
+                        <div class="checkbox-content">
+                            <span class="checkbox-title">Abstract</span>
+                            <span class="checkbox-desc">Concise summary of your work.</span>
+                        </div>
+                    </label>
+                    <label class="modern-checkbox-item">
+                        <input type="checkbox" class="modern-checkbox" name="features" value="executive-summary">
+                        <div class="checkbox-content">
+                            <span class="checkbox-title">Executive Summary</span>
+                            <span class="checkbox-desc">High-level overview for quick review.</span>
+                        </div>
+                    </label>
+                    <label class="modern-checkbox-item">
+                        <input type="checkbox" class="modern-checkbox" name="features" value="proofread">
+                        <div class="checkbox-content">
+                            <span class="checkbox-title">Proofread by Editor</span>
+                            <span class="checkbox-desc">Editorial pass for grammar and flow.</span>
+                        </div>
+                    </label>
+                    <label class="modern-checkbox-item">
+                        <input type="checkbox" class="modern-checkbox" name="features" value="draft">
+                        <div class="checkbox-content">
+                            <span class="checkbox-title">Draft</span>
+                            <span class="checkbox-desc">Receive an interim draft for review.</span>
+                        </div>
+                    </label>
+                    <label class="modern-checkbox-item">
+                        <input type="checkbox" class="modern-checkbox" name="features" value="daily-update">
+                        <div class="checkbox-content">
+                            <span class="checkbox-title">Daily Delivery Update</span>
+                            <span class="checkbox-desc">Progress updates as the work proceeds.</span>
+                        </div>
+                    </label>
+                    <label class="modern-checkbox-item">
+                        <input type="checkbox" class="modern-checkbox" name="features" value="grammarly">
+                        <div class="checkbox-content">
+                            <span class="checkbox-title">Grammarly Report</span>
+                            <span class="checkbox-desc">Quality check with Grammarly.</span>
+                        </div>
+                    </label>
+                    <label class="modern-checkbox-item">
+                        <input type="checkbox" class="modern-checkbox" name="features" value="turnitin-ai">
+                        <div class="checkbox-content">
+                            <span class="checkbox-title">Turnitin AI Report</span>
+                            <span class="checkbox-desc">AI detection insights.</span>
+                        </div>
+                    </label>
+                    <label class="modern-checkbox-item">
+                        <input type="checkbox" class="modern-checkbox" name="features" value="turnitin-similarity">
+                        <div class="checkbox-content">
+                            <span class="checkbox-title">Turnitin Similarity Report</span>
+                            <span class="checkbox-desc">Similarity score report.</span>
+                        </div>
+                    </label>
+                    <label class="modern-checkbox-item">
+                        <input type="checkbox" class="modern-checkbox" name="features" value="table-of-contents">
+                        <div class="checkbox-content">
+                            <span class="checkbox-title">Table of Contents</span>
+                            <span class="checkbox-desc">Structured contents page.</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Attachments Section -->
+            <div class="form-field-group">
+                <label class="form-label">Attachments <span class="optional">(optional)</span></label>
+                <div class="attachment-upload-zone" id="attachmentUploadZone">
+                    <input type="file" id="attachmentFiles" name="supportFiles" multiple
+                        accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.zip,.rar,.xls,.xlsx,.ppt,.pptx"
+                        class="attachment-input-hidden">
+                    <div class="attachment-upload-content">
+                        <i class="fas fa-cloud-upload-alt attachment-upload-icon"></i>
+                        <div class="attachment-upload-text">
+                            <span class="attachment-upload-main">Drag and drop files here or click to browse</span>
+                            <span class="attachment-upload-hint">You can select multiple files and add more anytime</span>
+                        </div>
+                        <button type="button" class="attachment-browse-btn">Browse Files</button>
+                    </div>
+                </div>
+                <!-- Attachment Preview List -->
+                <div id="attachmentPreviewList" class="attachment-preview-list" style="display: none;">
+                    <div class="attachment-preview-header">
+                        <span class="attachment-count-text">Attachments (<span id="attachmentCount">0</span>)</span>
+                        <button type="button" class="attachment-clear-all-btn" id="clearAllAttachments">Clear All</button>
+                    </div>
+                    <div class="attachment-preview-items" id="attachmentPreviewItems">
+                        <!-- Attachment items will be injected here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-actions">
+                <button type="submit" class="primary-button">Submit Request</button>
+            </div>
+        </form>
+    </div>
+</section>
+
+<script>
+    (function() {
+        // Handle conditional fields
+        const serviceTypeSelect = document.getElementById('serviceType');
+        if (serviceTypeSelect) {
+            serviceTypeSelect.addEventListener('change', function() {
+                const type = this.value;
+                document.getElementById('writingField').style.display = type === 'writing' ? 'block' : 'none';
+                document.getElementById('assignmentField').style.display = type === 'assignment' ? 'block' : 'none';
+                document.getElementById('solvePaperField').style.display = type === 'solve-paper' ? 'block' : 'none';
+                document.getElementById('examDateField').style.display = type === 'do-exam' ? 'block' : 'none';
+            });
+        }
+
+        const solvePaperTypeSelect = document.getElementById('solvePaperType');
+        if (solvePaperTypeSelect) {
+            solvePaperTypeSelect.addEventListener('change', function() {
+                document.getElementById('otherPaperField').style.display = this.value === 'other' ? 'block' : 'none';
+            });
+        }
+
+        // Attachment Management System
+        const attachmentZone = document.getElementById('attachmentUploadZone');
+        const attachmentInput = document.getElementById('attachmentFiles');
+        const attachmentPreviewList = document.getElementById('attachmentPreviewList');
+        const attachmentPreviewItems = document.getElementById('attachmentPreviewItems');
+        const attachmentCount = document.getElementById('attachmentCount');
+        const clearAllBtn = document.getElementById('clearAllAttachments');
+        const browseBtn = attachmentZone?.querySelector('.attachment-browse-btn');
+        let attachmentFiles = []; // Store all selected attachments
+
+        if (attachmentZone && attachmentInput) {
+            // Click handlers
+            if (browseBtn) {
+                browseBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    attachmentInput.click();
+                });
+            }
+
+            attachmentZone.addEventListener('click', (e) => {
+                // Only trigger if clicking on the zone itself, not on buttons
+                if (e.target === attachmentZone || e.target.closest('.attachment-upload-content')) {
+                    attachmentInput.click();
+                }
+            });
+
+            // Drag and drop handlers
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                attachmentZone.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                attachmentZone.addEventListener(eventName, () => {
+                    attachmentZone.classList.add('attachment-drag-active');
+                }, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                attachmentZone.addEventListener(eventName, () => {
+                    attachmentZone.classList.remove('attachment-drag-active');
+                }, false);
+            });
+
+            attachmentZone.addEventListener('drop', (e) => {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                if (files && files.length > 0) {
+                    handleAttachments(files);
+                }
+            });
+
+            attachmentInput.addEventListener('change', function(e) {
+                if (this.files && this.files.length > 0) {
+                    handleAttachments(this.files);
+                    // Reset input to allow selecting the same files again
+                    this.value = '';
+                }
+            });
+
+            function handleAttachments(files) {
+                const newFiles = Array.from(files);
+                let addedCount = 0;
+
+                newFiles.forEach(file => {
+                    // Check for duplicates based on name, size, and lastModified
+                    const isDuplicate = attachmentFiles.some(f => 
+                        f.name === file.name && 
+                        f.size === file.size && 
+                        f.lastModified === file.lastModified
+                    );
+                    
+                    if (!isDuplicate) {
+                        attachmentFiles.push(file);
+                        addedCount++;
+                    }
+                });
+
+                if (addedCount > 0) {
+                    updateAttachmentPreviews();
+                    // Show success feedback
+                    if (typeof window.showToast === 'function') {
+                        window.showToast(`${addedCount} file(s) added`, 'success', 2000);
+                    }
+                }
+
+                // Reset input to allow selecting files multiple times
+                attachmentInput.value = '';
+            }
+
+            function updateAttachmentPreviews() {
+                if (attachmentFiles.length > 0) {
+                    attachmentPreviewList.style.display = 'block';
+                    attachmentCount.textContent = attachmentFiles.length;
+                    attachmentPreviewItems.innerHTML = '';
+
+                    attachmentFiles.forEach((file, index) => {
+                        const previewItem = document.createElement('div');
+                        previewItem.className = 'attachment-preview-item';
+                        
+                        const fileExt = file.name.split('.').pop().toLowerCase();
+                        let iconClass = 'fa-file-alt';
+                        let fileType = 'Document';
+                        
+                        if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(fileExt)) {
+                            iconClass = 'fa-file-image';
+                            fileType = 'Image';
+                        } else if (['pdf'].includes(fileExt)) {
+                            iconClass = 'fa-file-pdf';
+                            fileType = 'PDF';
+                        } else if (['doc', 'docx'].includes(fileExt)) {
+                            iconClass = 'fa-file-word';
+                            fileType = 'Word';
+                        } else if (['xls', 'xlsx'].includes(fileExt)) {
+                            iconClass = 'fa-file-excel';
+                            fileType = 'Excel';
+                        } else if (['ppt', 'pptx'].includes(fileExt)) {
+                            iconClass = 'fa-file-powerpoint';
+                            fileType = 'PowerPoint';
+                        } else if (['zip', 'rar', '7z'].includes(fileExt)) {
+                            iconClass = 'fa-file-archive';
+                            fileType = 'Archive';
+                        }
+
+                        const fileSize = file.size < 1024 
+                            ? file.size + ' B' 
+                            : file.size < 1024 * 1024 
+                            ? (file.size / 1024).toFixed(1) + ' KB' 
+                            : (file.size / (1024 * 1024)).toFixed(2) + ' MB';
+
+                        previewItem.innerHTML = `
+                            <div class="attachment-item-icon">
+                                <i class="fas ${iconClass}"></i>
+                            </div>
+                            <div class="attachment-item-details">
+                                <span class="attachment-item-name" title="${file.name}">${file.name}</span>
+                                <span class="attachment-item-meta">${fileType} • ${fileSize}</span>
+                            </div>
+                            <button type="button" class="attachment-item-remove" data-index="${index}" aria-label="Remove ${file.name}">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        `;
+
+                        attachmentPreviewItems.appendChild(previewItem);
+                    });
+
+                    // Attach remove event listeners
+                    document.querySelectorAll('.attachment-item-remove').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            const index = parseInt(btn.getAttribute('data-index'));
+                            const removedFile = attachmentFiles[index];
+                            attachmentFiles.splice(index, 1);
+                            updateAttachmentPreviews();
+                            if (typeof window.showToast === 'function') {
+                                window.showToast(`Removed ${removedFile.name}`, 'info', 2000);
+                            }
+                        });
+                    });
+                } else {
+                    attachmentPreviewList.style.display = 'none';
+                }
+            }
+
+            // Clear all attachments
+            if (clearAllBtn) {
+                clearAllBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (attachmentFiles.length > 0) {
+                        attachmentFiles = [];
+                        updateAttachmentPreviews();
+                        if (typeof window.showToast === 'function') {
+                            window.showToast('All attachments cleared', 'info', 2000);
+                        }
+                    }
+                });
+            }
+        }
+
+        // Form submission with attachments
+        const form = document.getElementById('assignmentRequestForm');
+        let isSubmitting = false;
+
+        if (form) {
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                if (isSubmitting) return;
+                isSubmitting = true;
+
+                const submitBtn = form.querySelector('.primary-button');
+                
+                // Create FormData from form
+                const formData = new FormData(form);
+
+                // Remove any existing supportFiles and add from attachmentFiles array
+                formData.delete('supportFiles');
+                
+                // Debug: Log attachment files
+                console.log('=== Form Submission Debug ===');
+                console.log('Total attachment files:', attachmentFiles.length);
+                
+                // Add each attachment file to FormData with the correct field name
+                attachmentFiles.forEach((file, index) => {
+                    formData.append('supportFiles', file);
+                    console.log(`  Added file ${index + 1}: ${file.name} (${(file.size / 1024).toFixed(2)} KB)`);
+                });
+                
+                // Verify files in FormData
+                const formDataFiles = formData.getAll('supportFiles');
+                console.log('Files in FormData:', formDataFiles.length);
+                console.log('FormData file names:', formDataFiles.map(f => f.name));
+                console.log('===========================');
+
+                // Show loading state
+                if (submitBtn) {
+                    submitBtn.classList.add('loading');
+                    const originalText = submitBtn.textContent;
+                    submitBtn.textContent = 'Submitting...';
+                    submitBtn.disabled = true;
+                }
+
+                try {
+                    const response = await fetch('/assingment/create/', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRFToken': getCookie('csrftoken')
+                        }
+                    });
+
+                    const result = await response.json();
+
+                    // Debug: Log response
+                    console.log('=== Server Response ===');
+                    console.log('Success:', result.success);
+                    console.log('Files received:', result.files_received || 0);
+                    console.log('Files uploaded:', result.files_uploaded || 0);
+                    if (result.file_errors && result.file_errors.length > 0) {
+                        console.error('File errors:', result.file_errors);
+                    }
+                    if (result.saved_files) {
+                        console.log('Saved files:', result.saved_files);
+                    }
+                    console.log('======================');
+
+                    if (result.success) {
+                        const message = 'Thanks for submitting the form! Someone will get back to you soon.';
+                        if (typeof window.showToast === 'function') {
+                            window.showToast(message, 'success', 5000);
+                        } else {
+                            alert(message);
+                        }
+                        
+                        // Reset form and attachments
+                        form.reset();
+                        attachmentFiles = [];
+                        if (attachmentPreviewList) {
+                            attachmentPreviewList.style.display = 'none';
+                        }
+                        if (attachmentInput) {
+                            attachmentInput.value = '';
+                        }
+                        
+                        // Switch to tracker if possible
+                        setTimeout(() => {
+                            if (window.switchSection) {
+                                window.switchSection('tracker');
+                            }
+                        }, 2000);
+                    } else {
+                        if (typeof window.showToast === 'function') {
+                            window.showToast(result.error || 'Failed to submit assignment', 'error');
+                        } else {
+                            alert(result.error || 'Failed to submit assignment');
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error submitting assignment:', error);
+                    if (typeof window.showToast === 'function') {
+                        window.showToast('An error occurred while submitting your assignment.', 'error');
+                    } else {
+                        alert('An error occurred while submitting your assignment.');
+                    }
+                } finally {
+                    isSubmitting = false;
+                    if (submitBtn) {
+                        submitBtn.classList.remove('loading');
+                        submitBtn.textContent = 'Submit Request';
+                        submitBtn.disabled = false;
+                    }
+                }
+            });
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    })();
+</script>
+{% endblock %}
+

@@ -1,0 +1,165 @@
+{% extends "admin/admin_base.html" %}
+
+{% block content %}
+            <section class="content-section" id="analyticsSection" aria-labelledby="analyticsHeading">
+                <h1 class="section-title" id="analyticsHeading">Analytics Dashboard</h1>
+                <p class="section-subtitle">Comprehensive insights and performance metrics for your platform.</p>
+
+                <div class="date-filter">
+                    <select class="filter-select">
+                        <option value="7">Last 7 days</option>
+                        <option value="30" selected>Last 30 days</option>
+                        <option value="90">Last 90 days</option>
+                        <option value="365">Last year</option>
+                    </select>
+                </div>
+
+                <!-- Key Metrics Overview -->
+                <div class="analytics-overview">
+                    <div class="metric-cards">
+                        <div class="metric-card primary">
+                            <div class="metric-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="metric-content">
+                                <div class="metric-value">2,847</div>
+                                <div class="metric-label">Total Students</div>
+                                <div class="metric-change positive">
+                                    <i class="fas fa-arrow-up"></i>
+                                    <span>+12.5%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="metric-card success">
+                            <div class="metric-icon">
+                                <i class="fas fa-chalkboard-teacher"></i>
+                            </div>
+                            <div class="metric-content">
+                                <div class="metric-value">134</div>
+                                <div class="metric-label">Active Teachers</div>
+                                <div class="metric-change positive">
+                                    <i class="fas fa-arrow-up"></i>
+                                    <span>+5.2%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="metric-card warning">
+                            <div class="metric-icon">
+                                <i class="fas fa-tasks"></i>
+                            </div>
+                            <div class="metric-content">
+                                <div class="metric-value">15,692</div>
+                                <div class="metric-label">Assignments Completed</div>
+                                <div class="metric-change positive">
+                                    <i class="fas fa-arrow-up"></i>
+                                    <span>+18.7%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity & Alerts -->
+                <div class="activity-alerts-section">
+                    <div class="activity-row">
+                        <div class="recent-activity">
+                            <div class="section-header">
+                                <h3>Recent System Activity</h3>
+                                <a href="#" class="view-all-link">View All</a>
+                            </div>
+                            <div class="activity-list">
+                                <div class="activity-item">
+                                    <div class="activity-icon student">
+                                        <i class="fas fa-user-plus"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <div class="activity-text">
+                                            <strong>Sarah Johnson</strong> registered as a new student
+                                        </div>
+                                        <div class="activity-time">2 minutes ago</div>
+                                    </div>
+                                </div>
+
+                                <div class="activity-item">
+                                    <div class="activity-icon assignment">
+                                        <i class="fas fa-clipboard-check"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <div class="activity-text">
+                                            <strong>Dr. Emily Carter</strong> created a new assignment
+                                        </div>
+                                        <div class="activity-time">15 minutes ago</div>
+                                    </div>
+                                </div>
+
+                                <div class="activity-item">
+                                    <div class="activity-icon payment">
+                                        <i class="fas fa-credit-card"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <div class="activity-text">
+                                            Payment of <strong>$120.00</strong> received from Alex Thompson
+                                        </div>
+                                        <div class="activity-time">32 minutes ago</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="system-alerts">
+                            <div class="section-header">
+                                <h3>System Alerts</h3>
+                                <span class="alert-count">3</span>
+                            </div>
+                            <div class="alerts-list">
+                                <div class="alert-item warning">
+                                    <div class="alert-icon">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                    </div>
+                                    <div class="alert-content">
+                                        <div class="alert-title">High Server Load</div>
+                                        <div class="alert-message">Server CPU usage is at 85%. Consider scaling
+                                            resources.</div>
+                                        <div class="alert-time">5 minutes ago</div>
+                                    </div>
+                                    <button class="alert-dismiss">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+
+                                <div class="alert-item info">
+                                    <div class="alert-icon">
+                                        <i class="fas fa-info-circle"></i>
+                                    </div>
+                                    <div class="alert-content">
+                                        <div class="alert-title">Scheduled Maintenance</div>
+                                        <div class="alert-message">System maintenance scheduled for tonight at 2:00 AM
+                                            EST.</div>
+                                        <div class="alert-time">30 minutes ago</div>
+                                    </div>
+                                    <button class="alert-dismiss">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+
+                                <div class="alert-item success">
+                                    <div class="alert-icon">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                    <div class="alert-content">
+                                        <div class="alert-title">Backup Completed</div>
+                                        <div class="alert-message">Daily database backup completed successfully.</div>
+                                        <div class="alert-time">1 hour ago</div>
+                                    </div>
+                                    <button class="alert-dismiss">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+{% endblock %}

@@ -1,0 +1,125 @@
+{% extends "admin/admin_base.html" %}
+{% load static %}
+
+{% block content %}
+<section class="content-section active" id="dashboardSection" aria-labelledby="dashboardHeading">
+    <h1 class="section-title" id="dashboardHeading">Admin Dashboard</h1>
+    <p class="section-subtitle">Overview of your platform's key metrics and daily tasks.</p>
+
+    <!-- Overview Metrics Cards -->
+    <div class="dashboard-overview">
+        <div class="metric-cards">
+            <div class="metric-card primary" onclick="navigateToSectionWithFilter('students')">
+                <div class="metric-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="metric-content">
+                    <div class="metric-value">{{ total_students|default:"0" }}</div>
+                    <div class="metric-label">Total Students</div>
+                    <div class="metric-change positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>+12.5%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="metric-card success" onclick="navigateToSectionWithFilter('user-management', 'teachers')">
+                <div class="metric-icon">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                </div>
+                <div class="metric-content">
+                    <div class="metric-value">{{ active_teachers|default:"0" }}</div>
+                    <div class="metric-label">Active Teachers</div>
+                    <div class="metric-change positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>+5.2%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="metric-card warning"
+                onclick="navigateToSectionWithFilter('assignment-requests', 'pending', 'assignmentStatusFilter')">
+                <div class="metric-icon">
+                    <i class="fas fa-clipboard-list"></i>
+                </div>
+                <div class="metric-content">
+                    <div class="metric-value">{{ pending_assignments|default:"0" }}</div>
+                    <div class="metric-label">Pending Assignments</div>
+                    <div class="metric-change neutral">
+                        <i class="fas fa-minus"></i>
+                        <span>-2.3%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="main-grid">
+        <!-- To-Do List Section matches teacher dashboard -->
+        <div class="todo-section">
+            <div class="todo-header">
+                <h2 class="section-title">
+                    <i class="fas fa-tasks"></i>
+                    To-Do List
+                </h2>
+                <button class="todo-add-btn" id="addTodoBtn" title="Add New Todo" type="button"
+                    onclick="window.openAddTodoModal()">
+                    <i class="fas fa-plus"></i>
+                    Add Todo
+                </button>
+            </div>
+
+            <!-- To-Do List Container -->
+            <div class="todo-list-container" id="todoListContainer">
+                <div class="todo-list" id="todoList">
+                    <!-- Todos will be dynamically added here -->
+                </div>
+
+                <!-- Empty State -->
+                <div class="todo-empty-state" id="todoEmptyState">
+                    <div class="empty-state-content">
+                        <i class="fas fa-clipboard-list"></i>
+                        <h3>No Todos Yet</h3>
+                        <p>Click "Add Todo" to create your first task.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    function navigateToSectionWithFilter(sectionName, filterValue = null, filterId = null) {
+        if (typeof showSection === 'function') {
+            showSection(sectionName);
+
+            // Update active navigation in sidebar
+            document.querySelectorAll('.nav-link[data-section]').forEach(link => {
+                if (link.getAttribute('data-section') === sectionName) {
+                    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+                    link.parentElement.classList.add('active');
+                }
+            });
+
+            if (filterValue) {
+                setTimeout(() => {
+                    if (sectionName === 'user-management') {
+                        if (typeof filterUsersByType === 'function') {
+                            filterUsersByType(filterValue);
+                        }
+                    } else if (sectionName === 'assignment-requests' && filterId) {
+                        const filterSelect = document.getElementById(filterId);
+                        if (filterSelect) {
+                            filterSelect.value = filterValue;
+                            if (typeof filterAssignmentsByStatus === 'function') {
+                                filterAssignmentsByStatus();
+                            }
+                        }
+                    }
+                }, 100);
+            }
+        }
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,131 @@
+{% extends "admin/admin_base.html" %}
+
+{% block content %}
+            <section class="content-section" id="studentsSection" aria-labelledby="studentsHeading">
+                <h1 class="section-title" id="studentsHeading">Students Management</h1>
+                <p class="section-subtitle">Manage student assignments and teacher assignments.</p>
+
+                <div class="search-filter-container">
+                    <div class="search-container-improved">
+                        <div class="search-input-wrapper">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" class="search-input" placeholder="Search students..."
+                                id="studentSearchInput">
+                        </div>
+                    </div>
+                    <div class="filter-container">
+                        <select class="filter-select" id="studentFilter">
+                            <option value="all">All Students</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                            <option value="new">New Students</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Students Table List -->
+                <div class="students-table-container">
+                    <table class="students-table">
+                        <thead>
+                            <tr>
+                                <th>STUDENT</th>
+                                <th>STATUS</th>
+                                <th>ASSIGNMENTS</th>
+                                <th>TEACHERS</th>
+                                <th>ACTIONS</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentsTableBody">
+                            {% for student in students_list %}
+                            <tr class="student-row" 
+                                data-status="{% if student.user.is_active %}active{% else %}inactive{% endif %}"
+                                data-is-new="{% if student.created_at >= seven_days_ago %}true{% else %}false{% endif %}">
+                                <td class="student-info-cell">
+                                    <div class="student-info-list">
+                                        <div class="student-avatar-list">
+                                            {% if student.user.profile_picture %}
+                                            <img src="{{ student.user.profile_picture.url }}" alt="{{ student.user.get_full_name }}">
+                                            {% else %}
+                                            <div class="avatar-fallback">
+                                                <span>{{ student.user.first_name|slice:":1" }}{{ student.user.last_name|slice:":1" }}</span>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="student-details-list">
+                                            <div class="student-name">{{ student.user.get_full_name }}</div>
+                                            <div class="student-email">{{ student.user.email }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="student-status">
+                                    {% if student.user.is_active %}
+                                    <span class="status-badge online">
+                                        <i class="fas fa-circle"></i> Active
+                                    </span>
+                                    {% else %}
+                                    <span class="status-badge offline">
+                                        <i class="fas fa-circle"></i> Inactive
+                                    </span>
+                                    {% endif %}
+                                    
+                                    {% if student.created_at >= seven_days_ago %}
+                                    <span class="status-badge pending" style="margin-top: 4px; display: block; width: fit-content;">
+                                        <i class="fas fa-star"></i> New
+                                    </span>
+                                    {% endif %}
+                                </td>
+                                <td class="student-assignments-count">{{ student.assignment_count }}</td>
+                                <td class="student-teachers-count">{{ student.teacher_count }}</td>
+                                <td class="student-actions-cell">
+                                    <button class="action-btn-small primary" onclick="toggleStudentAssignments(this, '{{ student.id }}')">
+                                        <i class="fas fa-chevron-down"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr id="assignments-{{ student.id }}" class="assignments-accordion" style="display: none;">
+                                <td colspan="5">
+                                    <div class="assignments-container">
+                                        <div class="assignments-header">{{ student.user.first_name }}'s Assignments</div>
+                                        {% for assignment in student.assignments.all %}
+                                        <div class="assignment-item">
+                                            <div class="assignment-info">
+                                                <div class="assignment-basic-info">
+                                                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
+                                                        <h4 class="assignment-title" style="margin: 0;">{{ assignment.title }}</h4>
+                                                        <span class="status-badge {{ assignment.status }}" style="font-size: 0.7rem; padding: 2px 8px;">
+                                                            {{ assignment.get_status_display }}
+                                                        </span>
+                                                    </div>
+                                                    <p class="assignment-subject">
+                                                        {{ assignment.get_service_type_display }} · 
+                                                        {% if assignment.num_pages %}{{ assignment.num_pages }} pages · {% endif %}
+                                                        Due {{ assignment.due_date|date:"M d, Y"|default:assignment.exam_date|date:"M d, Y"|default:"-" }}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="assignment-actions">
+                                                <button class="action-btn-small primary" onclick="viewAssignmentDetails('{{ assignment.id }}')" title="Quick View">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="action-btn-small secondary" onclick="viewSpecificAssignment('{{ student.id }}', '{{ assignment.id }}')" style="background: rgba(17, 88, 229, 0.1); color: var(--primary); border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 0.8rem; font-weight: 600;">
+                                                    <i class="fas fa-external-link-alt"></i>
+                                                    Go to Request
+                                                </button>
+                                            </div>
+                                        </div>
+                                        {% empty %}
+                                        <p class="muted" style="padding: 1rem; text-align: center;">No assignments requested yet.</p>
+                                        {% endfor %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center" style="padding: 2rem; color: var(--muted);">No students found in the database.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+{% endblock %}

@@ -1,0 +1,460 @@
+{% extends "student/student_base.html" %}
+
+{% block content %}
+<section class="content-section" id="tutorsSection" aria-labelledby="tutorsHeading">
+    <h1 class="section-title" id="tutorsHeading">Assigned Tutors</h1>
+    <p class="section-subtitle">Tutors currently assisting you with your assignments</p>
+
+    <!-- Tutors List -->
+    <div id="tutorsListContainer">
+        <div class="tutors-grid-modern" id="tutorsList">
+            {% for tutor in tutors %}
+            <div class="tutor-card-modern" data-tutor-id="{{ tutor.id }}">
+                <!-- Card Top Section with Gradient -->
+                <div class="tutor-card-top">
+                    <div class="tutor-status-badge {% if tutor.user.is_active %}online{% else %}offline{% endif %}">
+                        <span class="status-dot"></span>
+                        <span>{% if tutor.user.is_active %}Active{% else %}Inactive{% endif %}</span>
+                    </div>
+                </div>
+
+                <!-- Card Header with Avatar and Info -->
+                <div class="tutor-card-header">
+                    <div class="tutor-avatar-wrapper">
+                        <div class="tutor-avatar-large">
+                            {% if tutor.user.profile_picture %}
+                            <img src="{{ tutor.user.profile_picture.url }}" alt="{{ tutor.user.get_full_name }}"
+                                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            {% else %}
+                            <div class="avatar-placeholder" style="display: flex;">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="online-indicator {% if not tutor.user.is_active %}offline{% endif %}"></div>
+                    </div>
+                    <div class="tutor-info-main">
+                        <h3 class="tutor-name">{{ tutor.user.get_full_name }}</h3>
+                        <div class="tutor-subtitle">{{ tutor.title|default:"Professional Tutor" }}</div>
+                    </div>
+                </div>
+
+                <!-- Assignment Info -->
+                <div class="tutor-assignment-info">
+                    <div class="assignment-list-header" onclick="toggleAssignments(this)">
+                        <div class="header-main">
+                            <i class="fas fa-tasks"></i>
+                            <span>Related Assignments</span>
+                        </div>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="tutor-assignments-mini-list">
+                        {% for task in tutor.student_tasks %}
+                        <div class="mini-assignment-item">
+                            <span class="assignment-title-link" onclick="viewAssignment('{{ task.assignment.id }}')">
+                                {{ task.assignment.title }}
+                            </span>
+                            <span class="status-badge-mini {{ task.assignment.status }}">
+                                {{ task.assignment.get_status_display }}
+                            </span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="tutor-actions">
+                    <button class="tutor-action-btn primary"
+                        onclick="chatWithTutor('{{ tutor.user.id }}', '{{ tutor.user.get_full_name }}')">
+                        <i class="fas fa-comments"></i> <span>Chat</span>
+                    </button>
+                    <button class="tutor-action-btn secondary" onclick="viewTutorDetails(this, '{{ tutor.id }}')"
+                        data-name="{{ tutor.user.get_full_name }}"
+                        data-title="{{ tutor.title|default:'Professional Tutor' }}"
+                        data-rating="{{ tutor.rating|default:'5.0' }}"
+                        data-avatar="{% if tutor.user.profile_picture %}{{ tutor.user.profile_picture.url }}{% endif %}"
+                        data-expertise="{{ tutor.expertise|default:'N/A'|escape }}"
+                        data-primary-subject="{{ tutor.primary_subject|default:'N/A'|escape }}"
+                        data-specialization="{{ tutor.expertise|default:'N/A'|escape }}"
+                        data-experience="{{ tutor.years_of_experience|default:'0' }}"
+                        data-education="{{ tutor.qualifications|default:'N/A'|escape }}"
+                        data-bio="{{ tutor.bio|default:'No bio available.'|escape }}">
+                        <i class="fas fa-eye"></i> <span>View</span>
+                    </button>
+                    <button class="tutor-action-btn icon-only feedback-btn"
+                        onclick="openFeedbackModal('{{ tutor.id }}', '{{ tutor.user.get_full_name }}')"
+                        title="Provide Feedback">
+                        <i class="fas fa-star"></i>
+                    </button>
+                </div>
+            </div>
+            {% empty %}
+            <!-- No Tutors State Handled Below -->
+            {% endfor %}
+        </div>
+
+        <!-- Empty State -->
+        <div id="tutorsEmptyState" class="tutors-empty-state" {% if tutors %}style="display: none;" {% else
+            %}style="display: flex;" {% endif %}>
+            <div class="empty-state-icon">
+                <i class="fas fa-user-graduate"></i>
+            </div>
+            <h3>No Assigned Tutors</h3>
+
+            <p>You currently have no assigned tutors. Once a teacher is assigned to your assignments, they'll appear
+                here.</p>
+        </div>
+    </div>
+
+    <!-- Tutor Details Modal -->
+    <div class="modal-overlay" id="tutorDetailsModal" style="display: none;">
+        <div class="modal-content modern-modal tutor-detail-modal">
+            <div class="modal-header">
+                <div class="header-content">
+                    <h2 class="modal-title">Tutor Profile</h2>
+                    <p class="modal-subtitle" id="modalTutorTitle">Academic Professional</p>
+                </div>
+                <button class="modal-close" onclick="closeTutorModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="tutor-profile-detailed">
+                    <div class="profile-hero-section">
+                        <div class="tutor-avatar-detailed">
+                            <img id="modalTutorAvatar" src="" alt=""
+                                onerror="this.src='/static/pics/default-avatar.png'" />
+                        </div>
+                        <div class="tutor-main-meta">
+                            <h3 id="modalTutorName">Tutor Name</h3>
+                            <div class="meta-badges">
+                                <span class="experience-badge"><i class="fas fa-award"></i> <span
+                                        id="modalTutorExp">0</span> Years Exp</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tutor-stats-strip">
+                        <div class="stat-item">
+                            <div class="stat-icon"><i class="fas fa-book-open"></i></div>
+                            <div class="stat-info">
+                                <label>Primary Subject</label>
+                                <p id="modalTutorPrimarySubject">-</p>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon"><i class="fas fa-graduation-cap"></i></div>
+                            <div class="stat-info">
+                                <label>Education</label>
+                                <p id="modalTutorEducation">-</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tutor-details-grid-new">
+                        <div class="detail-card-item">
+                            <div class="item-header">
+                                <i class="fas fa-brain"></i>
+                                <span>Expertise</span>
+                            </div>
+                            <p id="modalTutorExpertise">-</p>
+                        </div>
+                        <div class="detail-card-item">
+                            <div class="item-header">
+                                <i class="fas fa-certificate"></i>
+                                <span>Specialization</span>
+                            </div>
+                            <p id="modalTutorSpecialization">-</p>
+                        </div>
+                    </div>
+
+                    <div class="bio-section-new">
+                        <div class="section-label">
+                            <i class="fas fa-user-tag"></i> About the Tutor
+                        </div>
+                        <div id="modalTutorBio" class="bio-content-new">
+                            -
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="tutor-action-btn primary full-width-btn" id="modalChatBtn">
+                    <i class="fas fa-comments"></i> Start Conversation
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback Modal -->
+    <div class="modal-overlay" id="tutorFeedbackModal" style="display: none;">
+        <div class="modal-content modern-modal feedback-modal-new">
+            <div class="modal-header">
+                <div class="header-content">
+                    <h2 class="modal-title">Share Experience</h2>
+                    <p class="modal-subtitle">Your feedback helps us improve our service</p>
+                </div>
+                <button class="modal-close" onclick="closeFeedbackModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="tutorFeedbackForm" class="modern-form-new">
+                    <input type="hidden" id="feedbackTutorId" name="tutor_id">
+
+                    <div class="feedback-target-summary">
+                        <div class="target-label">Reviewing</div>
+                        <div id="feedbackTutorNameDisplay" class="target-name">Tutor Name</div>
+                    </div>
+
+                    <div class="form-row-new">
+                        <div class="form-group-new">
+                            <label for="feedbackAssignment">Related Assignment <span class="required">*</span></label>
+                            <div class="select-wrapper-new">
+                                <select id="feedbackAssignment" name="assignment_id" class="modern-select-new" required>
+                                    <option value="">Choose an assignment...</option>
+                                </select>
+                                <i class="fas fa-chevron-down select-icon"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group-new">
+                        <label for="feedbackMessage">Your Feedback <span class="required">*</span></label>
+                        <textarea id="feedbackMessage" name="message" class="modern-textarea-new" rows="4"
+                            placeholder="Tell us about your experience with this tutor..." required></textarea>
+                        <div class="textarea-hint">Please be specific about what you liked or what could be better.
+                        </div>
+                    </div>
+
+                    <div class="form-actions-new">
+                        <button type="button" class="btn-cancel-new" onclick="closeFeedbackModal()">Discard</button>
+                        <button type="submit" class="btn-submit-new">
+                            <span>Submit Review</span>
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    (function () {
+        // Toggle related assignments accordion
+        window.toggleAssignments = function (header) {
+            const list = header.nextElementSibling;
+            header.classList.toggle('active');
+            list.classList.toggle('expanded');
+        };
+
+        // Expose functions globally
+        window.viewTutorDetails = function (element, tutorId) {
+            const data = element.dataset;
+
+            document.getElementById('modalTutorName').textContent = data.name;
+            document.getElementById('modalTutorExpertise').textContent = data.expertise;
+            document.getElementById('modalTutorPrimarySubject').textContent = data.primarySubject;
+            document.getElementById('modalTutorSpecialization').textContent = data.specialization;
+            document.getElementById('modalTutorExp').textContent = data.experience;
+            document.getElementById('modalTutorEducation').textContent = data.education;
+            document.getElementById('modalTutorBio').textContent = data.bio;
+            document.getElementById('modalTutorAvatar').src = data.avatar || '/static/pics/default-avatar.png';
+
+            // Populate title and rating if exists
+            const titleEl = document.getElementById('modalTutorTitle');
+            if (titleEl) titleEl.textContent = data.title || 'Academic Professional';
+
+            const ratingBadge = document.querySelector('.rating-badge-detailed');
+            if (ratingBadge && data.rating) {
+                ratingBadge.innerHTML = `<i class="fas fa-star"></i> ${data.rating}`;
+            }
+
+            // Setup Chat button in modal
+            const modalChatBtn = document.getElementById('modalChatBtn');
+            if (modalChatBtn) {
+                // Remove existing listeners if any
+                const newBtn = modalChatBtn.cloneNode(true);
+                modalChatBtn.parentNode.replaceChild(newBtn, modalChatBtn);
+
+                // Get the user ID from the card (we need to pass it to the view button)
+                const card = element.closest('.tutor-card-modern');
+                const chatBtnOnCard = card.querySelector('.tutor-action-btn.primary');
+                // The chat button on the card has onclick="chatWithTutor('userId', 'name')"
+                const onclickStr = chatBtnOnCard.getAttribute('onclick');
+                const idMatch = onclickStr.match(/'([^']+)'/);
+                const userId = idMatch ? idMatch[1] : '';
+
+                newBtn.addEventListener('click', () => {
+                    closeTutorModal();
+                    chatWithTutor(userId, data.name);
+                });
+            }
+
+            document.getElementById('tutorDetailsModal').style.display = 'flex';
+        };
+
+        window.closeTutorModal = function () {
+            document.getElementById('tutorDetailsModal').style.display = 'none';
+        };
+
+        window.openFeedbackModal = function (tutorId, tutorName) {
+            const tutorIdField = document.getElementById('feedbackTutorId');
+            const tutorNameDisplay = document.getElementById('feedbackTutorNameDisplay');
+
+            if (tutorIdField) tutorIdField.value = tutorId;
+            if (tutorNameDisplay) tutorNameDisplay.textContent = tutorName;
+
+            const card = document.querySelector(`.tutor-card-modern[data-tutor-id="${tutorId}"]`);
+            if (!card) {
+                console.error(`Tutor card with ID ${tutorId} not found.`);
+                return;
+            }
+
+            const assignments = card.querySelectorAll('.mini-assignment-item');
+            const select = document.getElementById('feedbackAssignment');
+
+            if (select) {
+                select.innerHTML = '<option value="">Select assignment...</option>';
+                assignments.forEach(item => {
+                    const titleLink = item.querySelector('.assignment-title-link');
+                    const title = titleLink.textContent.trim();
+                    const onclickStr = titleLink.getAttribute('onclick');
+                    const idMatch = onclickStr.match(/'([^']+)'/);
+                    const assignmentId = idMatch ? idMatch[1] : '';
+
+                    const opt = document.createElement('option');
+                    opt.value = assignmentId;
+                    opt.textContent = title;
+                    select.appendChild(opt);
+                });
+            }
+
+            const modal = document.getElementById('tutorFeedbackModal');
+            if (modal) modal.style.display = 'flex';
+        };
+
+        window.closeFeedbackModal = function () {
+            const modal = document.getElementById('tutorFeedbackModal');
+            if (modal) modal.style.display = 'none';
+            const form = document.getElementById('tutorFeedbackForm');
+            if (form) form.reset();
+        };
+
+        window.chatWithTutor = async function (userId, tutorName) {
+            // Bridge into the messaging system. Messages tab can be loaded async via switchSection,
+            // so we set a pending target user id that `messaging.js` will consume on init.
+            window.__pendingMessagingUserId = userId;
+
+            // If messaging is already active and mounted, start immediately.
+            try {
+                if (window.StudyMessaging && window.StudyMessaging._initialized && document.getElementById('messagesSection')) {
+                    await window.StudyMessaging.startConversation(userId);
+                    return;
+                }
+            } catch (e) {
+                // fall back to switching section
+                console.warn('chatWithTutor direct start failed, falling back to switchSection', e);
+            }
+
+            if (window.switchSection) {
+                window.switchSection('messages');
+            } else {
+                alert('Messaging system is initializing. Please try again.');
+            }
+        };
+
+        const feedbackForm = document.getElementById('tutorFeedbackForm');
+        if (feedbackForm) {
+            feedbackForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                const submitBtn = this.querySelector('.btn-submit-new');
+
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.querySelector('span').textContent = 'Submitting...';
+                }
+
+                try {
+                    const csrftoken = getCookie('csrftoken');
+                    if (!csrftoken) {
+                        alert('Error: CSRF token not found. Please refresh the page and try again.');
+                        if (submitBtn) {
+                            submitBtn.disabled = false;
+                            submitBtn.querySelector('span').textContent = 'Submit Review';
+                        }
+                        return;
+                    }
+
+                    const response = await fetch('/assingment/student/feedback/submit/', {
+                        method: 'POST',
+                        credentials: 'include',
+                        body: JSON.stringify({
+                            tutor_id: formData.get('tutor_id'),
+                            assignment_id: formData.get('assignment_id'),
+                            message: formData.get('message')
+                        }),
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrftoken
+                        }
+                    });
+
+                    // Check if response is ok before parsing JSON
+                    if (!response.ok) {
+                        let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+                        try {
+                            const errorData = await response.json();
+                            errorMessage = errorData.error || errorMessage;
+                        } catch (e) {
+                            // If response is not JSON, use status text
+                        }
+                        throw new Error(errorMessage);
+                    }
+
+                    const result = await response.json();
+                    if (result.success) {
+                        if (typeof window.showToast === 'function') {
+                            window.showToast('Feedback submitted successfully!', 'success');
+                        } else {
+                            alert('Feedback submitted successfully!');
+                        }
+                        closeFeedbackModal();
+                    } else {
+                        alert(result.error || 'Failed to submit feedback');
+                    }
+                } catch (error) {
+                    console.error('Error submitting feedback:', error);
+                    const errorMessage = error.message || 'An error occurred. Please try again.';
+                    alert('Error: ' + errorMessage);
+                } finally {
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.querySelector('span').textContent = 'Submit Review';
+                    }
+                }
+            });
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            // Fallback to meta tag if cookie not found
+            if (!cookieValue) {
+                const metaTag = document.querySelector('meta[name="csrf-token"]');
+                if (metaTag) {
+                    cookieValue = metaTag.getAttribute('content');
+                }
+            }
+            return cookieValue;
+        }
+    })();
+</script>
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends "csrep/csrep_base.html" %}
+{% block content %}
+
+<section class="content-section" id="assignmentSection" aria-labelledby="assignmentHeading">
+    <header class="section-header">
+        <div>
+            <h1 class="section-title" id="assignmentHeading">Assign Teacher</h1>
+            <p class="section-subtitle">Initiate tutor matching, notify admin for approvals, and track
+                outcomes.</p>
+        </div>
+        <button class="primary-button" id="openAssignModal"><i class="fas fa-user-plus"></i> Assign Teacher
+            to Student</button>
+    </header>
+
+    <div class="assignment-grid">
+        <article class="assignment-table">
+            <header class="panel-header">
+                <div>
+                    <h2 class="panel-title">Pending Assignments</h2>
+                    <p class="panel-subtitle">CS Rep leads assignment · Admin confirms in portal.</p>
+                </div>
+            </header>
+            <table id="csRepAssignmentsTable">
+                <thead>
+                    <tr>
+                        <th>Assignment ID</th>
+                        <th>Student</th>
+                        <th>Subject</th>
+                        <th>Assigned Teacher</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Mock Assignment Data -->
+                    <tr>
+                        <td><code>ASG-2025-001</code></td>
+                        <td>Alex Johnson</td>
+                        <td>Calculus</td>
+                        <td><span style="color: var(--muted-text);">Not assigned</span></td>
+                        <td><span class="status-pill warm">Pending</span></td>
+                        <td>
+                            <button class="ghost-button small" onclick="openAssignTeacherModal(1)">Assign</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><code>ASG-2025-002</code></td>
+                        <td>Emma Wilson</td>
+                        <td>Physics</td>
+                        <td>Dr. Sarah Chen</td>
+                        <td><span class="status-pill warm">In Process</span></td>
+                        <td>
+                            <button class="ghost-button small" onclick="viewAssignment(2)">View</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><code>ASG-2025-003</code></td>
+                        <td>Maya Chen</td>
+                        <td>Chemistry</td>
+                        <td>Dr. Michael Johnson</td>
+                        <td><span class="status-pill converted">Completed</span></td>
+                        <td>
+                            <button class="ghost-button small" onclick="viewAssignment(3)">View</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><code>ASG-2025-004</code></td>
+                        <td>Sarah Martinez</td>
+                        <td>Mathematics</td>
+                        <td><span style="color: var(--muted-text);">Not assigned</span></td>
+                        <td><span class="status-pill followup">Pending Invoice</span></td>
+                        <td>
+                            <button class="ghost-button small" onclick="openAssignTeacherModal(4)">Assign</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><code>ASG-2025-005</code></td>
+                        <td>Jerry Martinez</td>
+                        <td>Biology</td>
+                        <td>Dr. Priya Sharma</td>
+                        <td><span class="status-pill warm">In Process</span></td>
+                        <td>
+                            <button class="ghost-button small" onclick="viewAssignment(5)">View</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </article>
+    </div>
+</section>
+{% endblock %}

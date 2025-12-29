@@ -1,0 +1,179 @@
+{% extends "csrep/csrep_base.html" %}
+{% block content %}
+
+
+<section class="content-section" id="notificationsSection" aria-labelledby="notificationsHeading">
+    <header class="section-header">
+        <div>
+            <h1 class="section-title" id="notificationsHeading">Notifications</h1>
+            <p class="section-subtitle">Real-time updates for new pre-sign-in chats, reminders, invoice
+                changes, and messages.</p>
+        </div>
+    </header>
+    <div class="overview-grid">
+        <article class="panel">
+            <header class="panel-header">
+                <div>
+                    <h2 class="panel-title">Activity Feed</h2>
+                    <p class="panel-subtitle">Most recent events</p>
+                </div>
+            </header>
+            <div style="display:flex; gap:12px; margin-bottom: 12px; flex-wrap: wrap;">
+                <button class="ghost-button" type="button" id="csrepMarkAllReadBtn">Mark all as read</button>
+                <button class="ghost-button" type="button" id="csrepDeleteAllNotificationsBtn">Delete all</button>
+            </div>
+            <ul class="alert-list" id="notificationsAlertsList"></ul>
+        </article>
+    </div>
+</section>
+
+<script>
+(function () {
+    // Wait for DOM to be ready
+    function init() {
+        async function load() {
+            // Fallback: direct API render
+            const list = document.getElementById('notificationsAlertsList');
+            if (!list) return;
+            if (!window.apiClient || typeof window.apiClient.getNotifications !== 'function') {
+                list.innerHTML = '<li style="text-align: center; padding: 2rem; color: var(--muted-text);">Notifications unavailable</li>';
+                return;
+            }
+            try {
+                const resp = await window.apiClient.getNotifications({ role: 'cs_rep', limit: 50 });
+                const notifs = Array.isArray(resp) ? resp : (resp.results || []);
+                if (!notifs.length) {
+                    list.innerHTML = '<li style="text-align: center; padding: 2rem; color: var(--muted-text);">No new notifications</li>';
+                    return;
+                }
+                list.innerHTML = notifs.map(n => {
+                    const badgeClass = (n.notification_type === 'assignment') ? 'info'
+                        : (n.notification_type === 'invoice') ? 'warning'
+                        : 'neutral';
+                    const title = (n.title || n.message || 'Notification').replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                    const unreadClass = n.is_read ? '' : 'unread';
+                    return `
+                        <li data-id="${n.notification_id}" class="notification-item ${unreadClass}">
+                            <span class="alert-badge ${badgeClass} ${unreadClass}"></span>
+                            <div style="flex: 1; min-width: 0;">
+                                <p class="alert-text">${title}</p>
+                                <p class="alert-meta">${new Date(n.created_at).toLocaleString()} · ${n.notification_type || 'system'}</p>
+                            </div>
+                            <button class="ghost-button delete-notification-btn" type="button" data-action="delete" data-delete="${n.notification_id}" title="Delete notification" style="padding: 8px; min-width: auto; flex-shrink: 0;">
+                                <i class="fas fa-shopping-basket" style="font-size: 0.875rem;"></i>
+                            </button>
+                        </li>
+                    `;
+                }).join('');
+                list.querySelectorAll('button[data-delete]').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const id = btn.getAttribute('data-delete');
+                        try { 
+                            await window.apiClient.deleteNotification(id);
+                            // Remove the notification from UI immediately
+                            const listItem = btn.closest('li');
+                            if (listItem) {
+                                listItem.remove();
+                            }
+                            // Reload notifications to update count
+                            load();
+                        } catch (e) {
+                            console.error('Error deleting notification:', e);
+                            alert('Failed to delete notification. Please try again.');
+                        }
+                    });
+                });
+            } catch (e) {
+                list.innerHTML = '<li style="text-align: center; padding: 2rem; color: var(--muted-text);">Error loading notifications</li>';
+            }
+        }
+
+        // Initialize button handlers - ensure they're attached
+        const markAllBtn = document.getElementById('csrepMarkAllReadBtn');
+        if (markAllBtn) {
+            // Remove any existing listeners by cloning the button
+            const newMarkAllBtn = markAllBtn.cloneNode(true);
+            markAllBtn.parentNode.replaceChild(newMarkAllBtn, markAllBtn);
+            
+            newMarkAllBtn.addEventListener('click', async (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (!window.apiClient || typeof window.apiClient.markAllNotificationsRead !== 'function') {
+                    alert('API client not available. Please refresh the page.');
+                    return;
+                }
+                try { 
+                    await window.apiClient.markAllNotificationsRead();
+                    // Reload notifications to update UI
+                    await load();
+                    // Show success message
+                    if (typeof showToast === 'function') {
+                        showToast('All notifications marked as read', 'success');
+                    } else {
+                        alert('All notifications marked as read');
+                    }
+                } catch (e) {
+                    console.error('Error marking all as read:', e);
+                    const errorMsg = e.message || e.error || 'Failed to mark all notifications as read. Please try again.';
+                    if (typeof showToast === 'function') {
+                        showToast(errorMsg, 'error');
+                    } else {
+                        alert(errorMsg);
+                    }
+                }
+            });
+        }
+
+        const deleteAllBtn = document.getElementById('csrepDeleteAllNotificationsBtn');
+        if (deleteAllBtn) {
+            // Remove any existing listeners by cloning the button
+            const newDeleteAllBtn = deleteAllBtn.cloneNode(true);
+            deleteAllBtn.parentNode.replaceChild(newDeleteAllBtn, deleteAllBtn);
+            
+            newDeleteAllBtn.addEventListener('click', async (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (!window.apiClient || typeof window.apiClient.deleteAllNotifications !== 'function') {
+                    alert('API client not available. Please refresh the page.');
+                    return;
+                }
+                if (confirm('Are you sure you want to delete all notifications?')) {
+                    try { 
+                        await window.apiClient.deleteAllNotifications();
+                        // Reload notifications to update UI
+                        await load();
+                        // Show success message
+                        if (typeof showToast === 'function') {
+                            showToast('All notifications deleted', 'success');
+                        } else {
+                            alert('All notifications deleted');
+                        }
+                    } catch (e) {
+                        console.error('Error deleting all notifications:', e);
+                        const errorMsg = e.message || e.error || 'Failed to delete all notifications. Please try again.';
+                        if (typeof showToast === 'function') {
+                            showToast(errorMsg, 'error');
+                        } else {
+                            alert(errorMsg);
+                        }
+                    }
+                }
+            });
+        }
+
+        // Load notifications on page load
+        load();
+    }
+
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        // DOM already loaded
+        init();
+    }
+})();
+</script>
+{% endblock %}

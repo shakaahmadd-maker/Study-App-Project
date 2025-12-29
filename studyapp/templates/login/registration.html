@@ -1,0 +1,502 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Sign Up — Nano Problem</title>
+    <link rel="stylesheet" href="{% static 'css/registration.css' %}">
+</head>
+
+<body>
+    <div class="split">
+        <aside class="left">
+            <div class="left-overlay">
+                <img src="{% static 'SVG/comas.svg' %}" alt="" class="comas" aria-hidden="true">
+                <h2 class="lead">
+                    The roots of
+                    <span class="emph">Education</span>
+                    were bitter but fruits are sweet.
+                </h2>
+            </div>
+        </aside>
+
+        <main class="right">
+            <div class="card signup-card" aria-hidden="false">
+                <div class="brand">
+                    <h2 class="brand-text">Nano <span class="brand-strong">Problem</span></h2>
+                </div>
+
+                <h3 class="card-title">Create new account</h3>
+                <p class="card-sub">Join a community of learners and educators.</p>
+
+                <div class="error-message" id="errorMessage"
+                    style="display: none; color: #e74c3c; background-color: #fee; border: 1px solid #e74c3c; padding: 12px; border-radius: 6px; margin-bottom: 16px;">
+                </div>
+                <div class="success-message" id="successMessage"
+                    style="display: none; color: #27ae60; background-color: #efe; border: 1px solid #27ae60; padding: 12px; border-radius: 6px; margin-bottom: 16px;">
+                </div>
+
+                <form class="signup-form" id="registrationForm" novalidate>
+                    <div class="form-row">
+                        <label class="field">
+                            <input type="text" name="firstname" id="firstname" placeholder="First Name" required>
+                        </label>
+                        <label class="field">
+                            <input type="text" name="lastname" id="lastname" placeholder="Last Name" required>
+                        </label>
+                    </div>
+
+                    <div class="form-row">
+                        <label class="field field-full">
+                            <input type="email" name="email" id="email" placeholder="Email Address" required>
+                        </label>
+                    </div>
+
+                    <div class="form-row">
+                        <label class="field">
+                            <input type="password" name="password" id="password" placeholder="Password" required>
+                        </label>
+                        <label class="field">
+                            <input type="password" name="confirm" id="confirm" placeholder="Confirm Password" required>
+                        </label>
+                    </div>
+
+                    <label class="agree">
+                        <input type="checkbox" name="agree" id="agree" required>
+                        <span>I agreed to <a href="#">Terms and Conditions</a></span>
+                    </label>
+
+                    <button class="cta" type="submit" id="submitBtn">Get Started Now</button>
+
+                    <p class="signin">Already have an account? <a href="#" class="show-signin">Sign
+                            in</a></p>
+                </form>
+            </div>
+
+
+            <!-- SIGNIN CARD (starts hidden) -->
+            <div class="card signin-card hidden" aria-hidden="true">
+                <div class="brand">
+                    <h2 class="brand-text">Nano <span class="brand-strong">Problem</span></h2>
+                </div>
+
+                <h3 class="card-title">Hello!</h3>
+                <p class="card-sub">Welcome back! Sign in to your student account.</p>
+
+                <div class="error-message" id="signinErrorMessage"
+                    style="display: none; color: #e74c3c; background-color: #fee; border: 1px solid #e74c3c; padding: 12px; border-radius: 6px; margin-bottom: 16px;">
+                </div>
+                <div class="success-message" id="signinSuccessMessage"
+                    style="display: none; color: #27ae60; background-color: #efe; border: 1px solid #27ae60; padding: 12px; border-radius: 6px; margin-bottom: 16px;">
+                </div>
+
+                <form class="signin-form" id="signinForm" novalidate>
+                    <label class="field">
+                        <input type="email" name="email" id="signinEmail" placeholder="Email Address" required>
+                    </label>
+
+                    <label class="field">
+                        <input type="password" name="password" id="signinPassword" placeholder="Password" required>
+                    </label>
+
+                    <button class="cta" type="submit" id="signinSubmitBtn">Sign In</button>
+
+                    <p class="signin">
+                        <a href="#" id="forgotPasswordLink">Forgot your password?</a>
+                    </p>
+
+                    <p class="signin" style="margin-top:14px;">Don't have an account? <a href="#"
+                            class="show-signup">Create account</a></p>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div id="forgotPasswordModal" class="forgot-password-modal" style="display: none;">
+        <div class="forgot-password-modal-overlay"></div>
+        <div class="forgot-password-modal-content">
+            <button class="forgot-password-modal-close" id="closeForgotPasswordModal">&times;</button>
+            <div class="forgot-password-modal-body">
+                <p>To get the temporary Password please Reach us by calling or text use at <strong>+1-917-730-4520</strong></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'javascript/apiClient.js' %}"></script>
+    <script>
+        (function () {
+            const signupCard = document.querySelector('.signup-card');
+            const signinCard = document.querySelector('.signin-card');
+            const showSigninLinks = document.querySelectorAll('.show-signin');
+            const showSignupLinks = document.querySelectorAll('.show-signup');
+
+            function showCard(card) {
+                if (card === 'signin') {
+                    signupCard.classList.add('hidden');
+                    signupCard.setAttribute('aria-hidden', 'true');
+                    signinCard.classList.remove('hidden');
+                    signinCard.setAttribute('aria-hidden', 'false');
+                } else {
+                    signinCard.classList.add('hidden');
+                    signinCard.setAttribute('aria-hidden', 'true');
+                    signupCard.classList.remove('hidden');
+                    signupCard.setAttribute('aria-hidden', 'false');
+                }
+            }
+
+            // Check URL parameter to determine which card to show on page load
+            const urlParams = new URLSearchParams(window.location.search);
+            const mode = urlParams.get('mode');
+            if (mode === 'signin') {
+                showCard('signin');
+            }
+
+            showSigninLinks.forEach(a => a.addEventListener('click', e => { e.preventDefault(); showCard('signin'); }));
+            showSignupLinks.forEach(a => a.addEventListener('click', e => { e.preventDefault(); showCard('signup'); }));
+
+            // Registration form handler
+            const registrationForm = document.getElementById('registrationForm');
+            const errorMessage = document.getElementById('errorMessage');
+            const successMessage = document.getElementById('successMessage');
+            const submitBtn = document.getElementById('submitBtn');
+
+            // Signin form handler
+            const signinForm = document.getElementById('signinForm');
+            const signinErrorMessage = document.getElementById('signinErrorMessage');
+            const signinSuccessMessage = document.getElementById('signinSuccessMessage');
+            const signinSubmitBtn = document.getElementById('signinSubmitBtn');
+
+            function showSigninError(message) {
+                signinErrorMessage.textContent = message;
+                signinErrorMessage.style.display = 'block';
+                signinSuccessMessage.style.display = 'none';
+            }
+
+            function showSigninSuccess(message) {
+                signinSuccessMessage.textContent = message;
+                signinSuccessMessage.style.display = 'block';
+                signinErrorMessage.style.display = 'none';
+            }
+
+            function hideSigninMessages() {
+                signinErrorMessage.style.display = 'none';
+                signinSuccessMessage.style.display = 'none';
+            }
+
+            function getCookie(name) {
+                return null; // Static HTML - no backend CSRF needed
+            }
+
+            function showError(message) {
+                errorMessage.textContent = message;
+                errorMessage.style.display = 'block';
+                successMessage.style.display = 'none';
+            }
+
+            function showSuccess(message) {
+                successMessage.textContent = message;
+                successMessage.style.display = 'block';
+                errorMessage.style.display = 'none';
+            }
+
+            if (registrationForm) {
+                registrationForm.addEventListener('submit', async function (e) {
+                    e.preventDefault();
+
+                    const firstName = document.getElementById('firstname').value.trim();
+                    const lastName = document.getElementById('lastname').value.trim();
+                    const email = document.getElementById('email').value.trim();
+                    const phone = document.getElementById('phone').value.trim();
+                    const password = document.getElementById('password').value;
+                    const confirm = document.getElementById('confirm').value;
+                    const agree = document.getElementById('agree').checked;
+
+                    // Validation (phone is optional)
+                    if (!firstName || !lastName || !email || !password || !confirm) {
+                        showError('Please fill in all required fields.');
+                        return;
+                    }
+
+                    if (password !== confirm) {
+                        showError('Passwords do not match.');
+                        return;
+                    }
+
+                    if (!agree) {
+                        showError('Please accept the terms and conditions.');
+                        return;
+                    }
+
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = 'Registering...';
+
+                    try {
+                        console.log('Starting registration request...');
+                        // Try the default create endpoint first
+                        const response = await fetch('/account/api/accounts/register/', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                email: email,
+                                password: password,
+                                password2: confirm,
+                                first_name: firstName,
+                                last_name: lastName,
+                                phone: phone || null,
+                            })
+                        });
+
+                        // Check if response is actually JSON before parsing
+                        const contentType = response.headers.get('content-type');
+                        let data;
+
+                        if (!contentType || !contentType.includes('application/json')) {
+                            const text = await response.text();
+                            console.error('Non-JSON response received. Status:', response.status);
+                            console.error('Response preview:', text.substring(0, 500));
+
+                            // Try to extract error message from HTML if possible
+                            let errorMsg = 'An error occurred. Please try again later.';
+
+                            // Try to parse error from HTML response if possible
+                            const errorMatch = text.match(/<title>([^<]+)<\/title>/i) ||
+                                text.match(/<h1>([^<]+)<\/h1>/i) ||
+                                text.match(/AttributeError[^<\n]+/i);
+                            if (errorMatch) {
+                                errorMsg = `Server error: ${errorMatch[1] || errorMatch[0]}. Check console for details.`;
+                            }
+
+                            if (response.status === 404) {
+                                showError('Registration endpoint not found. Please contact support.');
+                            } else if (response.status === 500) {
+                                showError(errorMsg);
+                            } else {
+                                showError('Unexpected response from server. Please check the console for details.');
+                            }
+                            submitBtn.disabled = false;
+                            submitBtn.textContent = 'Get Started Now';
+                            return;
+                        }
+
+                        data = await response.json();
+                        console.log('Registration response status:', response.status);
+                        console.log('Registration response data:', data);
+
+                        if (response.ok) {
+                            // Check for success response
+                            if (data.success || (data.student && data.student.email) || (data.id && data.email)) {
+                                showSuccess('Registration successful! Opening sign-in form...');
+
+                                // Store tokens if provided
+                                if (data.tokens) {
+                                    localStorage.setItem('access_token', data.tokens.access);
+                                    localStorage.setItem('refresh_token', data.tokens.refresh);
+                                    console.log('Tokens stored successfully');
+                                }
+
+                                setTimeout(() => {
+                                    // Show the sign-in form instead of redirecting
+                                    showCard('signin');
+                                    // Pre-fill the email field with the registered email
+                                    const signinEmailField = document.getElementById('signinEmail');
+                                    if (signinEmailField) {
+                                        signinEmailField.value = email;
+                                    }
+                                    // Hide registration success message and show signin success message
+                                    successMessage.style.display = 'none';
+                                    showSigninSuccess('Registration successful! Please sign in to continue.');
+                                }, 1500);
+                            } else {
+                                // Unexpected success response format
+                                console.warn('Unexpected success response format:', data);
+                                showSuccess('Registration successful! Opening sign-in form...');
+                                setTimeout(() => {
+                                    // Show the sign-in form instead of redirecting
+                                    showCard('signin');
+                                    // Pre-fill the email field with the registered email
+                                    const signinEmailField = document.getElementById('signinEmail');
+                                    if (signinEmailField) {
+                                        signinEmailField.value = email;
+                                    }
+                                    // Hide registration success message and show signin success message
+                                    successMessage.style.display = 'none';
+                                    showSigninSuccess('Registration successful! Please sign in to continue.');
+                                }, 1500);
+                            }
+                        } else {
+                            // Handle validation errors - log full error for debugging
+                            console.error('Registration failed with status:', response.status);
+                            console.error('Full error response:', JSON.stringify(data, null, 2));
+
+                            let errorMsg = 'Registration failed. ';
+
+                            if (data.detail) {
+                                errorMsg = data.detail;
+                                if (data.type) {
+                                    console.error('Error type:', data.type);
+                                }
+                            } else if (data.error) {
+                                errorMsg = Array.isArray(data.error) ? data.error.join(', ') : data.error;
+                            } else if (data.password) {
+                                errorMsg += Array.isArray(data.password) ? data.password.join(', ') : data.password;
+                            } else if (data.email) {
+                                errorMsg += Array.isArray(data.email) ? data.email.join(', ') : data.email;
+                            } else if (typeof data === 'object') {
+                                // Extract first error message
+                                const firstError = Object.values(data).flat()[0];
+                                errorMsg += firstError || 'Please check your input and try again.';
+                            } else {
+                                errorMsg = 'Registration failed. Please try again.';
+                            }
+
+                            showError(errorMsg);
+                            submitBtn.disabled = false;
+                            submitBtn.textContent = 'Get Started Now';
+                        }
+                    } catch (error) {
+                        console.error('Registration error:', error);
+                        console.error('Error details:', {
+                            message: error.message,
+                            stack: error.stack
+                        });
+
+                        let errorMessage = 'An error occurred. Please try again later.';
+                        if (error.message && error.message.includes('JSON')) {
+                            errorMessage = 'Server returned an invalid response. Please check if the server is running correctly.';
+                        }
+
+                        showError(errorMessage);
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Get Started Now';
+                    }
+                });
+            }
+
+            // Signin form submission handler
+            if (signinForm) {
+                signinForm.addEventListener('submit', async function (e) {
+                    e.preventDefault();
+                    hideSigninMessages();
+
+                    const email = document.getElementById('signinEmail').value.trim();
+                    const password = document.getElementById('signinPassword').value;
+
+                    // Validation
+                    if (!email || !password) {
+                        showSigninError('Please fill in all fields.');
+                        return;
+                    }
+
+                    signinSubmitBtn.disabled = true;
+                    signinSubmitBtn.textContent = 'Signing in...';
+
+                    try {
+                        // Student login uses email and password
+                        const response = await fetch('/account/api/accounts/login/', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                email: email,
+                                password: password,
+                                role: 'student'
+                            })
+                        });
+
+                        const data = await response.json();
+
+                        if (response.ok && data.success) {
+                            // Store tokens in localStorage
+                            if (data.tokens) {
+                                localStorage.setItem('access_token', data.tokens.access);
+                                localStorage.setItem('refresh_token', data.tokens.refresh);
+                            }
+
+                            // Store user info
+                            if (data.role) {
+                                localStorage.setItem('user_role', data.role);
+                            }
+                            if (data.user_id) {
+                                localStorage.setItem('user_id', data.user_id);
+                            }
+                            if (data.email) {
+                                localStorage.setItem('user_email', data.email);
+                            }
+
+                            showSigninSuccess('Login successful! Redirecting...');
+
+                            // Redirect to student dashboard
+                            setTimeout(() => {
+                                window.location.href = '/account/student/dashboard/';
+                            }, 1000);
+                        } else {
+                            // Handle error response
+                            const errorMsg = data.error || data.detail || 'Invalid email or password. Please try again.';
+                            showSigninError(errorMsg);
+                            signinSubmitBtn.disabled = false;
+                            signinSubmitBtn.textContent = 'Sign In';
+                        }
+                    } catch (error) {
+                        console.error('Login error:', error);
+                        showSigninError('An error occurred. Please try again later.');
+                        signinSubmitBtn.disabled = false;
+                        signinSubmitBtn.textContent = 'Sign In';
+                    }
+                });
+
+                // Clear error messages on input
+                document.getElementById('signinEmail').addEventListener('input', hideSigninMessages);
+                document.getElementById('signinPassword').addEventListener('input', hideSigninMessages);
+            }
+
+            // Forgot Password Modal
+            const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+            const forgotPasswordModal = document.getElementById('forgotPasswordModal');
+            const closeForgotPasswordModal = document.getElementById('closeForgotPasswordModal');
+
+            if (forgotPasswordLink) {
+                forgotPasswordLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (forgotPasswordModal) {
+                        forgotPasswordModal.style.display = 'flex';
+                    }
+                });
+            }
+
+            if (closeForgotPasswordModal) {
+                closeForgotPasswordModal.addEventListener('click', function() {
+                    if (forgotPasswordModal) {
+                        forgotPasswordModal.style.display = 'none';
+                    }
+                });
+            }
+
+            // Close modal when clicking on overlay
+            const modalOverlay = document.querySelector('.forgot-password-modal-overlay');
+            if (modalOverlay) {
+                modalOverlay.addEventListener('click', function() {
+                    if (forgotPasswordModal) {
+                        forgotPasswordModal.style.display = 'none';
+                    }
+                });
+            }
+
+            // Close modal on ESC key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && forgotPasswordModal && forgotPasswordModal.style.display === 'flex') {
+                    forgotPasswordModal.style.display = 'none';
+                }
+            });
+        })();
+    </script>
+
+</body>
+
+</html>

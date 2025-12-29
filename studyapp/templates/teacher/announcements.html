@@ -1,0 +1,124 @@
+{% extends "teacher/teacher_base.html" %}
+
+{% block content %}
+            <section class="content-section" id="announcementsSection" aria-labelledby="announcementsHeading"
+                style="display: none;">
+                <div class="section-header">
+                    <div class="header-left">
+                        <h1 class="section-title" id="announcementsHeading">Announcements</h1>
+                        <p class="section-subtitle">Create and manage announcements for students and teachers.</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn-primary" onclick="openCreateAnnouncementModal()">
+                            <i class="fas fa-plus"></i>
+                            Create Announcement
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Announcements List -->
+                <div class="announcements-container">
+                    <!-- Announcement Item 1 -->
+                    <div class="announcement-item">
+                        <div class="announcement-header">
+                            <div class="announcement-author">
+                                <div class="author-avatar">
+                                    <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=40&h=40&fit=crop&crop=face"
+                                        alt="Dr. Amelia Harper"
+                                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    <div class="avatar-fallback" style="display: none;">👤</div>
+                                </div>
+                                <div class="author-info">
+                                    <div class="author-name">Dr. Amelia Harper</div>
+                                    <div class="announcement-date">2 hours ago</div>
+                                </div>
+                            </div>
+                            <div class="announcement-badge important">
+                                <i class="fas fa-star"></i>
+                                Important
+                            </div>
+                        </div>
+                        <div class="announcement-content">
+                            <h3 class="announcement-title">Final Exam Schedule Update</h3>
+                            <p class="announcement-text">Please note that the final exam schedule has been updated. The
+                                Mathematics exam has been moved to Friday, December 20th at 2:00 PM. Please check your
+                                student portal for the complete updated schedule.</p>
+                        </div>
+                        <div class="announcement-footer">
+                            <div class="announcement-tags">
+                                <span class="tag">Exams</span>
+                                <span class="tag">Mathematics</span>
+                            </div>
+                            <div class="announcement-recipients">
+                                <i class="fas fa-users"></i>
+                                <span>Sent to: All Students, All Teachers</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Announcement Item 2 -->
+                    <div class="announcement-item">
+                        <div class="announcement-header">
+                            <div class="announcement-author">
+                                <div class="author-avatar">
+                                    <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=40&h=40&fit=crop&crop=face"
+                                        alt="Dr. Amelia Harper"
+                                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    <div class="avatar-fallback" style="display: none;">👤</div>
+                                </div>
+                                <div class="author-info">
+                                    <div class="author-name">Dr. Amelia Harper</div>
+                                    <div class="announcement-date">1 day ago</div>
+                                </div>
+                            </div>
+                            <div class="announcement-badge general">
+                                <i class="fas fa-info-circle"></i>
+                                General
+                            </div>
+                        </div>
+                        <div class="announcement-content">
+                            <h3 class="announcement-title">Assignment Submission Reminder</h3>
+                            <p class="announcement-text">Reminder: All assignments for the Mathematics course are due by
+                                Friday, December 15th at 11:59 PM. Late submissions will not be accepted.</p>
+                        </div>
+                        <div class="announcement-footer">
+                            <div class="announcement-tags">
+                                <span class="tag">Assignments</span>
+                                <span class="tag">Mathematics</span>
+                            </div>
+                            <div class="announcement-recipients">
+                                <i class="fas fa-users"></i>
+                                <span>Sent to: Selected Students (5)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div class="announcements-empty" style="display: none;">
+                    <div class="empty-state">
+                        <i class="fas fa-bullhorn"></i>
+                        <h3>No Announcements</h3>
+                        <p>You haven't created any announcements yet. Click "Create Announcement" to get started.</p>
+                    </div>
+                </div>
+            </section>
+
+<script>
+    (function () {
+        function initAnnouncements() {
+            if (typeof window.loadAnnouncements === 'function') {
+                console.log('Initializing Teacher Announcements...');
+                window.loadAnnouncements();
+                if (typeof window.fetchAnnouncementRecipients === 'function') {
+                    window.fetchAnnouncementRecipients();
+                }
+            } else {
+                console.log('loadAnnouncements not found, retrying...');
+                setTimeout(initAnnouncements, 100);
+            }
+        }
+        initAnnouncements();
+    })();
+</script>
+{% endblock %}

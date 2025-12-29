@@ -1,0 +1,70 @@
+{% extends "student/student_base.html" %}
+
+{% block content %}
+<section class="content-section" id="messagesSection" aria-labelledby="messagesHeading">
+    <h2 class="section-title" id="messagesHeading" style="font-size: 36px;">Messages</h2>
+    <div class="messages-wrapper">
+        <div class="chat-column">
+            <!-- Start New Conversation -->
+            <div class="user-dropdown-wrapper" style="margin-bottom: 12px;">
+                <button class="user-dropdown-toggle" id="newConversationBtn" aria-label="Select user">
+                    <i class="fas fa-user-plus"></i>
+                    <span>Start New Conversation</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="user-dropdown-menu" id="newConversationMenu" style="display: none;">
+                    <div class="dropdown-search-wrapper">
+                        <i class="fas fa-search"></i>
+                        <input type="text" class="dropdown-search-input" id="newConversationSearch" placeholder="Search users...">
+                    </div>
+                    <div class="user-dropdown-tabs">
+                        <button class="user-tab active" data-tab="all">All</button>
+                        <button class="user-tab" data-tab="TEACHER">Teachers</button>
+                        <button class="user-tab" data-tab="ADMIN">Admins</button>
+                        <button class="user-tab" data-tab="CS_REP">CS Reps</button>
+                    </div>
+                    <div class="user-dropdown-list" id="newConversationList">
+                        <!-- Populated by messaging.js -->
+                    </div>
+                </div>
+            </div>
+
+            <input class="search-box" type="search" placeholder="Search" id="messagesSearchInput" name="messagesSearch"
+                autocomplete="off" />
+            <div id="messagesContactList">
+                <!-- Populated by messaging.js -->
+            </div>
+            <div id="noMessagesMessage"
+                style="display: none; text-align: center; padding: 2rem; color: var(--muted-text);">
+                <p>No messages yet.</p>
+            </div>
+        </div>
+        <div class="messages-area">
+            <div class="thread-header"><span id="threadHeaderName">Select a conversation</span></div>
+            <div class="messages-container" id="messagesContainer">
+                <!-- Populated by messaging.js -->
+            </div>
+            <div id="noActiveConversationMessage" style="display: none;"></div>
+            <div class="composer-large" id="composerLarge">
+                <div id="composerNormalMode" style="display: flex; align-items: center; gap: 12px; width: 100%;">
+                    <input type="text" id="messageInput" name="messageInput" autocomplete="off"
+                        placeholder="Type a message..." style="flex: 1;" />
+                    <input type="file" id="fileInput" name="fileInput" style="display: none;" multiple
+                        accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt,.zip,.rar">
+                    <button class="icon-btn" id="attachmentBtn" title="Attach file"><i class="fas fa-paperclip"></i></button>
+                    <button class="send-cta" id="sendMessageBtn" title="Send"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+            <div id="attachmentPreview"
+                style="display: none; padding: 8px 16px; border-top: 1px solid var(--divider); background: var(--surface);">
+                <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
+                    <span style="font-size: 0.85rem; color: var(--muted);">Attachments:</span>
+                    <div id="attachmentList" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+

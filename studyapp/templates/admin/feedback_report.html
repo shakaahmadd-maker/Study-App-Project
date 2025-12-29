@@ -1,0 +1,366 @@
+{% extends "admin/admin_base.html" %}
+
+{% block content %}
+            <section class="content-section" id="feedback-reportsSection" aria-labelledby="feedbackReportsHeading"
+                style="display: none;">
+                <div class="section-header">
+                    <div class="header-left">
+                        <h1 class="section-title" id="feedbackReportsHeading">Feedback & Reports</h1>
+                        <p class="section-subtitle">View feedback and reports submitted by teachers.</p>
+                    </div>
+                    <div class="header-actions">
+                        <select class="filter-select" id="feedbackReportsFilter" onchange="filterFeedbackReports()">
+                            <option value="all">All Items</option>
+                            <option value="feedback">Feedback Only</option>
+                            <option value="reports">Reports Only</option>
+                            <option value="unread">Unread</option>
+                            <option value="high-priority">High Priority</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Tabs for Feedback and Reports -->
+                <div class="feedback-reports-tabs">
+                    <button class="tab-btn active" data-tab="feedback" onclick="switchFeedbackReportsTab('feedback')">
+                        <i class="fas fa-comment-dots"></i>
+                        <span>Feedback</span>
+                        <span class="badge-count" id="feedbackCount">{{ unread_feedback_count|default:"0" }}</span>
+                    </button>
+                    <button class="tab-btn" data-tab="reports" onclick="switchFeedbackReportsTab('reports')">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Reports</span>
+                        <span class="badge-count" id="reportsCount">{{ unread_reports_count|default:"0" }}</span>
+                    </button>
+                </div>
+
+                <!-- Feedback Tab Content -->
+                <div class="tab-content active" id="feedbackTabContent">
+                    <div class="feedback-reports-table-container">
+                        <table class="feedback-reports-table">
+                            <thead>
+                                <tr>
+                                    <th>TEACHER</th>
+                                    <th>STUDENT</th>
+                                    <th>TYPE</th>
+                                    <th>SUBJECT</th>
+                                    <th>PRIORITY</th>
+                                    <th>SUBMITTED</th>
+                                    <th>STATUS</th>
+                                    <th>ACTIONS</th>
+                                </tr>
+                            </thead>
+                            <tbody id="feedbackTableBody">
+                                {% for feedback in feedbacks %}
+                                <tr class="feedback-row" data-id="{{ feedback.id }}" data-priority="{{ feedback.priority }}" data-status="{% if feedback.is_read %}read{% else %}unread{% endif %}">
+                                    <td class="teacher-cell">
+                                        <div class="user-info-list">
+                                            <div class="user-avatar-list">
+                                                {% if feedback.teacher.user.profile_picture %}
+                                                <img src="{{ feedback.teacher.user.profile_picture.url }}"
+                                                    alt="{{ feedback.teacher.user.get_full_name }}">
+                                                {% else %}
+                                                <div class="avatar-fallback">👨‍🏫</div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="user-details-list">
+                                                <div class="user-name">{{ feedback.teacher.user.get_full_name }}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="student-cell">{{ feedback.student.user.get_full_name }} ({{ feedback.student.student_id|stringformat:"04d" }})</td>
+                                    <td class="type-cell">
+                                        <span class="type-badge feedback">{{ feedback.feedback_type }}</span>
+                                    </td>
+                                    <td class="subject-cell">{{ feedback.subject }}</td>
+                                    <td class="priority-cell">
+                                        <span class="priority-badge {{ feedback.priority|lower }}">{{ feedback.priority }}</span>
+                                    </td>
+                                    <td class="date-cell">{{ feedback.created_at|date:"M d, Y" }}</td>
+                                    <td class="status-cell">
+                                        {% if feedback.is_read %}
+                                        <span class="status-badge read">Read</span>
+                                        {% else %}
+                                        <span class="status-badge unread">Unread</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="actions-cell">
+                                        <button class="action-btn-small primary" onclick="viewFeedback('{{ feedback.id }}')" title="View">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        {% if not feedback.is_read %}
+                                        <button class="action-btn-small secondary" onclick="markFeedbackRead('{{ feedback.id }}')"
+                                            title="Mark as Read">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                        {% endif %}
+                                        <button class="action-btn-small danger" onclick="deleteFeedback('{{ feedback.id }}')" title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="8" style="text-align: center; padding: 20px; color: #666;">No feedback submitted yet.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Reports Tab Content -->
+                <div class="tab-content" id="reportsTabContent" style="display: none;">
+                    <div class="feedback-reports-table-container">
+                        <table class="feedback-reports-table">
+                            <thead>
+                                <tr>
+                                    <th>TEACHER</th>
+                                    <th>STUDENT</th>
+                                    <th>TYPE</th>
+                                    <th>TITLE</th>
+                                    <th>SEVERITY</th>
+                                    <th>DATE</th>
+                                    <th>STATUS</th>
+                                    <th>ACTIONS</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reportsTableBody">
+                                {% for report in reports %}
+                                <tr class="report-row" data-id="{{ report.id }}" data-severity="{{ report.severity }}" data-status="{% if report.is_read %}read{% else %}unread{% endif %}">
+                                    <td class="teacher-cell">
+                                        <div class="user-info-list">
+                                            <div class="user-avatar-list">
+                                                {% if report.teacher.user.profile_picture %}
+                                                <img src="{{ report.teacher.user.profile_picture.url }}"
+                                                    alt="{{ report.teacher.user.get_full_name }}">
+                                                {% else %}
+                                                <div class="avatar-fallback">👨‍🏫</div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="user-details-list">
+                                                <div class="user-name">{{ report.teacher.user.get_full_name }}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="student-cell">{{ report.student.user.get_full_name }} ({{ report.student.student_id|stringformat:"04d" }})</td>
+                                    <td class="type-cell">
+                                        <span class="type-badge report">{{ report.report_type }}</span>
+                                    </td>
+                                    <td class="title-cell">{{ report.title }}</td>
+                                    <td class="severity-cell">
+                                        <span class="severity-badge {{ report.severity|lower }}">{{ report.severity }}</span>
+                                    </td>
+                                    <td class="date-cell">{{ report.report_date|date:"M d, Y" }}</td>
+                                    <td class="status-cell">
+                                        {% if report.is_read %}
+                                        <span class="status-badge read">Read</span>
+                                        {% else %}
+                                        <span class="status-badge unread">Unread</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="actions-cell">
+                                        <button class="action-btn-small primary" onclick="viewReport('{{ report.id }}')" title="View">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        {% if not report.is_read %}
+                                        <button class="action-btn-small secondary" onclick="markReportRead('{{ report.id }}')"
+                                            title="Mark as Read">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                        {% endif %}
+                                        <button class="action-btn-small danger" onclick="deleteReport('{{ report.id }}')" title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="8" style="text-align: center; padding: 20px; color: #666;">No reports submitted yet.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- View Feedback/Report Modal -->
+                <div class="modal-overlay" id="viewFeedbackReportModal" style="display: none;">
+                    <div class="modal-content modern-modal view-feedback-report-modal">
+                        <div class="modern-modal-header">
+                            <div>
+                                <h2 class="modern-modal-title" id="viewModalTitle">View Details</h2>
+                                <p class="modern-modal-subtitle" id="viewModalSubtitle">Feedback & Report Information
+                                </p>
+                            </div>
+                            <button class="modern-close-btn" onclick="closeViewFeedbackReportModal()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="modern-modal-body" id="viewModalBody">
+                            <!-- Content will be populated here -->
+                        </div>
+                        <div class="modern-modal-footer">
+                            <button class="modern-btn-secondary" onclick="closeViewFeedbackReportModal()">Close</button>
+                            <button class="modern-btn-primary" onclick="markAsReadAndClose()">
+                                <i class="fas fa-check"></i>
+                                Mark as Read
+                            </button>
+                            <button class="modern-btn-danger" id="modalDeleteBtn" onclick="deleteCurrentItem()" style="background: #ef4444; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 600;">
+                                <i class="fas fa-trash"></i>
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+<script>
+    function switchFeedbackReportsTab(tab) {
+        const tabs = document.querySelectorAll('.tab-btn');
+        const contents = document.querySelectorAll('.tab-content');
+        
+        tabs.forEach(btn => {
+            if (btn.dataset.tab === tab) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+        
+        contents.forEach(content => {
+            if (content.id === tab + 'TabContent') {
+                content.style.display = 'block';
+                content.classList.add('active');
+            } else {
+                content.style.display = 'none';
+                content.classList.remove('active');
+            }
+        });
+
+        // Re-apply filters when switching tabs
+        filterFeedbackReports();
+    }
+
+    function filterFeedbackReports() {
+        const filterValue = document.getElementById('feedbackReportsFilter').value;
+        const feedbackRows = document.querySelectorAll('.feedback-row');
+        const reportRows = document.querySelectorAll('.report-row');
+        const activeTabBtn = document.querySelector('.tab-btn.active');
+        const activeTab = activeTabBtn ? activeTabBtn.dataset.tab : 'feedback';
+
+        // Reset display for all rows first
+        feedbackRows.forEach(row => row.style.display = 'none');
+        reportRows.forEach(row => row.style.display = 'none');
+
+        if (filterValue === 'all' || filterValue === 'feedback') {
+            if (activeTab === 'feedback' || filterValue === 'feedback') {
+                feedbackRows.forEach(row => {
+                    row.style.display = '';
+                });
+            }
+        }
+
+        if (filterValue === 'all' || filterValue === 'reports') {
+            if (activeTab === 'reports' || filterValue === 'reports') {
+                reportRows.forEach(row => {
+                    row.style.display = '';
+                });
+            }
+        }
+
+        if (filterValue === 'unread') {
+            feedbackRows.forEach(row => {
+                if (row.dataset.status === 'unread') row.style.display = '';
+            });
+            reportRows.forEach(row => {
+                if (row.dataset.status === 'unread') row.style.display = '';
+            });
+        }
+
+        if (filterValue === 'high-priority') {
+            feedbackRows.forEach(row => {
+                if (row.dataset.priority === 'high' || row.dataset.priority === 'urgent') row.style.display = '';
+            });
+            reportRows.forEach(row => {
+                if (row.dataset.severity === 'high' || row.dataset.severity === 'critical') row.style.display = '';
+            });
+        }
+    }
+
+    async function markAsReadAndClose() {
+        if (!window.currentViewId || !window.currentViewType) return;
+        
+        if (window.currentViewType === 'feedback') {
+            await markFeedbackRead(window.currentViewId);
+        } else {
+            await markReportRead(window.currentViewId);
+        }
+        if (typeof closeViewFeedbackReportModal === 'function') {
+            closeViewFeedbackReportModal();
+        } else {
+            document.getElementById('viewFeedbackReportModal').style.display = 'none';
+        }
+    }
+
+    async function deleteCurrentItem() {
+        if (!window.currentViewId || !window.currentViewType) return;
+        
+        if (window.currentViewType === 'feedback') {
+            await deleteFeedback(window.currentViewId);
+        } else {
+            await deleteReport(window.currentViewId);
+        }
+        if (typeof closeViewFeedbackReportModal === 'function') {
+            closeViewFeedbackReportModal();
+        } else {
+            document.getElementById('viewFeedbackReportModal').style.display = 'none';
+        }
+    }
+</script>
+
+<style>
+    .detail-row {
+        margin-bottom: 12px;
+        display: flex;
+        gap: 10px;
+    }
+    .detail-row strong {
+        min-width: 120px;
+        color: #555;
+    }
+    .message-box, .description-box {
+        flex-direction: column;
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #eee;
+    }
+    .message-box p, .description-box p {
+        background: #f9f9f9;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 8px;
+        line-height: 1.5;
+        white-space: pre-wrap;
+    }
+    .badge-count {
+        background: #ff4757;
+        color: white;
+        padding: 2px 6px;
+        border-radius: 10px;
+        font-size: 11px;
+        margin-left: 5px;
+    }
+    .status-badge.read {
+        background: #e1f5fe;
+        color: #039be5;
+    }
+    .priority-badge.urgent {
+        background: #ffebee;
+        color: #c62828;
+    }
+    .severity-badge.critical {
+        background: #ffebee;
+        color: #c62828;
+    }
+</style>
+{% endblock %}

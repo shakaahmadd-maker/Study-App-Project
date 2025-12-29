@@ -1,0 +1,33 @@
+{% extends "student/student_base.html" %}
+
+{% block content %}
+<div class="writing-feedback-section" id="writingFeedbackSection">
+    <h3><i class="fas fa-star"></i> Final Feedback</h3>
+    <p style="color: var(--muted-text); font-size: 0.9rem; margin-bottom: 12px;">
+        Please share your thoughts about the delivered writing. Your feedback helps us improve our services.
+    </p>
+    <textarea id="writingFinalFeedback" placeholder="Example feedback: The writing was well-researched and met all requirements. The structure was clear and the arguments were well-supported. I particularly appreciated the detailed analysis in section 3. However, I noticed a few minor grammatical errors that could be improved. Overall, very satisfied with the quality and timely delivery..."
+        rows="6"></textarea>
+    <div class="feedback-actions" style="margin-top: 16px;">
+        <button class="primary-button" onclick="submitWritingFeedback()">
+            <i class="fas fa-paper-plane"></i> Submit Feedback
+        </button>
+        <button class="ghost-button" onclick="document.getElementById('writingFinalFeedback').value='';" style="margin-left: 8px;">
+            Clear
+        </button>
+    </div>
+    
+    <!-- Example feedback suggestions (optional helper) -->
+    <div style="margin-top: 20px; padding: 16px; background-color: var(--bg-secondary, #f9fafb); border-radius: 8px; border-left: 3px solid #1158e5;">
+        <p style="margin: 0 0 8px 0; font-weight: 600; font-size: 0.875rem; color: var(--text-primary);">
+            <i class="fas fa-lightbulb"></i> Tips for helpful feedback:
+        </p>
+        <ul style="margin: 0; padding-left: 20px; color: var(--muted-text); font-size: 0.875rem; line-height: 1.6;">
+            <li>Mention what you liked about the writing</li>
+            <li>Note any areas that could be improved</li>
+            <li>Share how the writing met your expectations</li>
+            <li>Rate the overall quality and timeliness</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

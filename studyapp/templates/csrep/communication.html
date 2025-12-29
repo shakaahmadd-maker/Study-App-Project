@@ -1,0 +1,74 @@
+{% extends "csrep/csrep_base.html" %}
+{% block content %}
+<section class="content-section" id="communicationSection" aria-labelledby="communicationHeading" style="padding: 0;">
+    <header class="section-header" style="padding: 14px 14px 10px 14px;">
+        <h1 class="section-title" id="communicationHeading">Message / Communication</h1>
+    </header>
+    <div class="messages-wrapper">
+        <div class="chat-column">
+
+            <!-- Start New Conversation -->
+            <div class="user-dropdown-wrapper" style="margin-bottom: 12px;">
+                <button class="user-dropdown-toggle" id="newConversationBtn" aria-label="Select user">
+                    <i class="fas fa-user-plus"></i>
+                    <span>Start New Conversation</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="user-dropdown-menu" id="newConversationMenu" style="display: none;">
+                    <div class="dropdown-search-wrapper">
+                        <i class="fas fa-search"></i>
+                        <input type="text" class="dropdown-search-input" id="newConversationSearch"
+                            placeholder="Search users...">
+                    </div>
+                    <div class="user-dropdown-tabs">
+                        <button class="user-tab active" data-tab="all">All</button>
+                        <button class="user-tab" data-tab="STUDENT">Students</button>
+                        <button class="user-tab" data-tab="TEACHER">Teachers</button>
+                        <button class="user-tab" data-tab="ADMIN">Admins</button>
+                    </div>
+                    <div class="user-dropdown-list" id="newConversationList">
+                        <!-- Populated by messaging.js -->
+                    </div>
+                </div>
+            </div>
+
+            <input class="search-box" type="search" placeholder="Search conversations..." id="messagesSearchInput" />
+
+            <div class="thread-list-container" id="messagesContactList">
+                <!-- Populated by messaging.js -->
+            </div>
+        </div>
+        <div class="messages-area">
+            <div class="thread-header">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+                    <span id="threadHeaderName">Select a conversation</span>
+                    <button class="icon-btn" id="deleteThreadBtn" title="Delete chat" type="button" style="display:none;">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="messages-container" id="messagesContainer">
+                <!-- Populated by messaging.js -->
+            </div>
+            <div class="composer-large">
+                <input type="text" id="messageInput" placeholder="Type a message..." />
+                <input type="file" id="fileInput" style="display: none;" multiple
+                    accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt,.zip,.rar">
+                <button class="icon-btn" id="attachmentBtn" title="Attach file">
+                    <i class="fas fa-paperclip"></i>
+                </button>
+                <button class="send-cta" id="sendMessageBtn" title="Send">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+            <div id="attachmentPreview"
+                style="display: none; padding: 8px 16px; border-top: 1px solid var(--divider); background: var(--surface);">
+                <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
+                    <span style="font-size: 0.85rem; color: var(--muted);">Attachments:</span>
+                    <div id="attachmentList" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

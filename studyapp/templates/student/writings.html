@@ -1,0 +1,1763 @@
+{% extends "student/student_base.html" %}
+
+{% block content %}
+<section class="content-section" id="writingsSection" aria-labelledby="writingsHeading">
+    <div class="section-header" style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+        <div>
+            <h1 class="section-title" id="writingsHeading">Writing Requests</h1>
+            <p class="section-subtitle">Track submitted writings, reviews, and delivered files.</p>
+        </div>
+        <div class="chip" id="writingTotalCount" aria-live="polite"></div>
+    </div>
+
+    <div class="filter-row" id="writingFilters">
+        <button class="filter-pill active" data-filter="all">All</button>
+        <button class="filter-pill" data-filter="submitted">Submitted</button>
+        <button class="filter-pill" data-filter="reviewing">In Review</button>
+        <button class="filter-pill" data-filter="revision">Revision</button>
+        <button class="filter-pill" data-filter="completed">Completed</button>
+    </div>
+
+    <div class="table-wrapper" style="width: 100%; overflow-x: auto;">
+        <table id="writingTable" style="width: 100%; table-layout: auto;">
+            <thead>
+                <tr>
+                    <th>Assignment ID</th>
+                    <th>Assignment</th>
+                    <th>Status</th>
+                    <th>Due Date</th>
+                    <th>Updated</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr data-writing-id="WR-2025-090" data-status="submitted">
+                    <td><code>ASG-2025-090</code></td>
+                    <td>Opinion Essay - Renewable Energy</td>
+                    <td><span class="writing-status-badge submitted"><i class="fas fa-circle"></i> Submitted</span></td>
+                    <td>Feb 20, 2025</td>
+                    <td>Feb 10, 2025</td>
+                    <td><button class="action-btn view-btn" onclick="viewWritingDetail('WR-2025-090')"
+                            title="View Details"><i class="fas fa-arrow-right"></i></button></td>
+                </tr>
+                <tr data-writing-id="WR-2025-001" data-status="reviewing">
+                    <td><code>ASG-2025-001</code></td>
+                    <td>Literature Review - Climate Policy</td>
+                    <td><span class="writing-status-badge reviewing"><i class="fas fa-circle"></i> In Review</span></td>
+                    <td>Feb 15, 2025</td>
+                    <td>Jan 28, 2025</td>
+                    <td><button class="action-btn view-btn" onclick="viewWritingDetail('WR-2025-001')"
+                            title="View Details"><i class="fas fa-arrow-right"></i></button></td>
+                </tr>
+                <tr data-writing-id="WR-2025-014" data-status="completed">
+                    <td><code>ASG-2025-014</code></td>
+                    <td>Personal Statement Editing</td>
+                    <td><span class="writing-status-badge completed"><i class="fas fa-circle"></i> Completed</span></td>
+                    <td>Jan 20, 2025</td>
+                    <td>Jan 18, 2025</td>
+                    <td><button class="action-btn view-btn" onclick="viewWritingDetail('WR-2025-014')"
+                            title="View Details"><i class="fas fa-arrow-right"></i></button></td>
+                </tr>
+                <tr data-writing-id="WR-2025-025" data-status="submitted">
+                    <td><code>ASG-2025-025</code></td>
+                    <td>Research Paper - Machine Learning Ethics</td>
+                    <td><span class="writing-status-badge submitted"><i class="fas fa-circle"></i> Submitted</span></td>
+                    <td>Feb 28, 2025</td>
+                    <td>Jan 22, 2025</td>
+                    <td><button class="action-btn view-btn" onclick="viewWritingDetail('WR-2025-025')"
+                            title="View Details"><i class="fas fa-arrow-right"></i></button></td>
+                </tr>
+                <tr data-writing-id="WR-2025-030" data-status="revision">
+                    <td><code>ASG-2025-030</code></td>
+                    <td>Essay on Shakespeare's Hamlet</td>
+                    <td><span class="writing-status-badge revision"><i class="fas fa-circle"></i> Revision</span></td>
+                    <td>Feb 10, 2025</td>
+                    <td>Jan 25, 2025</td>
+                    <td><button class="action-btn view-btn" onclick="viewWritingDetail('WR-2025-030')"
+                            title="View Details"><i class="fas fa-arrow-right"></i></button></td>
+                </tr>
+                <tr data-writing-id="WR-2025-042" data-status="reviewing">
+                    <td><code>ASG-2025-042</code></td>
+                    <td>Case Study Analysis - Business Strategy</td>
+                    <td><span class="writing-status-badge reviewing"><i class="fas fa-circle"></i> In Review</span></td>
+                    <td>Mar 5, 2025</td>
+                    <td>Jan 27, 2025</td>
+                    <td><button class="action-btn view-btn" onclick="viewWritingDetail('WR-2025-042')"
+                            title="View Details"><i class="fas fa-arrow-right"></i></button></td>
+                </tr>
+                <tr data-writing-id="WR-2025-061" data-status="reviewing">
+                    <td><code>ASG-2025-061</code></td>
+                    <td>Dissertation Chapter - Literature Review</td>
+                    <td><span class="writing-status-badge reviewing"><i class="fas fa-circle"></i> In Review</span></td>
+                    <td>Mar 15, 2025</td>
+                    <td>Jan 29, 2025</td>
+                    <td><button class="action-btn view-btn" onclick="viewWritingDetail('WR-2025-061')"
+                            title="View Details"><i class="fas fa-arrow-right"></i></button></td>
+                </tr>
+                <tr data-writing-id="WR-2025-068" data-status="completed">
+                    <td><code>ASG-2025-068</code></td>
+                    <td>Lab Report - Chemistry Experiment</td>
+                    <td><span class="writing-status-badge completed"><i class="fas fa-circle"></i> Completed</span></td>
+                    <td>Jan 25, 2025</td>
+                    <td>Jan 23, 2025</td>
+                    <td><button class="action-btn view-btn" onclick="viewWritingDetail('WR-2025-068')"
+                            title="View Details"><i class="fas fa-arrow-right"></i></button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="writingEmptyState" style="display:none; text-align:center; padding:2rem; color: var(--muted);">
+        <p>No writing requests yet. Submit a writing assignment to see it here.</p>
+    </div>
+
+    <!-- Writing Detail View (inline, similar to thread detail) -->
+    <div class="writing-detail-header" id="writingDetailView" style="display:none;">
+        <div>
+            <button class="ghost-button" id="writingBackButton" onclick="showWritingList()">
+                <i class="fas fa-arrow-left"></i> Back to Writings
+            </button>
+            <h2 class="writing-detail-title" id="writingViewTitle">Writing Assignment</h2>
+            <div class="writing-view-meta">
+                <span class="writing-status-badge" id="writingViewStatus">Submitted</span>
+                <span class="writing-link"><i class="fas fa-link"></i> Assignment: <span
+                        id="writingViewAssignmentCode"></span></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Assignment Details Section -->
+    <div class="writing-assignment-info" id="writingAssignmentInfo" style="display:none; margin-top: 20px;">
+        <h3><i class="fas fa-info-circle"></i> Assignment Details</h3>
+        <div class="assignment-info-grid">
+            <div class="info-item">
+                <span class="info-label">Title:</span>
+                <span class="info-value" id="writingAssignmentTitle">—</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Type:</span>
+                <span class="info-value" id="writingAssignmentType">—</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Academic Level:</span>
+                <span class="info-value" id="writingAcademicLevel">—</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Pages:</span>
+                <span class="info-value" id="writingPages">—</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Due Date:</span>
+                <span class="info-value" id="writingDueDate">—</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Teacher:</span>
+                <span class="info-value" id="writingTeacherName">—</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Conversation Thread -->
+    <div class="writing-view-body" id="writingViewBody" style="display:none; margin-top: 20px;">
+        <div id="writingMessagesContainer" class="writing-messages-container">
+            <!-- Example Message 1: Opinion Essay - Renewable Energy (matches image) -->
+            <div class="writing-message student" data-example="WR-2025-090" style="display:none;">
+                <div class="writing-message-header">
+                    <span class="writing-message-sender">Jordan Lee</span>
+                    <span class="writing-message-role">Student</span>
+                    <span class="writing-message-time">Feb 10, 2:30 PM</span>
+                </div>
+                <div class="writing-message-content">Draft attached. Please focus on tone and clarity for a public
+                    audience.</div>
+                <div class="writing-message-attachments">
+                    <a href="#" class="attachment-item" onclick="event.preventDefault();">
+                        <i class="fas fa-paperclip"></i> @renewable_opinion_draft.docx
+                    </a>
+                </div>
+            </div>
+
+            <!-- Example Message 2: Literature Review -->
+            <div class="writing-message student" data-example="WR-2025-001" style="display:none;">
+                <div class="writing-message-header">
+                    <span class="writing-message-sender">You</span>
+                    <span class="writing-message-role">Student</span>
+                    <span class="writing-message-time">Jan 28, 10:00 AM</span>
+                </div>
+                <div class="writing-message-content">I need help with a literature review on climate policy. Here's
+                    my initial draft and requirements.</div>
+                <div class="writing-message-attachments">
+                    <a href="#" class="attachment-item" onclick="event.preventDefault();">
+                        <i class="fas fa-paperclip"></i> draft_v1.pdf
+                    </a>
+                </div>
+            </div>
+            <div class="writing-message teacher" data-example="WR-2025-001" style="display:none;">
+                <div class="writing-message-header">
+                    <span class="writing-message-sender">Dr. Sarah Chen</span>
+                    <span class="writing-message-role">Teacher</span>
+                    <span class="writing-message-time">Jan 28, 4:15 PM</span>
+                </div>
+                <div class="writing-message-content">Thank you for the draft. I've reviewed it and here are my
+                    initial thoughts:<br><br>1. The introduction needs a stronger thesis statement<br>2. Add 3-5
+                    more recent references (2020-2024)<br>3. Consider organizing by policy themes rather than
+                    chronologically<br><br>I'll work on the revision and send it back within 24 hours.</div>
+                <div class="writing-message-attachments">
+                    <a href="#" class="attachment-item" onclick="event.preventDefault();">
+                        <i class="fas fa-paperclip"></i> review_notes.pdf
+                    </a>
+                </div>
+            </div>
+
+            <!-- Example Message 3: Personal Statement (Completed) -->
+            <div class="writing-message student" data-example="WR-2025-014" style="display:none;">
+                <div class="writing-message-header">
+                    <span class="writing-message-sender">You</span>
+                    <span class="writing-message-role">Student</span>
+                    <span class="writing-message-time">Jan 15, 9:30 AM</span>
+                </div>
+                <div class="writing-message-content">I've attached my personal statement draft. Please help me
+                    refine it for my MSCS application.</div>
+                <div class="writing-message-attachments">
+                    <a href="#" class="attachment-item" onclick="event.preventDefault();">
+                        <i class="fas fa-paperclip"></i> personal_statement_draft.docx
+                    </a>
+                </div>
+            </div>
+            <div class="writing-message teacher" data-example="WR-2025-014" style="display:none;">
+                <div class="writing-message-header">
+                    <span class="writing-message-sender">Ms. Olivia Carter</span>
+                    <span class="writing-message-role">Teacher</span>
+                    <span class="writing-message-time">Jan 17, 2:45 PM</span>
+                </div>
+                <div class="writing-message-content">I've reviewed your statement. Here's the polished version
+                    with:<br>- Grammar and style improvements<br>- Stronger narrative flow<br>- Better emphasis on
+                    your AI safety research<br>- Highlighted your internship outcomes<br><br>Please review and let
+                    me know if you'd like any adjustments.</div>
+                <div class="writing-message-attachments">
+                    <a href="#" class="attachment-item" onclick="event.preventDefault();">
+                        <i class="fas fa-paperclip"></i> personal_statement_revised.pdf
+                    </a>
+                </div>
+            </div>
+
+            <!-- Default placeholder when no specific writing is selected -->
+            <p style="text-align:center;color:var(--muted, #6b7280);padding:2rem;display:block;"
+                id="writingMessagesPlaceholder">Select a writing request to view messages and details.</p>
+        </div>
+        <div class="writing-composer" id="writingComposer">
+            <!-- Drag & Drop Overlay -->
+            <div id="writingDragOverlay" class="drag-drop-overlay" style="display: none;">
+                <div class="drag-drop-content">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>Drop files here to attach</p>
+                </div>
+            </div>
+
+            <!-- Attachment Preview Area -->
+            <div id="writingAttachmentsPreview" class="attachment-preview-container" style="display: none;">
+                <div class="attachment-preview-header">
+                    <span class="attachment-preview-title">
+                        <i class="fas fa-paperclip"></i> Attached Files (<span id="attachmentCount">0</span>)
+                    </span>
+                </div>
+                <div class="attachment-preview-list" id="writingAttachmentsList"></div>
+            </div>
+
+            <div class="composer-note" id="writingComposerNote" style="display:none;">
+                <i class="fas fa-lock"></i> This writing is completed. Discussion is locked, but you can
+                still provide feedback below.
+            </div>
+
+            <div class="composer-large">
+                <input type="text" id="writingReplyInput" name="writingReplyInput" autocomplete="off"
+                    placeholder="Type your message, attach files, or provide feedback..." />
+                <input type="file" id="writingFileInput" name="writingFileInput" style="display: none;" multiple
+                    accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt,.zip,.rar,.xls,.xlsx,.ppt,.pptx">
+                <button class="icon-btn" id="writingAttachBtn" title="Attach files" type="button"><i
+                        class="fas fa-paperclip"></i></button>
+                <button class="send-cta" id="writingSendBtn" title="Send" type="button"><i
+                        class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Final Feedback Section (shown when completed) -->
+    <div class="writing-feedback-section" id="writingFeedbackSection" style="display:none;">
+        <h3><i class="fas fa-star"></i> Final Feedback</h3>
+        <textarea id="writingFinalFeedback" placeholder="Share your feedback about the delivered writing..."
+            rows="4"></textarea>
+        <div class="feedback-actions">
+            <button class="primary-button" onclick="submitWritingFeedback()">Submit Feedback</button>
+        </div>
+    </div>
+</section>
+
+<script>
+    // Mock writing records data directly in HTML (not from JavaScript functions)
+    window.WRITING_RECORDS_DATA = [
+        {
+            writing_id: 'WR-2025-090',
+            assignment_code: 'ASG-2025-090',
+            assignment_id: 90,
+            title: 'Opinion Essay - Renewable Energy',
+            status: 'submitted',
+            student_excerpt: 'Opinion essay on renewable energy for public audience.',
+            assignment_details: {
+                title: 'Opinion Essay - Renewable Energy',
+                type: 'Opinion Essay',
+                academicLevel: 'Undergraduate',
+                pages: '3-4',
+                dueDate: '2025-02-20',
+                studentName: 'Jordan Lee',
+                teacher: 'Ms. Olivia Carter'
+            },
+            messages: [
+                {
+                    id: 1,
+                    role: 'student',
+                    sender: 'Jordan Lee',
+                    content: 'Draft attached. Please focus on tone and clarity for a public audience.',
+                    attachments: ['@renewable_opinion_draft.docx'],
+                    timestamp: new Date('2025-02-10T14:30:00').toISOString()
+                }
+            ],
+            final_file_url: null,
+            updated_at: new Date('2025-02-10T14:30:00').toISOString(),
+            created_at: new Date('2025-02-10T14:30:00').toISOString(),
+            student_feedback: null,
+            is_locked: false
+        },
+        {
+            writing_id: 'WR-2025-001',
+            assignment_code: 'ASG-2025-001',
+            assignment_id: 1,
+            title: 'Literature Review - Climate Policy',
+            status: 'reviewing',
+            student_excerpt: 'Need a concise literature review covering climate policy shifts since 2018...',
+            assignment_details: {
+                title: 'Literature Review - Climate Policy',
+                type: 'Analytical Essay',
+                academicLevel: 'Graduate',
+                pages: '8-10',
+                dueDate: '2025-02-15',
+                studentName: 'Alex Johnson',
+                teacher: 'Dr. Sarah Chen'
+            },
+            messages: [
+                {
+                    id: 1,
+                    role: 'student',
+                    sender: 'You',
+                    content: 'I need help with a literature review on climate policy. Here\'s my initial draft and requirements.',
+                    attachments: ['draft_v1.pdf'],
+                    timestamp: new Date('2025-01-28T10:00:00').toISOString()
+                },
+                {
+                    id: 2,
+                    role: 'teacher',
+                    sender: 'Dr. Sarah Chen',
+                    content: 'Thank you for the draft. I\'ve reviewed it and here are my initial thoughts:\n\n1. The introduction needs a stronger thesis statement\n2. Add 3-5 more recent references (2020-2024)\n3. Consider organizing by policy themes rather than chronologically\n\nI\'ll work on the revision and send it back within 24 hours.',
+                    attachments: ['review_notes.pdf'],
+                    timestamp: new Date('2025-01-28T16:15:00').toISOString()
+                },
+                {
+                    id: 3,
+                    role: 'student',
+                    sender: 'You',
+                    content: 'Thanks for the feedback! Could you also focus more on the economic impacts section?',
+                    timestamp: new Date('2025-01-28T18:00:00').toISOString()
+                }
+            ],
+            final_file_url: null,
+            updated_at: new Date('2025-01-28T18:00:00').toISOString(),
+            created_at: new Date('2025-01-28T10:00:00').toISOString(),
+            student_feedback: null,
+            is_locked: false
+        },
+        {
+            writing_id: 'WR-2025-014',
+            assignment_code: 'ASG-2025-014',
+            assignment_id: 14,
+            title: 'Personal Statement Editing',
+            status: 'completed',
+            student_excerpt: 'Personal statement for MSCS application with focus on AI safety.',
+            assignment_details: {
+                title: 'Personal Statement Editing',
+                type: 'Personal Statement',
+                academicLevel: 'Graduate',
+                pages: '2',
+                dueDate: '2025-01-20',
+                studentName: 'Emma Wilson',
+                teacher: 'Ms. Olivia Carter'
+            },
+            messages: [
+                {
+                    id: 1,
+                    role: 'student',
+                    sender: 'You',
+                    content: 'I\'ve attached my personal statement draft. Please help me refine it for my MSCS application.',
+                    attachments: ['personal_statement_draft.docx'],
+                    timestamp: new Date('2025-01-15T09:30:00').toISOString()
+                },
+                {
+                    id: 2,
+                    role: 'teacher',
+                    sender: 'Ms. Olivia Carter',
+                    content: 'I\'ve reviewed your statement. Here\'s the polished version with:\n- Grammar and style improvements\n- Stronger narrative flow\n- Better emphasis on your AI safety research\n- Highlighted your internship outcomes\n\nPlease review and let me know if you\'d like any adjustments.',
+                    attachments: ['personal_statement_revised.pdf'],
+                    timestamp: new Date('2025-01-17T14:45:00').toISOString()
+                },
+                {
+                    id: 3,
+                    role: 'student',
+                    sender: 'You',
+                    content: 'This looks perfect! Thank you so much. I\'m ready to submit.',
+                    timestamp: new Date('2025-01-18T10:00:00').toISOString()
+                }
+            ],
+            final_file_url: 'https://example.com/final-personal-statement.pdf',
+            updated_at: new Date('2025-01-18T10:00:00').toISOString(),
+            created_at: new Date('2025-01-15T09:30:00').toISOString(),
+            student_feedback: 'Looks great, thanks!',
+            is_locked: true
+        },
+        {
+            writing_id: 'WR-2025-025',
+            assignment_code: 'ASG-2025-025',
+            assignment_id: 25,
+            title: 'Research Paper - Machine Learning Ethics',
+            status: 'submitted',
+            student_excerpt: 'Need help writing a research paper on ethical considerations in machine learning applications.',
+            assignment_details: {
+                title: 'Research Paper - Machine Learning Ethics',
+                type: 'Research Paper',
+                academicLevel: 'Undergraduate',
+                pages: '12-15',
+                dueDate: '2025-02-28',
+                studentName: 'Michael Brown',
+                teacher: 'Dr. Sarah Chen'
+            },
+            messages: [
+                {
+                    id: 1,
+                    role: 'student',
+                    sender: 'Michael Brown',
+                    content: 'I\'ve submitted my research paper topic and initial outline. Could you help me develop the arguments and structure?',
+                    attachments: ['research_outline.docx'],
+                    timestamp: new Date('2025-01-22T11:00:00').toISOString()
+                }
+            ],
+            final_file_url: null,
+            updated_at: new Date('2025-01-22T11:00:00').toISOString(),
+            created_at: new Date('2025-01-22T11:00:00').toISOString(),
+            student_feedback: null,
+            is_locked: false
+        },
+        {
+            writing_id: 'WR-2025-030',
+            assignment_code: 'ASG-2025-030',
+            assignment_id: 30,
+            title: 'Essay on Shakespeare\'s Hamlet',
+            status: 'revision',
+            student_excerpt: 'Literary analysis essay focusing on themes of madness and revenge in Hamlet.',
+            assignment_details: {
+                title: 'Essay on Shakespeare\'s Hamlet',
+                type: 'Literary Analysis',
+                academicLevel: 'High School',
+                pages: '5-7',
+                dueDate: '2025-02-10',
+                studentName: 'Sarah Davis',
+                teacher: 'Ms. Olivia Carter'
+            },
+            messages: [
+                {
+                    id: 1,
+                    role: 'student',
+                    sender: 'Sarah Davis',
+                    content: 'Here\'s my first draft of the Hamlet essay. Please review and provide feedback.',
+                    attachments: ['hamlet_essay_draft.pdf'],
+                    timestamp: new Date('2025-01-20T14:00:00').toISOString()
+                },
+                {
+                    id: 2,
+                    role: 'teacher',
+                    sender: 'Ms. Olivia Carter',
+                    content: 'Good start! However, I noticed a few areas that need improvement:\n\n1. Strengthen the thesis statement - be more specific about your argument\n2. Add more textual evidence from the play\n3. Expand the analysis of Ophelia\'s character\n4. Fix citation format (use MLA style)\n\nI\'ve attached a revised version with comments. Please review and let me know if you have questions.',
+                    attachments: ['hamlet_essay_reviewed.pdf', 'citation_guide.pdf'],
+                    timestamp: new Date('2025-01-25T16:30:00').toISOString()
+                }
+            ],
+            final_file_url: null,
+            updated_at: new Date('2025-01-25T16:30:00').toISOString(),
+            created_at: new Date('2025-01-20T14:00:00').toISOString(),
+            student_feedback: null,
+            is_locked: false
+        },
+        {
+            writing_id: 'WR-2025-042',
+            assignment_code: 'ASG-2025-042',
+            assignment_id: 42,
+            title: 'Case Study Analysis - Business Strategy',
+            status: 'reviewing',
+            student_excerpt: 'Case study analysis of a tech startup\'s business strategy and market positioning.',
+            assignment_details: {
+                title: 'Case Study Analysis - Business Strategy',
+                type: 'Case Study',
+                academicLevel: 'Graduate',
+                pages: '10-12',
+                dueDate: '2025-03-05',
+                studentName: 'Jessica Martinez',
+                teacher: 'Dr. Sarah Chen'
+            },
+            messages: [
+                {
+                    id: 1,
+                    role: 'student',
+                    sender: 'Jessica Martinez',
+                    content: 'I\'ve completed the case study analysis. Could you review it for clarity and depth?',
+                    attachments: ['case_study_analysis.pdf'],
+                    timestamp: new Date('2025-01-27T09:00:00').toISOString()
+                },
+                {
+                    id: 2,
+                    role: 'teacher',
+                    sender: 'Dr. Sarah Chen',
+                    content: 'I\'ve reviewed your case study. Overall, it\'s well-structured. Here are my suggestions:\n\n1. Add more quantitative data to support your analysis\n2. Include a SWOT analysis section\n3. Expand the competitive analysis\n4. Strengthen the recommendations section\n\nI\'ll work on enhancing these sections and send you an updated version.',
+                    attachments: ['case_study_feedback.pdf'],
+                    timestamp: new Date('2025-01-27T15:20:00').toISOString()
+                }
+            ],
+            final_file_url: null,
+            updated_at: new Date('2025-01-27T15:20:00').toISOString(),
+            created_at: new Date('2025-01-27T09:00:00').toISOString(),
+            student_feedback: null,
+            is_locked: false
+        },
+        {
+            writing_id: 'WR-2025-061',
+            assignment_code: 'ASG-2025-061',
+            assignment_id: 61,
+            title: 'Dissertation Chapter - Literature Review',
+            status: 'reviewing',
+            student_excerpt: 'Literature review chapter for PhD dissertation on renewable energy technologies.',
+            assignment_details: {
+                title: 'Dissertation Chapter - Literature Review',
+                type: 'Dissertation Chapter',
+                academicLevel: 'Doctorate',
+                pages: '25-30',
+                dueDate: '2025-03-15',
+                studentName: 'Emily Watson',
+                teacher: 'Dr. Sarah Chen'
+            },
+            messages: [
+                {
+                    id: 1,
+                    role: 'student',
+                    sender: 'Emily Watson',
+                    content: 'I\'ve completed the first draft of my literature review chapter. This is a critical part of my dissertation, so I\'d really appreciate thorough feedback.',
+                    attachments: ['lit_review_chapter_v1.pdf'],
+                    timestamp: new Date('2025-01-29T10:00:00').toISOString()
+                },
+                {
+                    id: 2,
+                    role: 'teacher',
+                    sender: 'Dr. Sarah Chen',
+                    content: 'I\'ve reviewed your literature review. It\'s comprehensive, but here are key areas to strengthen:\n\n1. The theoretical framework section needs more depth\n2. Add more recent studies (2023-2024)\n3. Strengthen the gap analysis\n4. Improve transitions between sections\n\nI\'m working on a detailed revision with annotations. This will take a bit longer given the scope - expect it within 48 hours.',
+                    attachments: ['lit_review_feedback.pdf'],
+                    timestamp: new Date('2025-01-29T14:00:00').toISOString()
+                }
+            ],
+            final_file_url: null,
+            updated_at: new Date('2025-01-29T14:00:00').toISOString(),
+            created_at: new Date('2025-01-29T10:00:00').toISOString(),
+            student_feedback: null,
+            is_locked: false
+        },
+        {
+            writing_id: 'WR-2025-068',
+            assignment_code: 'ASG-2025-068',
+            assignment_id: 68,
+            title: 'Lab Report - Chemistry Experiment',
+            status: 'completed',
+            student_excerpt: 'Lab report documenting acid-base titration experiment results.',
+            assignment_details: {
+                title: 'Lab Report - Chemistry Experiment',
+                type: 'Lab Report',
+                academicLevel: 'Undergraduate',
+                pages: '4-5',
+                dueDate: '2025-01-25',
+                studentName: 'Ryan Thompson',
+                teacher: 'Dr. Michael Johnson'
+            },
+            messages: [
+                {
+                    id: 1,
+                    role: 'student',
+                    sender: 'Ryan Thompson',
+                    content: 'I\'ve completed my lab report. Could you review it for accuracy and formatting?',
+                    attachments: ['lab_report_chemistry.pdf'],
+                    timestamp: new Date('2025-01-20T11:00:00').toISOString()
+                },
+                {
+                    id: 2,
+                    role: 'teacher',
+                    sender: 'Dr. Michael Johnson',
+                    content: 'Your lab report looks good! I\'ve made minor corrections to:\n- Calculation formatting\n- Graph labels\n- Conclusion section\n\nThe final version is attached. Great work on the data analysis!',
+                    attachments: ['lab_report_final.pdf'],
+                    timestamp: new Date('2025-01-23T13:00:00').toISOString()
+                },
+                {
+                    id: 3,
+                    role: 'student',
+                    sender: 'Ryan Thompson',
+                    content: 'Perfect! Thank you for the quick turnaround.',
+                    timestamp: new Date('2025-01-23T14:30:00').toISOString()
+                }
+            ],
+            final_file_url: 'https://example.com/lab_report_final.pdf',
+            updated_at: new Date('2025-01-23T14:30:00').toISOString(),
+            created_at: new Date('2025-01-20T11:00:00').toISOString(),
+            student_feedback: 'Very helpful feedback!',
+            is_locked: true
+        }
+    ];
+
+    // Override loadWritingRecords to use data from HTML instead of functions
+    if (typeof loadWritingRecords === 'function') {
+        const originalLoadWritingRecords = loadWritingRecords;
+        window.loadWritingRecords = function () {
+            if (window.WRITING_RECORDS_DATA && window.WRITING_RECORDS_DATA.length > 0) {
+                return window.WRITING_RECORDS_DATA;
+            }
+            return originalLoadWritingRecords();
+        };
+    } else {
+        window.loadWritingRecords = function () {
+            return window.WRITING_RECORDS_DATA || [];
+        };
+    }
+
+    // ============================================
+    // FRESH MESSAGE COMPOSER WITH ATTACHMENTS
+    // Built from scratch - no dependency on old code
+    // ============================================
+
+    // Global attachment state - persistent list until send or manual removal
+    window.writingAttachments = window.writingAttachments || [];
+
+    // Flag to prevent duplicate initialization
+    let composerInitialized = false;
+
+    // Store handler references for cleanup
+    let composerHandlers = {
+        fileInputChange: null,
+        attachBtnClick: null,
+        sendBtnClick: null,
+        replyInputKeypress: null,
+        dragenter: null,
+        dragleave: null,
+        dragover: null,
+        drop: null
+    };
+
+    /**
+     * Initialize the message composer with attachment support
+     * Initializes when composer elements are present (regardless of visibility)
+     */
+    function initWritingComposer() {
+        const composer = document.getElementById('writingComposer');
+        const fileInput = document.getElementById('writingFileInput');
+        const attachBtn = document.getElementById('writingAttachBtn');
+        const sendBtn = document.getElementById('writingSendBtn');
+        const replyInput = document.getElementById('writingReplyInput');
+        const dragOverlay = document.getElementById('writingDragOverlay');
+        const attachmentsPreview = document.getElementById('writingAttachmentsPreview');
+        const attachmentsList = document.getElementById('writingAttachmentsList');
+
+        // Check which elements are missing
+        const missingElements = [];
+        if (!composer) missingElements.push('writingComposer');
+        if (!fileInput) missingElements.push('writingFileInput');
+        if (!attachBtn) missingElements.push('writingAttachBtn');
+        if (!sendBtn) missingElements.push('writingSendBtn');
+        if (!replyInput) missingElements.push('writingReplyInput');
+
+        if (missingElements.length > 0) {
+            // Retry if elements not ready (max 50 attempts = 5 seconds)
+            if (!initWritingComposer._retryCount) initWritingComposer._retryCount = 0;
+            if (initWritingComposer._retryCount < 50) {
+                initWritingComposer._retryCount++;
+                if (initWritingComposer._retryCount % 10 === 0) {
+                    console.log('Waiting for composer elements:', missingElements);
+                }
+                setTimeout(initWritingComposer, 100);
+            } else {
+                console.error('Failed to initialize composer: missing elements', missingElements);
+            }
+            return;
+        }
+
+        // Reset retry counter on success
+        initWritingComposer._retryCount = 0;
+        console.log('All composer elements found, initializing...');
+
+        // Clean up existing listeners if already initialized
+        if (composerInitialized) {
+            if (fileInput && composerHandlers.fileInputChange) {
+                fileInput.removeEventListener('change', composerHandlers.fileInputChange);
+            }
+            if (attachBtn && composerHandlers.attachBtnClick) {
+                attachBtn.removeEventListener('click', composerHandlers.attachBtnClick);
+            }
+            if (sendBtn && composerHandlers.sendBtnClick) {
+                sendBtn.removeEventListener('click', composerHandlers.sendBtnClick);
+            }
+            if (replyInput && composerHandlers.replyInputKeypress) {
+                replyInput.removeEventListener('keypress', composerHandlers.replyInputKeypress);
+            }
+            if (composer && composerHandlers.dragenter) {
+                composer.removeEventListener('dragenter', composerHandlers.dragenter);
+                composer.removeEventListener('dragleave', composerHandlers.dragleave);
+                composer.removeEventListener('dragover', composerHandlers.dragover);
+                composer.removeEventListener('drop', composerHandlers.drop);
+            }
+        }
+
+        // Initialize attachment state
+        if (!Array.isArray(window.writingAttachments)) {
+            window.writingAttachments = [];
+        }
+
+        /**
+         * Add files to attachment list (append, don't replace)
+         */
+        function addAttachments(newFiles) {
+            if (!newFiles || newFiles.length === 0) return;
+
+            const filesArray = Array.from(newFiles);
+            filesArray.forEach(file => {
+                // Allow re-selecting the same file (no duplicate check needed)
+                window.writingAttachments.push(file);
+            });
+
+            updateAttachmentPreview();
+        }
+
+        /**
+         * Remove a single attachment by index
+         */
+        function removeAttachment(index) {
+            if (index >= 0 && index < window.writingAttachments.length) {
+                window.writingAttachments.splice(index, 1);
+                updateAttachmentPreview();
+            }
+            // Always clear file input after removal to allow re-selection
+            if (fileInput) fileInput.value = '';
+        }
+
+        /**
+         * Update the attachment preview UI
+         */
+        function updateAttachmentPreview() {
+            const files = window.writingAttachments || [];
+
+            if (files.length === 0) {
+                attachmentsPreview.style.display = 'none';
+                if (attachmentsList) attachmentsList.innerHTML = '';
+                return;
+            }
+
+            // Show preview container
+            attachmentsPreview.style.display = 'block';
+
+            // Update count
+            const countEl = document.getElementById('attachmentCount');
+            if (countEl) countEl.textContent = files.length;
+
+            // Render preview items
+            if (attachmentsList) {
+                attachmentsList.innerHTML = files.map((file, index) => {
+                    const icon = getFileIcon(file);
+                    const size = formatFileSize(file.size);
+                    const isImage = file.type && file.type.startsWith('image/');
+                    const isPDF = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+
+                    // Create preview HTML based on file type
+                    let previewContent = '';
+                    if (isImage) {
+                        // Image thumbnail preview
+                        const imageUrl = URL.createObjectURL(file);
+                        previewContent = `
+                            <div class="attachment-image-preview">
+                                <img src="${imageUrl}" alt="${escapeHtml(file.name)}" />
+                            </div>
+                        `;
+                    } else if (isPDF) {
+                        // PDF preview - show icon (embedded preview can be added later if needed)
+                        previewContent = `<i class="fas fa-file-pdf pdf-preview-icon"></i>`;
+                    } else {
+                        // Generic file icon
+                        previewContent = `<i class="fas ${icon} file-preview-icon"></i>`;
+                    }
+
+                    return `
+                        <div class="attachment-preview-item" data-index="${index}">
+                            ${previewContent}
+                            <div class="file-info">
+                                <div class="file-name" title="${escapeHtml(file.name)}">${escapeHtml(file.name)}</div>
+                                <div class="file-size">${size}</div>
+                            </div>
+                            <button class="attachment-remove-btn" data-index="${index}" type="button" title="Remove">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    `;
+                }).join('');
+
+                // Attach remove button handlers
+                attachmentsList.querySelectorAll('.attachment-remove-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const index = parseInt(btn.getAttribute('data-index'));
+                        removeAttachment(index);
+                    });
+                });
+            }
+        }
+
+        /**
+         * Get file icon class based on file type
+         */
+        function getFileIcon(file) {
+            const type = (file.type || '').toLowerCase();
+            const name = (file.name || '').toLowerCase();
+
+            if (type.startsWith('image/')) return 'fa-image';
+            if (type.startsWith('video/')) return 'fa-video';
+            if (type.startsWith('audio/')) return 'fa-file-audio';
+            if (type === 'application/pdf' || name.endsWith('.pdf')) return 'fa-file-pdf';
+            if (type.includes('word') || type.includes('document') || name.endsWith('.doc') || name.endsWith('.docx')) return 'fa-file-word';
+            if (type.includes('excel') || type.includes('spreadsheet') || name.endsWith('.xls') || name.endsWith('.xlsx')) return 'fa-file-excel';
+            if (type.includes('powerpoint') || type.includes('presentation') || name.endsWith('.ppt') || name.endsWith('.pptx')) return 'fa-file-powerpoint';
+            if (type.includes('zip') || type.includes('rar') || type.includes('archive') || name.endsWith('.zip') || name.endsWith('.rar')) return 'fa-file-archive';
+            if (name.endsWith('.txt') || type.includes('text')) return 'fa-file-alt';
+
+            return 'fa-file';
+        }
+
+        /**
+         * Format file size
+         */
+        function formatFileSize(bytes) {
+            if (!bytes || bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
+
+        /**
+         * Escape HTML to prevent XSS
+         */
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        /**
+         * Handle file selection from file input
+         */
+        composerHandlers.fileInputChange = function (e) {
+            const files = e.target.files;
+            if (files && files.length > 0) {
+                addAttachments(files);
+            }
+            // Clear input to allow selecting the same files again
+            fileInput.value = '';
+        };
+        fileInput.addEventListener('change', composerHandlers.fileInputChange);
+
+        /**
+         * Handle attach button click
+         */
+        composerHandlers.attachBtnClick = function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Attach button clicked', attachBtn);
+
+            if (attachBtn && attachBtn.disabled) {
+                console.log('Attach button is disabled, ignoring click');
+                return;
+            }
+
+            if (!fileInput) {
+                console.error('File input not found');
+                return;
+            }
+
+            // Reset file input to allow re-selecting same files
+            fileInput.value = '';
+            console.log('Triggering file input click');
+            fileInput.click();
+        };
+
+        if (attachBtn) {
+            attachBtn.addEventListener('click', composerHandlers.attachBtnClick);
+            // Ensure button is clickable - force enable
+            attachBtn.style.pointerEvents = 'auto';
+            attachBtn.style.cursor = 'pointer';
+            attachBtn.disabled = false;
+            attachBtn.setAttribute('tabindex', '0');
+            attachBtn.removeAttribute('disabled');
+            console.log('Attach button listener attached', attachBtn, 'disabled:', attachBtn.disabled);
+
+            // Test click handler
+            attachBtn.addEventListener('mousedown', function (e) {
+                console.log('Attach button mousedown event fired', e);
+            });
+        } else {
+            console.error('Attach button not found during initialization');
+        }
+
+        /**
+         * Drag & Drop handlers
+         */
+        let dragCounter = 0;
+
+        composerHandlers.dragenter = function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            dragCounter++;
+            if (dragOverlay) dragOverlay.style.display = 'flex';
+        };
+        composer.addEventListener('dragenter', composerHandlers.dragenter);
+
+        composerHandlers.dragleave = function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            dragCounter--;
+            if (dragCounter <= 0) {
+                dragCounter = 0;
+                if (dragOverlay) dragOverlay.style.display = 'none';
+            }
+        };
+        composer.addEventListener('dragleave', composerHandlers.dragleave);
+
+        composerHandlers.dragover = function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        };
+        composer.addEventListener('dragover', composerHandlers.dragover);
+
+        composerHandlers.drop = function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            dragCounter = 0;
+
+            if (dragOverlay) dragOverlay.style.display = 'none';
+
+            const files = e.dataTransfer.files;
+            if (files && files.length > 0) {
+                addAttachments(files);
+            }
+        };
+        composer.addEventListener('drop', composerHandlers.drop);
+
+        /**
+         * Send message with text + all attachments
+         */
+        function sendMessage() {
+            const writingId = window.currentWritingId;
+            if (!writingId) {
+                alert('No writing selected.');
+                return;
+            }
+
+            const message = replyInput.value.trim();
+            const files = window.writingAttachments || [];
+
+            // Prevent empty messages (no text AND no attachments)
+            if (!message && files.length === 0) {
+                alert('Please enter a message or attach a file');
+                return;
+            }
+
+            // Ensure loadWritingRecords and saveWritingRecords are available
+            if (typeof loadWritingRecords !== 'function') {
+                console.error('loadWritingRecords function not found');
+                alert('Error: Writing records loader not available. Please refresh the page.');
+                return;
+            }
+
+            if (typeof saveWritingRecords !== 'function') {
+                console.error('saveWritingRecords function not found');
+                alert('Error: Writing records saver not available. Please refresh the page.');
+                return;
+            }
+
+            const records = loadWritingRecords();
+            const record = records.find(r => r.writing_id === writingId);
+            if (!record) {
+                alert('Writing not found.');
+                return;
+            }
+
+            if (record.is_locked || record.status === 'completed') {
+                alert('This writing is completed. Discussion is locked.');
+                return;
+            }
+
+            // Create object URLs for files so they can be opened in new tabs
+            const messageId = Date.now();
+            const fileUrls = files.map(file => {
+                try {
+                    return URL.createObjectURL(file);
+                } catch (e) {
+                    console.error('Failed to create object URL for file:', file.name, e);
+                    return null;
+                }
+            }).filter(url => url !== null);
+
+            // Store file URLs for this message (for rendering)
+            if (!window.writingFileUrls) window.writingFileUrls = {};
+            if (!window.writingFileUrls[writingId]) window.writingFileUrls[writingId] = {};
+            window.writingFileUrls[writingId][messageId] = fileUrls;
+
+            // Collect attachment metadata
+            const attachments = files.map(f => ({
+                name: f.name,
+                type: f.type || '',
+                size: f.size
+            }));
+
+            // Create new message object
+            const newMessage = {
+                id: messageId,
+                role: 'student',
+                sender: 'You',
+                content: message || (files.length > 0 ? `Attached ${files.length} file(s)` : ''),
+                attachments: attachments.map(a => a.name), // For backward compatibility
+                attachmentData: attachments, // Full attachment data
+                timestamp: new Date().toISOString()
+            };
+
+            // Add message to record
+            if (!record.messages) record.messages = [];
+            record.messages.push(newMessage);
+            record.updated_at = new Date().toISOString();
+
+            // Update the record in the records array
+            const recordIndex = records.findIndex(r => r.writing_id === writingId);
+            if (recordIndex !== -1) {
+                records[recordIndex] = record;
+            }
+
+            saveWritingRecords(records);
+
+            // Re-render messages
+            if (typeof renderWritingMessages === 'function') {
+                renderWritingMessages(record.messages, writingId);
+                // Hide placeholder if it exists
+                const placeholder = document.getElementById('writingMessagesPlaceholder');
+                if (placeholder && record.messages && record.messages.length > 0) {
+                    placeholder.style.display = 'none';
+                }
+            } else {
+                console.error('renderWritingMessages function not found');
+                // Fallback: manually render the message
+                const container = document.getElementById('writingMessagesContainer');
+                if (container) {
+                    const placeholder = document.getElementById('writingMessagesPlaceholder');
+                    if (placeholder) placeholder.style.display = 'none';
+                    // This is a fallback - ideally renderWritingMessages should be available
+                    console.warn('Using fallback message rendering');
+                }
+            }
+
+            // Reset composer state only after successful send
+            replyInput.value = '';
+            window.writingAttachments = [];
+            updateAttachmentPreview();
+
+            if (fileInput) fileInput.value = '';
+
+            // Show success message
+            if (typeof showTemporaryMessage === 'function') {
+                showTemporaryMessage('Message sent! Teacher will respond soon.');
+            } else {
+                console.log('Message sent successfully');
+            }
+        }
+
+        /**
+         * Handle send button click
+         */
+        composerHandlers.sendBtnClick = function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Send button clicked, disabled:', sendBtn ? sendBtn.disabled : 'button not found');
+
+            if (!sendBtn) {
+                console.error('Send button not found');
+                return;
+            }
+
+            if (!sendBtn.disabled) {
+                console.log('Calling sendMessage...');
+                sendMessage();
+            } else {
+                console.log('Send button is disabled, ignoring click');
+            }
+        };
+
+        if (sendBtn) {
+            sendBtn.addEventListener('click', composerHandlers.sendBtnClick);
+            // Ensure button is clickable - force enable
+            sendBtn.style.pointerEvents = 'auto';
+            sendBtn.style.cursor = 'pointer';
+            sendBtn.disabled = false;
+            sendBtn.setAttribute('tabindex', '0');
+            sendBtn.removeAttribute('disabled');
+            console.log('Send button listener attached, button:', sendBtn, 'disabled:', sendBtn.disabled);
+
+            // Test click handler
+            sendBtn.addEventListener('mousedown', function (e) {
+                console.log('Send button mousedown event fired', e);
+            });
+        } else {
+            console.error('Send button not found during initialization');
+        }
+
+        /**
+         * Handle Enter key in input (but allow Shift+Enter for new lines)
+         */
+        composerHandlers.replyInputKeypress = function (e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        };
+
+        if (replyInput) {
+            replyInput.addEventListener('keypress', composerHandlers.replyInputKeypress);
+            // Also handle keydown as fallback
+            replyInput.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+            console.log('Reply input listeners attached');
+        } else {
+            console.error('Reply input not found during initialization');
+        }
+
+        // Store sendMessage function globally for access
+        window._sendWritingMessage = sendMessage;
+
+        // Mark as initialized
+        composerInitialized = true;
+
+        // Initial preview update
+        updateAttachmentPreview();
+
+        // Final check: Ensure buttons are enabled and clickable
+        setTimeout(() => {
+            if (attachBtn) {
+                attachBtn.disabled = false;
+                attachBtn.style.pointerEvents = 'auto';
+                attachBtn.style.cursor = 'pointer';
+                attachBtn.style.opacity = '1';
+            }
+            if (sendBtn) {
+                sendBtn.disabled = false;
+                sendBtn.style.pointerEvents = 'auto';
+                sendBtn.style.cursor = 'pointer';
+                sendBtn.style.opacity = '1';
+            }
+            console.log('Final button state check - Attach disabled:', attachBtn?.disabled, 'Send disabled:', sendBtn?.disabled);
+        }, 100);
+
+        console.log('Writing composer initialized successfully');
+    }
+
+    // Initialize composer when DOM is ready
+    function initializeComposerOnReady() {
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initWritingComposer);
+        } else {
+            initWritingComposer();
+        }
+    }
+
+    initializeComposerOnReady();
+
+    // Re-initialize when writing detail view is shown
+    function setupViewWritingDetailHook() {
+        // Wait for viewWritingDetail to be available
+        if (typeof window.viewWritingDetail === 'function') {
+            const originalViewWritingDetail = window.viewWritingDetail;
+            window.viewWritingDetail = function (writingId) {
+                console.log('viewWritingDetail called with:', writingId);
+                originalViewWritingDetail(writingId);
+                // Reset initialization flag and clear attachments
+                composerInitialized = false;
+                window.writingAttachments = [];
+                // Clear attachment preview
+                const attachmentsPreview = document.getElementById('writingAttachmentsPreview');
+                if (attachmentsPreview) attachmentsPreview.style.display = 'none';
+
+                // Force enable buttons after viewWritingDetail (in case it disabled them)
+                setTimeout(() => {
+                    const attachBtn = document.getElementById('writingAttachBtn');
+                    const sendBtn = document.getElementById('writingSendBtn');
+                    const replyInput = document.getElementById('writingReplyInput');
+                    const record = loadWritingRecords().find(r => r.writing_id === writingId);
+
+                    // Only enable if writing is not locked/completed
+                    if (record && !record.is_locked && record.status !== 'completed') {
+                        if (attachBtn) {
+                            attachBtn.disabled = false;
+                            attachBtn.style.pointerEvents = 'auto';
+                            attachBtn.style.cursor = 'pointer';
+                            attachBtn.style.opacity = '1';
+                        }
+                        if (sendBtn) {
+                            sendBtn.disabled = false;
+                            sendBtn.style.pointerEvents = 'auto';
+                            sendBtn.style.cursor = 'pointer';
+                            sendBtn.style.opacity = '1';
+                        }
+                        if (replyInput) {
+                            replyInput.disabled = false;
+                        }
+                    }
+                }, 50);
+
+                // Re-initialize immediately and also after a delay
+                initWritingComposer();
+                setTimeout(() => {
+                    initWritingComposer();
+                }, 200);
+            };
+            console.log('viewWritingDetail hook installed');
+        } else {
+            // If viewWritingDetail doesn't exist yet, wait for it
+            const checkViewWritingDetail = setInterval(() => {
+                if (typeof window.viewWritingDetail === 'function') {
+                    clearInterval(checkViewWritingDetail);
+                    const originalViewWritingDetail = window.viewWritingDetail;
+                    window.viewWritingDetail = function (writingId) {
+                        console.log('viewWritingDetail called with:', writingId);
+                        originalViewWritingDetail(writingId);
+                        composerInitialized = false;
+                        window.writingAttachments = [];
+                        const attachmentsPreview = document.getElementById('writingAttachmentsPreview');
+                        if (attachmentsPreview) attachmentsPreview.style.display = 'none';
+
+                        // Force enable buttons after viewWritingDetail
+                        setTimeout(() => {
+                            const attachBtn = document.getElementById('writingAttachBtn');
+                            const sendBtn = document.getElementById('writingSendBtn');
+                            const replyInput = document.getElementById('writingReplyInput');
+                            const record = loadWritingRecords().find(r => r.writing_id === writingId);
+
+                            if (record && !record.is_locked && record.status !== 'completed') {
+                                if (attachBtn) {
+                                    attachBtn.disabled = false;
+                                    attachBtn.style.pointerEvents = 'auto';
+                                    attachBtn.style.cursor = 'pointer';
+                                    attachBtn.style.opacity = '1';
+                                }
+                                if (sendBtn) {
+                                    sendBtn.disabled = false;
+                                    sendBtn.style.pointerEvents = 'auto';
+                                    sendBtn.style.cursor = 'pointer';
+                                    sendBtn.style.opacity = '1';
+                                }
+                                if (replyInput) {
+                                    replyInput.disabled = false;
+                                }
+                            }
+                        }, 50);
+
+                        initWritingComposer();
+                        setTimeout(() => {
+                            initWritingComposer();
+                        }, 200);
+                    };
+                    console.log('viewWritingDetail hook installed (delayed)');
+                }
+            }, 100);
+            // Stop checking after 10 seconds
+            setTimeout(() => {
+                clearInterval(checkViewWritingDetail);
+                if (typeof window.viewWritingDetail === 'function') {
+                    console.log('viewWritingDetail is now available');
+                }
+            }, 10000);
+        }
+    }
+
+    // Setup hook after a short delay to ensure dashboard.js has loaded
+    setTimeout(setupViewWritingDetailHook, 500);
+
+    // Also try to initialize when the writings section becomes visible
+    const writingsSection = document.getElementById('writingsSection');
+    if (writingsSection) {
+        // Use MutationObserver to detect when section becomes visible
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+                    const isVisible = writingsSection.style.display !== 'none';
+                    if (isVisible && !composerInitialized) {
+                        console.log('Writings section became visible, initializing composer...');
+                        setTimeout(initWritingComposer, 100);
+                    }
+                }
+            });
+        });
+        observer.observe(writingsSection, { attributes: true, attributeFilter: ['style'] });
+    }
+
+    // Expose sendWritingMessage globally for compatibility
+    window.sendWritingMessage = function () {
+        // Use the stored function if available, otherwise trigger button click
+        if (typeof window._sendWritingMessage === 'function') {
+            window._sendWritingMessage();
+        } else {
+            // Fallback: trigger button click
+            const sendBtn = document.getElementById('writingSendBtn');
+            if (sendBtn && !sendBtn.disabled) {
+                sendBtn.click();
+            } else {
+                console.error('Cannot send message: send function not available');
+            }
+        }
+    };
+
+    // Utility function to check if required functions are available
+    function checkRequiredFunctions() {
+        const required = ['loadWritingRecords', 'saveWritingRecords', 'renderWritingMessages'];
+        const missing = required.filter(fn => typeof window[fn] !== 'function');
+        if (missing.length > 0) {
+            console.warn('Missing required functions:', missing);
+            console.warn('These functions should be defined in dashboard.js');
+            return false;
+        }
+        return true;
+    }
+
+    // Check functions after a delay to allow dashboard.js to load
+    setTimeout(() => {
+        if (!checkRequiredFunctions()) {
+            console.error('Some required functions are missing. The composer may not work correctly.');
+        }
+    }, 1000);
+
+</script>
+
+<style>
+    /* Ensure writing-view-body uses flexbox properly for scrolling */
+    .writing-view-body {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        min-height: 600px;
+        max-height: calc(100vh - 400px);
+    }
+
+    .writing-messages-container {
+        flex: 1;
+        min-height: 0;
+        max-height: 500px;
+        height: 500px;
+        overflow-y: auto;
+        padding: 16px;
+        background: #f9fafb;
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .writing-composer {
+        flex-shrink: 0;
+    }
+
+    #writingAttachmentsPreview {
+        flex-shrink: 0;
+    }
+
+    /* Attachment Preview Container */
+    .attachment-preview-container {
+        padding: 16px;
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        margin-bottom: 12px;
+        animation: slideDown 0.2s ease-out;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .attachment-preview-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .attachment-preview-title {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #374151;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .attachment-preview-title i {
+        color: #6b7280;
+    }
+
+    #attachmentCount {
+        color: #1158e5;
+        font-weight: 700;
+    }
+
+    .attachment-preview-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .attachment-preview-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        min-width: 200px;
+        max-width: 350px;
+        transition: all 0.2s ease;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .attachment-preview-item .file-icon {
+        color: #64748b;
+        font-size: 1.5rem;
+        flex-shrink: 0;
+    }
+
+    .attachment-preview-item .file-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .attachment-preview-item .file-name {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #111827;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-bottom: 4px;
+    }
+
+    .attachment-preview-item .file-size {
+        font-size: 0.75rem;
+        color: #6b7280;
+    }
+
+    .attachment-remove-btn {
+        background: none;
+        border: none;
+        color: #ef4444;
+        cursor: pointer;
+        padding: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+    }
+
+    /* Smooth scrolling for messages container */
+    .writing-messages-container {
+        scroll-behavior: smooth;
+    }
+
+    /* Custom scrollbar for messages container */
+    .writing-messages-container::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .writing-messages-container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+    }
+
+    .writing-messages-container::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+    }
+
+    .writing-messages-container::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+    }
+
+    /* Attachment preview item hover */
+    .attachment-preview-item {
+        transition: all 0.2s ease;
+    }
+
+    /* Attachment items in messages - clickable links */
+    .writing-message-attachments {
+        margin-top: 8px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .writing-message .attachment-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+
+    .writing-message.student .attachment-item {
+        background: rgba(255, 255, 255, 0.2);
+        color: #fff;
+    }
+
+    .writing-message.student .attachment-item:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-1px);
+    }
+
+    .writing-message.teacher .attachment-item {
+        background: #f3f4f6;
+        color: #111827;
+        border: 1px solid #e5e7eb;
+    }
+
+    .writing-message.teacher .attachment-item:hover {
+        background: #e5e7eb;
+        border-color: #cbd5e1;
+        transform: translateY(-1px);
+    }
+
+    .attachment-preview-item:hover {
+        border-color: #cbd5e1;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .attachment-remove-btn:hover {
+        color: #dc2626 !important;
+        transform: scale(1.1);
+    }
+
+    /* Drag & Drop Overlay - MUST have pointer-events: none when visible */
+    .drag-drop-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(17, 88, 229, 0.95);
+        border: 3px dashed #ffffff;
+        border-radius: 12px;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        pointer-events: none !important;
+        /* Always allow clicks through */
+    }
+
+    /* When overlay is shown, ensure it doesn't block */
+    .drag-drop-overlay[style*="display: flex"],
+    .drag-drop-overlay[style*="display:block"] {
+        pointer-events: none !important;
+    }
+
+    .drag-drop-content {
+        text-align: center;
+        color: #ffffff;
+    }
+
+    .drag-drop-content i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        display: block;
+    }
+
+    .drag-drop-content p {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    /* Composer relative positioning for overlay */
+    .writing-composer {
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Ensure composer-large container is clickable */
+    .writing-composer .composer-large {
+        position: relative;
+        z-index: 1001 !important;
+        pointer-events: auto !important;
+    }
+
+    /* Ensure buttons are clickable - HIGHEST PRIORITY */
+    .writing-composer .icon-btn,
+    .writing-composer .send-cta {
+        pointer-events: auto !important;
+        cursor: pointer !important;
+        position: relative;
+        z-index: 1002 !important;
+        background: transparent;
+        border: none;
+    }
+
+    /* Ensure button icons don't block clicks */
+    .writing-composer .icon-btn i,
+    .writing-composer .send-cta i {
+        pointer-events: none;
+    }
+
+    /* Ensure buttons are not disabled by default */
+    .writing-composer .icon-btn:not(:disabled),
+    .writing-composer .send-cta:not(:disabled) {
+        opacity: 1 !important;
+        cursor: pointer !important;
+        pointer-events: auto !important;
+    }
+
+    /* Make sure composer input is accessible */
+    #writingReplyInput {
+        pointer-events: auto !important;
+        z-index: 1001 !important;
+        position: relative;
+    }
+
+    /* Ensure file input is accessible */
+    #writingFileInput {
+        pointer-events: auto !important;
+        z-index: 1003 !important;
+    }
+
+    /* Image Preview in Attachment List */
+    .attachment-image-preview {
+        width: 60px;
+        height: 60px;
+        border-radius: 8px;
+        overflow: hidden;
+        flex-shrink: 0;
+        background: #f3f4f6;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .attachment-image-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* PDF Preview Icon */
+    .pdf-preview-icon {
+        font-size: 2rem;
+        color: #dc2626;
+        flex-shrink: 0;
+    }
+
+    /* Generic File Preview Icon */
+    .file-preview-icon {
+        font-size: 2rem;
+        color: #64748b;
+        flex-shrink: 0;
+    }
+
+    /* Update attachment preview item to accommodate image previews */
+    .attachment-preview-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    /* CRITICAL: Override any CSS that might disable buttons */
+    #writingAttachBtn,
+    #writingSendBtn {
+        pointer-events: auto !important;
+        cursor: pointer !important;
+        z-index: 1002 !important;
+        position: relative !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        display: flex !important;
+    }
+
+    /* Ensure buttons are not blocked by parent elements */
+    .writing-composer * {
+        pointer-events: auto;
+    }
+
+    /* Exception: drag overlay should allow clicks through */
+    .writing-composer .drag-drop-overlay {
+        pointer-events: none !important;
+    }
+
+    /* Ensure no pseudo-elements are blocking */
+    .writing-composer .icon-btn::before,
+    .writing-composer .icon-btn::after,
+    .writing-composer .send-cta::before,
+    .writing-composer .send-cta::after {
+        pointer-events: none;
+        display: none;
+    }
+
+    /* Force button styles to be applied */
+    .writing-composer .icon-btn:focus,
+    .writing-composer .send-cta:focus {
+        outline: 2px solid rgba(17, 88, 229, 0.5);
+        outline-offset: 2px;
+    }
+
+    /* Ensure buttons work even when parent has pointer-events: none */
+    .writing-composer {
+        pointer-events: auto !important;
+    }
+
+    .writing-composer .composer-large {
+        pointer-events: auto !important;
+    }
+</style>
+{% endblock %}

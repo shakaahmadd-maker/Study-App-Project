@@ -1,0 +1,1475 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Services - Nano Problems</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&family=Open+Sans:wght@400;600;700&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'css/home_style.css' %}">
+</head>
+
+<body id="top">
+    <div class="header">
+        <div class="need_help">
+            <img src="{% static 'SVGs/rectangle1.svg' %}">
+            <h1>Need Any Help? +1-917-730-4520</h1>
+        </div>
+        <div class="social">
+            Our Social:
+            <span class="social-icons">
+                <a href="https://wa.me/19177304520" target="_blank" rel="noopener noreferrer"
+                    aria-label="WhatsApp +19177304520">
+                    <img src="{% static 'SVGs/whatsapp.svg' %}" alt="WhatsApp">
+                </a>
+                <a href="https://www.linkedin.com/company/nano-problem" target="_blank" rel="noopener noreferrer">
+                    <img src="{% static 'SVGs/linkedIn.svg' %}" alt="LinkedIn">
+                </a>
+                <a href="https://www.facebook.com/nanoproblem" target="_blank" rel="noopener noreferrer">
+                    <img src="{% static 'SVGs/facebook.svg' %}" alt="Facebook">
+                </a>
+            </span>
+        </div>
+    </div>
+
+    <nav class="nav-bar">
+        <div class="nav-inner">
+            <button class="mobile-menu-toggle" type="button" aria-label="Open navigation" aria-controls="mobileNav"
+                aria-expanded="false">
+                <span class="mobile-menu-toggle__bar"></span>
+                <span class="mobile-menu-toggle__bar"></span>
+                <span class="mobile-menu-toggle__bar"></span>
+            </button>
+
+            <div class="logo">
+                <h2>Nano <span class="brand-strong">Problem</span></h2>
+            </div>
+
+            <div class="nav-links">
+                <a href="{% url 'study:home' %}#top">Home</a>
+                <a href="{% url 'study:services' %}" class="active">Services</a>
+                <a href="#faq">FAQs</a>
+                <a href="{% url 'study:home' %}#contact">Contact</a>
+            </div>
+
+            <div class="nav-actions">
+                <a class="login" href="{% url 'account:register' %}?mode=signin">
+                    <img src="{% static 'SVGs/user.svg' %}" alt="User" class="icon"> Login
+                </a>
+                <a href="{% url 'account:register' %}" class="btn-register">Register Now</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile navigation overlay -->
+    <div class="mobile-nav" id="mobileNav" aria-hidden="true">
+        <div class="mobile-nav__backdrop" data-mobile-close></div>
+        <div class="mobile-nav__panel">
+            <div class="mobile-nav__header">
+                <div class="mobile-nav__brand">
+                    <h2 class="mobile-nav__title">Nano <span class="brand-strong">Problem</span></h2>
+                </div>
+                <button class="mobile-nav__close" type="button" aria-label="Close navigation" data-mobile-close>
+                    <img src="{% static 'SVGs/cross.svg' %}" alt="Close menu">
+                </button>
+            </div>
+
+            <nav class="mobile-nav__links" aria-label="Mobile primary navigation">
+                <a href="{% url 'study:home' %}#top">Home</a>
+                <a href="{% url 'study:services' %}" class="active">Services</a>
+                <a href="#faq">FAQs</a>
+                <a href="{% url 'study:home' %}#contact">Contact</a>
+            </nav>
+
+            <div class="mobile-nav__actions">
+                <span class="actions-sep" aria-hidden="true"></span>
+                <a class="login" href="{% url 'account:register' %}?mode=signin">
+                    <img src="{% static 'SVGs/user.svg' %}" alt="User" class="icon"> Login
+                </a>
+                <a href="{% url 'account:register' %}" class="btn-register">Register Now</a>
+            </div>
+        </div>
+    </div>
+
+    <main class="services-hero">
+        <div class="container">
+            <div class="hero-content">
+                <p class="eyebrow"><span class="eyebrow-blue">Our Services</span></p>
+                <h1 class="hero-title">Comprehensive Academic Solutions</h1>
+                <p class="hero-lead">Empowering students with expert guidance, innovative tools, and personalized
+                    support for every academic challenge.</p>
+            </div>
+        </div>
+        <img src="{% static 'SVGs/grids.svg' %}" alt="" class="hero-grid-bg">
+    </main>
+
+    <section class="services-overview">
+        <div class="container">
+            <div class="section-header">
+                <h2>All Our Services</h2>
+                <img src="{% static 'SVGs/seprator.svg' %}" alt="" class="sep">
+            </div>
+
+            <div class="services-grid">
+                <div class="service-summary-card" onclick="scrollToSection('assignments')">
+                    <div class="icon-box"><img src="{% static 'SVGs/clipboard.svg' %}" alt=""></div>
+                    <h3>Online Assignments & Homework Help</h3>
+                    <p>Get expert assistance in Math, Physics, Chemistry, and more.</p>
+                </div>
+                <div class="service-summary-card" onclick="scrollToSection('quizzes')">
+                    <div class="icon-box"><img src="{% static 'SVGs/progress.svg' %}" alt=""></div>
+                    <h3>Online Quizzes & Assessments</h3>
+                    <p>Interactive quizzes with instant feedback to track your progress.</p>
+                </div>
+                <div class="service-summary-card" onclick="scrollToSection('exams')">
+                    <div class="icon-box"><img src="{% static 'SVGs/report.svg' %}" alt=""></div>
+                    <h3>Online Examinations & Tests</h3>
+                    <p>Secure and reliable testing environment for midterms and finals.</p>
+                </div>
+                <div class="service-summary-card" onclick="scrollToSection('advanced-studies')">
+                    <div class="icon-box"><img src="{% static 'SVGs/pc.svg' %}" alt=""></div>
+                    <h3>Online Coursework</h3>
+                    <p>Full support for your academic coursework throughout the semester.</p>
+                </div>
+                <div class="service-summary-card" onclick="scrollToSection('tutoring')">
+                    <div class="icon-box"><img src="{% static 'SVGs/user.svg' %}" alt=""></div>
+                    <h3>Online Tutoring & Classes</h3>
+                    <p>Personalized 1-on-1 sessions with expert tutors in any field.</p>
+                </div>
+                <div class="service-summary-card" onclick="scrollToSection('proctored')">
+                    <div class="icon-box"><img src="{% static 'SVGs/float_button.svg' %}" alt=""></div>
+                    <h3>Protected / Proctored Exams</h3>
+                    <p>Secure exam solutions ensuring academic integrity and fairness.</p>
+                </div>
+                <div class="service-summary-card" onclick="scrollToSection('writing')">
+                    <div class="icon-box"><img src="{% static 'SVGs/message.svg' %}" alt=""></div>
+                    <h3>Essay & Literature Writing</h3>
+                    <p>High-quality, plagiarism-free writing services for all academic levels.</p>
+                </div>
+                <div class="service-summary-card" onclick="scrollToSection('it-projects')">
+                    <div class="icon-box"><img src="{% static 'SVGs/pc.svg' %}" alt=""></div>
+                    <h3>IT Project Assistance</h3>
+                    <p>Technical support for coding, programming, and documentation.</p>
+                </div>
+                <div class="service-summary-card" onclick="scrollToSection('advanced-studies')">
+                    <div class="icon-box"><img src="{% static 'SVGs/resource_cap.svg' %}" alt=""></div>
+                    <h3>Online PhD Classes</h3>
+                    <p>Advanced academic support for doctorate level students.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Assignments Section -->
+    <section id="assignments" class="service-detail-section light">
+        <div class="container">
+            <div class="detail-grid">
+                <div class="detail-content">
+                    <h2 class="detail-title">Online Assignments Help and Homework Help</h2>
+                    <p class="detail-lead">At NanoProblem, we know that assignments and homework can be tough. Whether
+                        you're stuck on a complicated problem or just need some help to finish on time, we've got you
+                        covered! Our team of experts is here to offer the support you need with online assignment help
+                        and homework assistance.</p>
+
+                    <h4 class="section-subtitle">Why Choose NanoProblem for Your Assignment and Homework Help?</h4>
+                    <div class="benefit-list">
+                        <div class="benefit-item">
+                            <h4>Expert Help in Every Subject</h4>
+                            <p>Professionals with deep knowledge in Math, Physics, Chemistry, Biology, and more.
+                                Whatever the problem, our experts are ready to tackle it with precision.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Tailored Support Just for You</h4>
+                            <p>Every student has different needs, and that’s why we offer personalized help. We
+                                customize our support to fit your needs.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>On-Time Delivery</h4>
+                            <p>Deadlines matter, and we get that! Our team works fast and efficiently to ensure your
+                                assignments are completed on time.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Affordable & Accessible</h4>
+                            <p>We believe everyone deserves quality help. We offer affordable services that provide real
+                                value without breaking the bank.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Available 24/7</h4>
+                            <p>Need help at any hour? Whether it's a last-minute question or ongoing support, our 24/7
+                                customer support is ready to assist you.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Plagiarism-Free Work</h4>
+                            <p>We take pride in delivering original solutions. Every assignment is checked for
+                                plagiarism to ensure 100% unique content.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Learn While You Work</h4>
+                            <p>We don’t just complete your assignments—we help you understand the material too with
+                                clear explanations and step-by-step breakdowns.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Hassle-Free Online Platform</h4>
+                            <p>Access our services from anywhere, anytime, without the need for in-person meetings. Easy
+                                help at home, school, or on the go.</p>
+                        </div>
+                    </div>
+
+                    <div class="service-sub-list">
+                        <h4>Our Services Include:</h4>
+                        <ul>
+                            <li>Homework Help in all major subjects</li>
+                            <li>Customized Assignment Solutions</li>
+                            <li>Expert Tutoring for deep understanding</li>
+                            <li>Test Preparation to help you ace exams</li>
+                            <li>Research Paper Help with writing and citation</li>
+                        </ul>
+                    </div>
+
+                    <div class="why-nano-box">
+                        <h4>Why NanoProblem?</h4>
+                        <p>At NanoProblem, our mission is simple: we make learning easier and more accessible. With a
+                            big team of experts, we provide the support students need to succeed. We’re here to help you
+                            tackle any academic challenge with confidence, and we’re proud to offer solutions that truly
+                            help students thrive.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quizzes Section -->
+    <section id="quizzes" class="service-detail-section">
+        <div class="container">
+            <div class="detail-grid">
+                <div class="detail-content">
+                    <h2 class="detail-title">Online Quizzes & Assessments</h2>
+                    <p class="detail-lead">At NanoProblem, we know that assessments are essential tools for gauging
+                        knowledge and improving learning. Whether you're preparing for exams, revising key concepts, or
+                        simply want to test your knowledge, our Online Quizzes and Assessments provide valuable
+                        feedback.</p>
+
+                    <h4 class="section-subtitle">Why Choose NanoProblem for Your Online Quizzes & Assessments?</h4>
+                    <div class="benefit-list">
+                        <div class="benefit-item">
+                            <h4>Interactive and Engaging Quizzes</h4>
+                            <p>Featuring multiple choice, true/false, short-answer, and scenario-based questions to keep
+                                you engaged while challenging your understanding.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Instant Feedback for Improvement</h4>
+                            <p>Receive real-time feedback after every quiz to identify where you went right and where
+                                improvement is needed.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Customized Assessments</h4>
+                            <p>We customize quizzes and assessments to cater to your specific learning goals and unique
+                                student needs.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Flexible, Anytime Access</h4>
+                            <p>Take quizzes whenever it suits your schedule—whether it's during a break or late at night
+                                via our online platform.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Track Your Progress Over Time</h4>
+                            <p>Monitor your progress with detailed insights on your performance to identify patterns and
+                                strengths.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Simulate Exam Conditions</h4>
+                            <p>Our quiz formats replicate real exam conditions, helping you build confidence and
+                                practice time management.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Complete Portal Management</h4>
+                            <p>Our team manages every aspect of your academic portal, from organizing assignments to
+                                tracking performance.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Long-Term Academic Support</h4>
+                            <p>Our support is available for the entire semester, ensuring you never feel alone in your
+                                academic endeavors.</p>
+                        </div>
+                    </div>
+
+                    <div class="why-nano-box">
+                        <h4>Why NanoProblem?</h4>
+                        <p>Our comprehensive services—ranging from online quizzes and assessments to full portal
+                            management and long-term academic support—are designed to ensure your academic journey is
+                            smooth, organized, and successful.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Examinations Section -->
+    <section id="exams" class="service-detail-section light">
+        <div class="container">
+            <div class="detail-grid">
+                <div class="detail-content">
+                    <h2 class="detail-title">Online Examinations & Tests</h2>
+                    <p class="detail-lead">At NanoProblem, we provide a seamless and efficient platform for online
+                        examinations and tests. We focus on delivering a smooth experience while ensuring accuracy,
+                        integrity, and real-time feedback.</p>
+
+                    <h4 class="section-subtitle">Why Choose NanoProblem for Your Online Examinations/Tests?</h4>
+                    <div class="benefit-list">
+                        <div class="benefit-item">
+                            <h4>Secure and Reliable Environment</h4>
+                            <p>Tamper-proof environment with advanced anti-cheating features like question randomization
+                                and secure login systems.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Variety of Question Formats</h4>
+                            <p>Testing MCQs, true/false, short answers, or essays to assess your understanding from
+                                different perspectives.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Real-Time Monitoring</h4>
+                            <p>Receive real-time updates on your time, progress, and remaining questions during the
+                                examination.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Customizable Exam Length</h4>
+                            <p>We offer flexibility in the length and difficulty of exams to meet your specific
+                                preparation needs.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Timed Test Simulation</h4>
+                            <p>Simulate real exam conditions to help you practice time management and exam-taking
+                                strategies.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Instant Results and Analytics</h4>
+                            <p>NanoProblem provides instant results and performance analytics once you complete your
+                                exam.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Accessible 24/7</h4>
+                            <p>Take your exams whenever and wherever it’s most convenient for you without stress.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Scalable for Large Groups</h4>
+                            <p>Our platform is scalable to handle multiple students simultaneously, ideal for
+                                institutions or organizations.</p>
+                        </div>
+                    </div>
+
+                    <div class="service-sub-list">
+                        <h4>Our Online Examination Services Include:</h4>
+                        <ul>
+                            <li>Customized Test Creation for any subject</li>
+                            <li>Timed Exams to simulate real-world conditions</li>
+                            <li>Multiple Question Formats (MCQs, Essays, etc.)</li>
+                            <li>Real-Time Monitoring and Feedback</li>
+                            <li>Instant Results and Performance Analytics</li>
+                            <li>Secure, Reliable, and Scalable System</li>
+                            <li>Protected Exams for high-stakes assessments</li>
+                        </ul>
+                    </div>
+
+                    <div class="why-nano-box">
+                        <h4>Why NanoProblem?</h4>
+                        <p>We are committed to providing an efficient, secure, and flexible online examination system
+                            designed to meet the needs of students and institutions while ensuring integrity and growth.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Proctored Exams Section -->
+    <section id="proctored" class="service-detail-section">
+        <div class="container">
+            <div class="detail-grid">
+                <div class="detail-content">
+                    <h2 class="detail-title">Protected/Proctored Exam Solutions</h2>
+                    <p class="detail-lead">At NanoProblem, we understand the pressure that comes with taking high-stakes
+                        exams. That’s why we offer Protected/Proctored Exam Solutions designed to help students succeed
+                        by providing secure, fair, and supported exam environments.</p>
+
+                    <h4 class="section-subtitle">How NanoProblem Can Help You with Protected/Proctored Exams</h4>
+                    <div class="benefit-list">
+                        <div class="benefit-item">
+                            <h4>Comprehensive Exam Support</h4>
+                            <p>Step-by-step assistance throughout your exam preparation, ensuring you're fully equipped
+                                to handle any exam with confidence.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Secure and Fair Environment</h4>
+                            <p>Our proctoring service guarantees that every exam is conducted with integrity using
+                                AI-based or live proctoring.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Identity Verification</h4>
+                            <p>Biometric verification and photo ID checks to ensure only the registered student is
+                                taking the exam.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Real-Time Monitoring</h4>
+                            <p>Proctors monitor every step to ensure compliance. Our team is available for immediate
+                                support if you encounter issues.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Proactive Anxiety Solutions</h4>
+                            <p>A calm and controlled testing environment ensures the exam is conducted fairly, reducing
+                                your anxiety.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Post-Exam Reporting</h4>
+                            <p>Detailed performance report analyzing your strengths and areas for improvement after each
+                                exam.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Test-Taking Strategy</h4>
+                            <p>Strategies to manage time, minimize stress, and tackle challenging questions efficiently
+                                during the exam.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Flexible & Affordable</h4>
+                            <p>Customized exam proctoring solutions that are affordable and accessible to all students
+                                and institutions.</p>
+                        </div>
+                    </div>
+
+                    <div class="service-sub-list">
+                        <h4>Our Proctored Solutions Include:</h4>
+                        <ul>
+                            <li>Live or AI-based Proctoring</li>
+                            <li>Identity Verification</li>
+                            <li>Secure Browser Technology</li>
+                            <li>Real-Time Support during exams</li>
+                            <li>Post-Exam Feedback and analytics</li>
+                            <li>Customized Exam Settings</li>
+                        </ul>
+                    </div>
+
+                    <div class="why-nano-box">
+                        <h4>Why NanoProblem?</h4>
+                        <p>We are committed to supporting your exam success by offering Protected/Proctored Exam
+                            Solutions that provide a secure, fair, and supportive environment for your academic or
+                            professional journey.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tutoring Section -->
+    <section id="tutoring" class="service-detail-section light">
+        <div class="container">
+            <div class="detail-grid">
+                <div class="detail-content">
+                    <h2 class="detail-title">Online Tutoring/Classes Services</h2>
+                    <p class="detail-lead">At NanoProblem, we understand the unique challenges students face at various
+                        academic levels. Our Online Tutoring Services are designed to offer personalized, one-on-one
+                        support across a wide range of subjects from high school to university level.</p>
+
+                    <h4 class="section-subtitle">What We Offer</h4>
+                    <div class="benefit-list">
+                        <div class="benefit-item">
+                            <h4>Personalized One-on-One Tutoring</h4>
+                            <p>We believe personalized learning is key. Every session is tailored to your unique
+                                learning needs, style, and pace.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Wide Range of Subjects</h4>
+                            <p>Expert support in Mathematics, Science, English, Social Studies, Business, IT,
+                                Engineering, and Foreign Languages.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Interactive Learning Environment</h4>
+                            <p>Using interactive whiteboards, screen sharing, and collaborative tools to create dynamic
+                                and hands-on lessons.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Flexible Scheduling</h4>
+                            <p>Book sessions at times most convenient for you—daytime, evening, or weekends—to fit your
+                                busy lifestyle.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Exam and Test Preparation</h4>
+                            <p>Specialized tutoring for standardized tests including SAT, ACT, GRE, GMAT, IELTS, and
+                                TOEFL.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Academic Coaching</h4>
+                            <p>Develop key learning skills like Time Management, Critical Thinking, and effective Study
+                                Techniques.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Homework & Assignment Help</h4>
+                            <p>Step-by-step assistance to complete your assignments accurately while helping you build
+                                independent skills.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Affordable & Secure</h4>
+                            <p>Competitively priced services in a confidential and secure online learning environment.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="service-sub-list">
+                        <h4>Subjects We Cover:</h4>
+                        <ul>
+                            <li><strong>Mathematics:</strong> Arithmetic to Advanced Calculus</li>
+                            <li><strong>Science:</strong> Physics, Chemistry, Biology</li>
+                            <li><strong>Languages:</strong> English, Spanish, French, etc.</li>
+                            <li><strong>Professional:</strong> Business, Economics, IT</li>
+                            <li><strong>Test Prep:</strong> SAT, GRE, IELTS, TOEFL</li>
+                        </ul>
+                    </div>
+
+                    <div class="why-nano-box">
+                        <h4>Why Choose NanoProblem?</h4>
+                        <p>With expert tutors, flexible scheduling, and a focus on interactive learning, NanoProblem is
+                            the ideal partner in your academic journey to help you achieve your educational goals.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Writing Services Section -->
+    <section id="writing" class="service-detail-section">
+        <div class="container">
+            <div class="detail-grid">
+                <div class="detail-content">
+                    <h2 class="detail-title">Essay and Literature Writing Services</h2>
+                    <p class="detail-lead">At NanoProblem, we understand that essay writing and literature-based
+                        assignments can be overwhelming. Our service is designed to offer high-quality, professionally
+                        written content tailored to your specific needs.</p>
+
+                    <h4 class="section-subtitle">How We Can Help</h4>
+                    <div class="benefit-list">
+                        <div class="benefit-item">
+                            <h4>Custom Writing for All Essay Types</h4>
+                            <p>Argumentative, Descriptive, Persuasive, Narrative, Expository, and Cause and Effect
+                                essays tailored to your requirements.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>In-Depth Research & Structure</h4>
+                            <p>Every paper is built upon meticulous research using high-quality sources and logical
+                                organization.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Specialized Writing Services</h4>
+                            <p>Assistance with Analytical essays, Annotated Bibliographies, Admission essays, Reviews,
+                                and Case Studies.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Term Papers, Thesis & Dissertations</h4>
+                            <p>Comprehensive support for long-term research projects ensuring academic rigor and
+                                thorough investigation.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Plagiarism-Free Content</h4>
+                            <p>All work is written from scratch. We use plagiarism-checking software to confirm 100%
+                                originality.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Timely Delivery</h4>
+                            <p>We guarantee timely delivery without sacrificing quality, whether you need a paper in a
+                                few hours or weeks.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Affordable Pricing</h4>
+                            <p>Excellent value for students without compromising on the quality of professional academic
+                                writing.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Confidentiality & Security</h4>
+                            <p>Your identity and academic work remain private throughout the entire process.</p>
+                        </div>
+                    </div>
+
+                    <div class="service-sub-list">
+                        <h4>Our Specialized Services:</h4>
+                        <ul>
+                            <li>Literary Analysis & Book Reviews</li>
+                            <li>Research Papers & Proposals</li>
+                            <li>Admission & Application Essays</li>
+                            <li>Lab Reports & Reflection Papers</li>
+                            <li>Memos, Press Releases & Response Papers</li>
+                            <li>PowerPoint Presentation Support</li>
+                        </ul>
+                    </div>
+
+                    <div class="why-nano-box">
+                        <h4>Why Choose NanoProblem?</h4>
+                        <p>With affordable prices, timely delivery, and a commitment to academic excellence, NanoProblem
+                            is your go-to resource for expert assistance in all forms of essay and literature-based
+                            assignments.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- IT Projects Section -->
+    <section id="it-projects" class="service-detail-section light">
+        <div class="container">
+            <div class="detail-grid">
+                <div class="detail-content">
+                    <h2 class="detail-title">IT Project Assistance</h2>
+                    <p class="detail-lead">In today’s fast-paced digital world, IT projects are an essential part of
+                        many academic curriculums. At NanoProblem, we offer high-quality, affordable IT project
+                        assistance tailored to your technical needs.</p>
+
+                    <h4 class="section-subtitle">What We Offer</h4>
+                    <div class="benefit-list">
+                        <div class="benefit-item">
+                            <h4>Software Development Projects</h4>
+                            <p>End-to-end support for custom applications using Java, C++, Python, and more.
+                                Requirements to testing.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Web Design & Development</h4>
+                            <p>Responsive and user-friendly websites using React, Node.js, Django, and WordPress.
+                                Frontend & Backend.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Data Analysis & Visualization</h4>
+                            <p>Assistance with data science projects using Python, R, Tableau, and Power BI for deep
+                                insights.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Network Security Projects</h4>
+                            <p>Vulnerability assessment, penetration testing, firewall implementation, and Wi-Fi
+                                security protection.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Database Projects</h4>
+                            <p>Design and development using MySQL, PostgreSQL, MongoDB, and Oracle. SQL query
+                                optimization.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Documentation & Presentation</h4>
+                            <p>Technical architecture manuals, source code documentation, and engaging PowerPoint
+                                presentations.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Minimum Cost Commitment</h4>
+                            <p>High-quality technical support at affordable rates specifically designed for student
+                                budgets.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Mobile App Development</h4>
+                            <p>Android and iOS development using Flutter, React Native, Java/Kotlin, and Swift.</p>
+                        </div>
+                    </div>
+
+                    <div class="service-sub-list">
+                        <h4>Other IT Projects We Offer:</h4>
+                        <ul>
+                            <li>Cloud Computing & IoT Projects</li>
+                            <li>Game Development & Software Testing</li>
+                            <li>Blockchain & Cybersecurity tasks</li>
+                            <li>AI and Machine Learning Projects</li>
+                            <li>Business Intelligence & API Integration</li>
+                        </ul>
+                    </div>
+
+                    <div class="why-nano-box">
+                        <h4>Why Choose NanoProblem?</h4>
+                        <p>Our expert support ensures you can confidently submit well-executed IT projects that meet
+                            academic goals—all at a minimal cost.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Coursework and PhD Section -->
+    <section id="advanced-studies" class="service-detail-section">
+        <div class="container">
+            <div class="detail-grid">
+                <div class="detail-content">
+                    <h2 class="detail-title">Online Coursework & PhD Classes</h2>
+                    <p class="detail-lead">Tailored support for full-semester coursework and advanced PhD level
+                        requirements. We provide consistent, high-standard delivery to keep you ahead in your academic
+                        journey.</p>
+
+                    <div class="benefit-list">
+                        <div class="benefit-item">
+                            <h4>Full Semester Management</h4>
+                            <p>Ongoing support covering weekly assignments, discussions, and multi-subject workloads.
+                            </p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>PhD Level Expertise</h4>
+                            <p>Specialized assistance for doctorate candidates, including research guidance and advanced
+                                dissertation support.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Academic Integrity</h4>
+                            <p>Strict adherence to institutional guidelines and standards-based delivery for all
+                                advanced tasks.</p>
+                        </div>
+                        <div class="benefit-item">
+                            <h4>Continuous Collaboration</h4>
+                            <p>Direct communication with experts who understand the depth and complexity of your course
+                                requirements.</p>
+                        </div>
+                    </div>
+
+                    <div class="why-nano-box">
+                        <h4>Elevate Your Studies</h4>
+                        <p>Whether you need occasional guidance or full-semester collaboration, NanoProblem's flexible
+                            academic support keeps busy students and doctoral candidates ahead of the curve.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <section class="get-quote-section">
+        <div class="container">
+            <h2 class="quote-main-title">What Are You Waiting For?</h2>
+            <p class="quote-main-lead">Pay Someone To Take Your Online Course & Get The Grade You Desire.</p>
+
+            <div class="quote-card">
+                <div class="quote-card-inner">
+                    <h3>How can we get in touch?</h3>
+
+                    <form action="#" class="quote-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <input type="text" name="first_name" placeholder="First Name" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" name="last_name" placeholder="Last Name" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" name="email" placeholder="Email Address" required>
+                        </div>
+                        <div class="form-group">
+                            <textarea name="details" placeholder="How can we help you" required></textarea>
+                        </div>
+                        <button type="submit" class="btn-quote-submit">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact" class="site-footer">
+        <div class="footer-panel">
+            <div class="container footer-grid">
+                <div class="footer-col about">
+                    <h4>About Us</h4>
+                    <p>Get help with assignments tailored to your subject and requirements with expert guidance. Get
+                        help with assignments tailored to your subject and requirements with expert guidance.</p>
+                </div>
+
+                <div class="footer-col links">
+                    <h4>Quick Links</h4>
+                    <ul class="quick-links">
+                        <li><img src="{% static 'SVGs/arrow.svg' %}" alt="" aria-hidden="true"> About Us</li>
+                        <li><img src="{% static 'SVGs/arrow.svg' %}" alt="" aria-hidden="true"> Contact Us</li>
+                        <li><img src="{% static 'SVGs/arrow.svg' %}" alt="" aria-hidden="true"> Careers</li>
+                        <li><a href="{% url 'study:services' %}" style="text-decoration: none; color: inherit;"><img
+                                    src="{% static 'SVGs/arrow.svg' %}" alt="" aria-hidden="true"> Services</a></li>
+                        <li><img src="{% static 'SVGs/arrow.svg' %}" alt="" aria-hidden="true"> Others</li>
+                    </ul>
+                </div>
+
+                <div class="footer-col follow">
+                    <h4>Follow US</h4>
+                    <ul class="social-list">
+                        <li>
+                            <img src="{% static 'SVGs/whatsapp.svg' %}" alt="WhatsApp">
+                            <a href="https://wa.me/19177304520" target="_blank"
+                                rel="noopener noreferrer">+1-917-730-4520</a>
+                        </li>
+                        <li>
+                            <img src="{% static 'SVGs/facebook.svg' %}" alt="facebook">
+                            <a href="https://www.facebook.com/nanoproblem" target="_blank"
+                                rel="noopener noreferrer">Nano Problem</a>
+                        </li>
+                        <li>
+                            <img src="{% static 'SVGs/linkedIn.svg' %}" alt="linkedin">
+                            <a href="https://www.linkedin.com/company/nano-problem" target="_blank"
+                                rel="noopener noreferrer">Nano Problem</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="footer-col contact">
+                    <h4>Get In Touch</h4>
+                    <p class="contact-line"><img src="{% static 'SVGs/gps.svg' %}" alt="" aria-hidden="true">
+                        OfficeNo.10, Sabzazar,
+                        Multan Road, Lahore.</p>
+                    <p class="contact-line"><img src="{% static 'SVGs/phone.svg' %}" alt="" aria-hidden="true">
+                        +1-917-730-4520</p>
+                    <p class="contact-line"><img src="{% static 'SVGs/email.svg' %}" alt="" aria-hidden="true">
+                        nanoproblems@gmail.com
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="container">
+                <hr class="footer-hr">
+                <p class="copyright">2025 Nano-Problem. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <div class="float-wrap" aria-hidden="false" data-chat-open="false">
+        <div class="float-toggle-wrap">
+            <div class="float-toggle-title">
+                <p>Need Help?</p>
+            </div>
+            <button class="float-toggle" type="button" aria-expanded="false">
+                <img src="{% static 'SVGs/float_button.svg' %}" alt="Need Help">
+            </button>
+        </div>
+
+        <aside class="chat-widget" role="dialog" aria-label="Help chat" aria-hidden="true" hidden>
+            <header class="chat-header">
+                <div class="chat-logo">
+                    <strong>Nano <span class="brand-strong">Problem</span></strong>
+                </div>
+                <button class="chat-close" aria-label="Close chat">
+                    <img src="{% static 'SVGs/cross.svg' %}" alt="Close">
+                </button>
+            </header>
+            <div class="chat-body" tabindex="0">
+                <ul class="chat-list" aria-live="polite"></ul>
+            </div>
+            <div class="chat-input-wrap">
+                <input id="chat-input" class="chat-input" type="text" placeholder="Type a message" />
+                <button class="chat-send" aria-label="Send">
+                    <img src="{% static 'SVGs/send.svg' %}" alt="send">
+                </button>
+            </div>
+        </aside>
+    </div>
+
+    <style>
+        /* Floating + chat base */
+        .float-wrap {
+            position: fixed;
+            right: 30px;
+            bottom: 50px;
+            z-index: 99999;
+            display: flex;
+            align-items: flex-end;
+            height: 100px;
+        }
+
+        .float-toggle-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: space-evenly;
+            gap: 0px;
+            flex-direction: row;
+            height: 50px;
+        }
+
+        .float-toggle-title {
+            background: #FFA600;
+            padding: 10px 15px;
+            width: 200px;
+            height: 40px;
+            border-radius: 35px;
+            text-align: center;
+        }
+
+        .float-toggle-title p {
+            font-size: 20px;
+            font-style: bold;
+            font-weight: 700;
+            font-family: 'open sans', sans-serif;
+            color: #FFFFFF;
+        }
+
+        .float-toggle {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            width: 125px;
+            height: 125px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 260ms cubic-bezier(0.25, 0.8, 0.25, 1),
+                box-shadow 260ms ease;
+        }
+
+        .float-toggle:hover {
+            transform: translateY(-6px) scale(1.08);
+        }
+
+        .float-toggle:focus-visible {
+            transform: translateY(-6px) scale(1.08);
+            outline: 3px solid rgba(255, 166, 0, 0.55) !important;
+            outline-offset: 4px;
+        }
+
+        .float-toggle img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: contain;
+            transition: transform 260ms cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .float-toggle:hover img,
+        .float-toggle:focus-visible img {
+            transform: scale(1.04);
+        }
+
+        @media (max-width: 1024px) {
+            .float-wrap {
+                right: 22px;
+                bottom: 36px;
+            }
+
+            .float-toggle-title {
+                width: 160px;
+                font-size: 18px;
+            }
+
+            .float-toggle {
+                width: 110px;
+                height: 110px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .float-wrap {
+                right: 18px;
+                bottom: 28px;
+            }
+
+            .float-toggle-title {
+                display: none;
+            }
+
+            .float-toggle {
+                width: 92px;
+                height: 92px;
+            }
+        }
+
+        /* Chat widget */
+        .chat-widget {
+            width: 360px;
+            max-width: calc(100vw - 40px);
+            height: 520px;
+            background: #f1f3f5;
+            border-radius: 18px;
+            box-shadow: 0 18px 40px rgba(11, 30, 60, 0.18);
+            position: absolute;
+            right: 0;
+            bottom: 86px;
+            display: flex;
+            flex-direction: column;
+            transform-origin: bottom right;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transform: translateY(16px) scale(0.94);
+            transition: opacity 220ms cubic-bezier(.2, .9, .3, 1), transform 220ms cubic-bezier(.2, .9, .3, 1), visibility 220ms linear;
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            overflow: visible;
+        }
+
+
+        .chat-widget.chat-widget--visible {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: translateY(0) scale(1);
+        }
+
+        /* header */
+        .chat-header {
+            background: #0868d6;
+            color: #fff;
+            padding: 18px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            position: relative;
+            /* for close btn overlap */
+            border-top-left-radius: 18px;
+            border-top-right-radius: 18px;
+        }
+
+        .chat-logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .chat-logo strong {
+            font-size: 20px;
+            letter-spacing: -0.02em;
+        }
+
+        .chat-logo .brand-strong {
+            color: #FFA600;
+        }
+
+        /* close button overlapping the top by 50% */
+        .chat-close {
+            position: absolute;
+            right: 22px;
+            top: -22px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: none;
+            background: #e9f2ff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 18px rgba(8, 40, 100, 0.14);
+            cursor: pointer;
+            padding: 6px;
+        }
+
+        .chat-close img {
+            width: 18px;
+            height: 18px;
+            display: block;
+        }
+
+        /* body */
+        .chat-body {
+            padding: 22px;
+            overflow: auto;
+            flex: 1;
+            background: #EFF1F4;
+        }
+
+        .chat-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 26px;
+        }
+
+        .chat-item {
+            display: flex;
+            align-items: flex-end;
+            gap: 12px;
+        }
+
+        .chat-item.other {
+            justify-content: flex-start;
+        }
+
+        .chat-item.me {
+            justify-content: flex-end;
+        }
+
+        .bubble {
+            display: inline-block;
+            padding: 12px 16px;
+            border-radius: 8px;
+            max-width: 72%;
+            box-shadow: 0 8px 20px rgba(12, 40, 90, 0.06);
+            background: #fff;
+            color: #0b2546;
+            font-size: 14px;
+            line-height: 1.35;
+        }
+
+        .chat-item.me .bubble {
+            background: #0868d6;
+            color: #fff;
+            box-shadow: 0 8px 20px rgba(8, 104, 214, 0.16);
+        }
+
+
+        /* footer - input bar with overlapping send button */
+
+        .chat-input-wrap {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-around;
+            gap: 12px;
+            padding: 5px;
+            background: #0868d6;
+            border-radius: 30px;
+            margin: 10px;
+        }
+
+        /* main input: large, fully blue, white text & placeholder */
+        .chat-input {
+            height: 45px;
+            width: 90%;
+            padding: 16px;
+            border: none;
+            color: #ffffff;
+            font-size: 16px;
+            line-height: 1;
+            box-shadow: inset 0 -3px 10px rgba(0, 0, 0, 0.06), 0 6px 18px rgba(8, 104, 214, 0.10);
+            outline: none;
+            border-top-left-radius: 30px;
+            border-bottom-left-radius: 30px;
+            background: #0868d6;
+        }
+
+        /* placeholder color */
+        .chat-input::placeholder {
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        /* send button: circular white button that overlaps the input (about 50% outside) */
+        .chat-send {
+            margin-right: 10px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 12px 30px rgba(8, 104, 214, 0.18);
+            cursor: pointer;
+            padding: 10px;
+        }
+
+        /* send icon: keep original colors (do not invert) */
+        .chat-send img {
+            margin-top: 4px;
+            width: 24px;
+            height: 24px;
+        }
+
+        /* focus state */
+        .chat-input:focus {
+            box-shadow: 0 6px 22px rgba(8, 104, 214, 0.12), inset 0 -2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        /* responsive tweaks */
+        @media (max-width:420px) {
+            .chat-input {
+                height: 56px;
+                padding: 12px 86px 12px 16px;
+                border-radius: 32px;
+                font-size: 15px;
+            }
+
+            .chat-send {
+                right: -22px;
+                width: 56px;
+                height: 56px;
+            }
+        }
+
+        /* responsive */
+        @media (max-width:420px) {
+            .float-wrap {
+                right: 12px;
+                bottom: 22px;
+            }
+
+            .float-toggle {
+                width: 78px;
+                height: 78px;
+            }
+
+            .chat-widget {
+                right: 10px;
+                bottom: 72px;
+                width: 92vw;
+                height: 70vh;
+            }
+
+            .chat-close {
+                right: -16px;
+                top: -16px;
+                width: 40px;
+                height: 40px;
+            }
+
+            .chat-send {
+                right: -22px;
+                width: 56px;
+                height: 56px;
+            }
+        }
+    </style>
+
+    <script src="{% static 'java/home_script.js' %}"></script>
+    <script>
+        function scrollToSection(id) {
+            const element = document.getElementById(id);
+            if (element) {
+                const headerOffset = 100;
+                const elementPosition = element.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: "smooth"
+                });
+            }
+        }
+
+        // Intersection Observer for scroll animations
+        document.addEventListener('DOMContentLoaded', () => {
+            const observerOptions = {
+                threshold: 0.15,
+                rootMargin: "0px 0px -50px 0px"
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    }
+                });
+            }, observerOptions);
+
+            const revealElements = document.querySelectorAll('.reveal, .stagger-reveal, .reveal-left, .reveal-right');
+            revealElements.forEach(el => observer.observe(el));
+        });
+
+        // Pre-Sign-In Chat Implementation
+        (function () {
+            const floatWrap = document.querySelector('.float-wrap');
+            if (!floatWrap) return;
+
+            const chatWidget = floatWrap.querySelector('.chat-widget');
+            const toggleButton = floatWrap.querySelector('.float-toggle');
+            const closeButton = floatWrap.querySelector('.chat-close');
+            const chatBody = chatWidget?.querySelector('.chat-body');
+            const chatList = chatWidget?.querySelector('.chat-list');
+            const chatInput = chatWidget?.querySelector('#chat-input');
+            const sendButton = chatWidget?.querySelector('.chat-send');
+
+            const OPEN_CLASS = 'chat-widget--visible';
+            let socket = null;
+            let sessionId = localStorage.getItem('pre_signin_session_id');
+            let visitorName = localStorage.getItem('pre_signin_visitor_name');
+            let isWaitingForInfo = false;
+
+            // Initial messages
+            const welcomeMsg = "Hi! I'm your Nano Problem assistant. To help you better, could you please share your full name and what you're looking for today?";
+
+            function addMessage(content, role = 'other', isSystem = false) {
+                if (!chatList) return;
+
+                // If it's a "live agent" system message, closing note, or connect prompt
+                const isAgentPrefix = content.includes("A live agent will assist you shortly.") || content.includes("Thanks for providing your name") || content.includes("Your chat has been closed");
+                const isBusyPrefix = content.includes("current all agents are bussy");
+                const isConnectPrompt = content.includes("please type Hi to start a new conversation");
+
+                const li = document.createElement('li');
+                li.className = `chat-item ${role === 'visitor' ? 'me' : 'other'}`;
+                if (isSystem || isAgentPrefix || isBusyPrefix || isConnectPrompt) li.classList.add('system');
+
+                li.innerHTML = `<span class="bubble">${content}</span>`;
+                chatList.appendChild(li);
+
+                // Trigger reflow for animation
+                window.requestAnimationFrame(() => {
+                    chatBody.scrollTop = chatBody.scrollHeight;
+                });
+            }
+
+            function initWebSocket(id = null) {
+                const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                const url = id ? `${protocol}//${window.location.host}/ws/presignin/${id}/` : `${protocol}//${window.location.host}/ws/presignin/`;
+
+                socket = new WebSocket(url);
+
+                socket.onmessage = function (e) {
+                    const data = JSON.parse(e.data);
+                    if (data.type === 'chat_message') {
+                        if (data.message.sender_role === 'csrep' || data.message.is_system) {
+                            addMessage(data.message.content, data.message.sender_role);
+                        }
+                        if (data.message.is_closed) {
+                            sessionId = null;
+                            localStorage.removeItem('pre_signin_session_id');
+                            addMessage("If you need assistance again, please type 'Hi' to start a new conversation.", "other", true);
+                        }
+                    } else if (data.type === 'session_created') {
+                        sessionId = data.session_id;
+                        localStorage.setItem('pre_signin_session_id', sessionId);
+
+                        if (localStorage.getItem('pre_signin_reinit') === 'true') {
+                            addMessage("Someone will contact you in a moment. Currently all agents are busy assisting others.", "other", true);
+                            localStorage.removeItem('pre_signin_reinit');
+                        }
+
+                        socket.close();
+                        initWebSocket(sessionId);
+                    }
+                };
+            }
+
+            function handleSend() {
+                const content = chatInput.value.trim();
+                if (!content) return;
+
+                if (isWaitingForInfo) {
+                    // Initial info submission
+                    visitorName = content.split(' ')[0] || "Visitor";
+                    localStorage.setItem('pre_signin_visitor_name', visitorName);
+                    addMessage(content, 'visitor');
+                    chatInput.value = '';
+                    isWaitingForInfo = false;
+                    if (!socket || socket.readyState !== WebSocket.OPEN) initWebSocket();
+                    const sendNewSession = () => {
+                        if (socket.readyState === WebSocket.OPEN) {
+                            socket.send(JSON.stringify({
+                                'type': 'new_session',
+                                'visitor_name': visitorName,
+                                'visitor_concern': content
+                            }));
+                        } else setTimeout(sendNewSession, 100);
+                    };
+                    sendNewSession();
+                } else if (sessionId) {
+                    // Active session
+                    addMessage(content, 'visitor');
+                    chatInput.value = '';
+                    if (socket && socket.readyState === WebSocket.OPEN) {
+                        socket.send(JSON.stringify({
+                            'type': 'chat_message',
+                            'content': content,
+                            'visitor_name': visitorName
+                        }));
+                    }
+                } else if (visitorName && content.toLowerCase() === 'hi') {
+                    // Closed session re-engagement
+                    localStorage.setItem('pre_signin_reinit', 'true');
+                    addMessage(content, 'visitor');
+                    chatInput.value = '';
+                    initWebSocket();
+                    const sendNewSession = () => {
+                        if (socket.readyState === WebSocket.OPEN) {
+                            socket.send(JSON.stringify({
+                                'type': 'new_session',
+                                'visitor_name': visitorName,
+                                'visitor_concern': "Visitor re-connected"
+                            }));
+                        } else setTimeout(sendNewSession, 100);
+                    };
+                    sendNewSession();
+                } else if (!sessionId && visitorName) {
+                    // Prompt to type 'Hi' if they send something else
+                    addMessage("If you need assistance again, please type 'Hi' to start a new conversation.", "other", true);
+                    chatInput.value = '';
+                }
+            }
+
+            function setState(shouldOpen) {
+                const isCurrentlyOpen = floatWrap.dataset.chatOpen === 'true';
+                if (shouldOpen && isCurrentlyOpen) return;
+                if (!shouldOpen && !isCurrentlyOpen) return;
+
+                if (shouldOpen) {
+                    chatWidget.hidden = false;
+                    window.requestAnimationFrame(() => {
+                        floatWrap.dataset.chatOpen = 'true';
+                        chatWidget.classList.add(OPEN_CLASS);
+                        chatWidget.setAttribute('aria-hidden', 'false');
+                        toggleButton.setAttribute('aria-expanded', 'true');
+
+                        // If this is the first time, show welcome
+                        if (!sessionId && chatList.children.length === 0) {
+                            addMessage(welcomeMsg, 'other');
+                            isWaitingForInfo = true;
+                        } else if (sessionId && !socket) {
+                            // Resume session
+                            initWebSocket(sessionId);
+                            // Load history if needed (could fetch from API)
+                            fetch(`/pre-signin/api/sessions/${sessionId}/messages/`)
+                                .then(r => r.json())
+                                .then(data => {
+                                    chatList.innerHTML = '';
+                                    data.messages.forEach(m => addMessage(m.content, m.sender_role === 'visitor' ? 'visitor' : 'other', m.is_system));
+                                });
+                        }
+
+                        window.requestAnimationFrame(() => {
+                            chatInput?.focus();
+                        });
+                    });
+                    return;
+                }
+
+                chatWidget.classList.remove(OPEN_CLASS);
+                chatWidget.setAttribute('aria-hidden', 'true');
+                floatWrap.dataset.chatOpen = 'false';
+                toggleButton.setAttribute('aria-expanded', 'false');
+
+                const handleTransitionEnd = (event) => {
+                    if (event.target !== chatWidget) return;
+                    chatWidget.hidden = true;
+                };
+                chatWidget.addEventListener('transitionend', handleTransitionEnd, { once: true });
+            }
+
+            toggleButton.addEventListener('click', () => {
+                setState(floatWrap.dataset.chatOpen !== 'true');
+            });
+
+            closeButton?.addEventListener('click', () => setState(false));
+
+            sendButton?.addEventListener('click', handleSend);
+            chatInput?.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') handleSend();
+            });
+
+            // Initialise to closed state
+            floatWrap.dataset.chatOpen = 'false';
+            chatWidget.hidden = true;
+        }());
+
+        // FAQ Accordion Functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            const faqItems = document.querySelectorAll('.faq-item');
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question');
+                question.addEventListener('click', () => {
+                    const isActive = item.classList.contains('active');
+
+                    // Close all other FAQ items
+                    faqItems.forEach(otherItem => {
+                        if (otherItem !== item) {
+                            otherItem.classList.remove('active');
+                            otherItem.querySelector('.faq-toggle').textContent = '+';
+                        }
+                    });
+
+                    // Toggle current item
+                    item.classList.toggle('active');
+                    const toggle = item.querySelector('.faq-toggle');
+                    toggle.textContent = item.classList.contains('active') ? '-' : '+';
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

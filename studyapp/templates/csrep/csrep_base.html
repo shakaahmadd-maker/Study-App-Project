@@ -1,0 +1,359 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Support Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/cs_rep_dash.css' %}">
+    <link rel="stylesheet" href="{% static 'css/threads.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <header class="top-header">
+        <div class="header-logo" style="height: 40px; display: flex; align-items: center;">
+            <span class="logo-text" style="font-size: 1.5rem; font-weight: 700;">Nano</span><span class="logo-accent" style="font-size: 1.5rem; font-weight: 700;"> Problem</span>
+        </div>
+        <div class="header-actions">
+            <button class="dark-mode-toggle" id="themeToggle" title="Toggle theme" aria-label="Toggle theme">
+                <i class="fas fa-moon"></i>
+            </button>
+            <button class="icon-button" id="notificationButton" title="Notifications" aria-label="Notifications"
+                data-open-section="notifications" style="position: relative;">
+                <i class="fas fa-bell"></i>
+                <span class="notification-counter-badge" id="notificationCounterBadge" style="display: none;"></span>
+            </button>
+            <div class="user-profile-menu" role="button" tabindex="0">
+                <div class="user-profile-avatar"
+                    style="position: relative; width: 44px; height: 44px; border-radius: 50%; overflow: hidden; background-color: #f3f4f6; display: flex; align-items: center; justify-content: center;">
+                    {% if profile_picture_url %}
+                    <img id="headerProfilePicture" src="{{ profile_picture_url }}" alt="CS Rep"
+                        style="width: 100%; height: 100%; object-fit: cover; display: block;" />
+                    <i class="fas fa-user" id="headerProfileIcon"
+                        style="font-size: 20px; color: #9ca3af; display: none;"></i>
+                    {% else %}
+                    <img id="headerProfilePicture" src="" alt="CS Rep"
+                        style="width: 100%; height: 100%; object-fit: cover; display: none;" />
+                    <i class="fas fa-user" id="headerProfileIcon"
+                        style="font-size: 20px; color: #9ca3af; display: flex;"></i>
+                    {% endif %}
+                </div>
+                <div class="user-profile-info">
+                    <span class="user-profile-name" id="headerUserName">{% if user.first_name %}{{ user.first_name }}{% else %}CS Rep{% endif %}</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="user-dropdown" role="menu">
+                    <a class="dropdown-item" href="#" data-open-section="profile">Profile Settings</a>
+                    <form action="{% url 'account:logout' %}" method="POST" id="logoutForm" style="display: none;">
+                        {% csrf_token %}
+                    </form>
+                    <a class="dropdown-item logout-link" href="#" onclick="event.preventDefault(); if(confirm('Are you sure you want to logout?')) document.getElementById('logoutForm').submit();">
+                        <i class="fas fa-right-from-bracket"></i> Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <aside class="sidebar">
+        <nav class="nav-menu" aria-label="Primary">
+            <ul class="nav-list">
+                <li class="nav-item active"><a class="nav-link" href="#" data-section="overview"><i
+                            class="fas fa-chart-line"></i><span>Overview</span></a></li>
+                <li class="nav-item"><a class="nav-link" href="#" data-section="preSignIn"><i
+                            class="fas fa-comments"></i><span>Pre-Sign-in Chat</span></a></li>
+                <li class="nav-item"><a class="nav-link" href="#" data-section="communication"><i
+                            class="fas fa-comment-dollar"></i><span>Communication</span>
+                        <span class="notification-dot" data-badge-dot="messages" style="display:none;"></span>
+                        <span class="nav-badge" data-badge-key="messages" style="display:none;">0</span>
+                    </a></li>
+                <li class="nav-item"><a class="nav-link" href="#" data-section="threads"><i
+                            class="fas fa-comments"></i><span>Threads</span>
+                        <span class="notification-dot" data-badge-dot="threads" style="display:none;"></span>
+                        <span class="nav-badge" data-badge-key="threads" style="display:none;">0</span>
+                    </a></li>
+                <li class="nav-item"><a class="nav-link" href="#" data-section="invoices"><i
+                            class="fas fa-file-invoice"></i><span>Invoice Management</span></a></li>
+                <li class="nav-item"><a class="nav-link" href="#" data-section="announcements"><i
+                            class="fas fa-bullhorn"></i><span>Announcements</span></a></li>
+                <li class="nav-item"><a class="nav-link" href="#" data-section="settings"><i
+                            class="fas fa-cog"></i><span>Settings</span></a></li>
+            </ul>
+        </nav>
+
+    </aside>
+
+    <main class="main-content" id="mainContent">
+        <!-- Dynamic Content Container -->
+        <div id="dynamicContentContainer">
+            {% block content %}
+            <!-- Default content will be loaded dynamically -->
+            {% endblock %}
+        </div>
+
+        <!-- Toast Notification -->
+        <div class="toast-container" id="toastContainer"></div>
+    </main>
+
+    <!-- Create Thread Modal -->
+    <div class="modal-overlay" id="createThreadModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Create New Thread</h2>
+                <button class="modal-close" aria-label="Close" id="createThreadCloseBtn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="createThreadForm">
+                    <div class="form-grid">
+                        <div class="input-field full-width">
+                            <span>Thread Subject *</span>
+                            <input type="text" id="threadSubject" name="threadSubject"
+                                placeholder="e.g., Student Progress Update" required>
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="input-field">
+                            <span>Thread Type *</span>
+                            <select id="threadType" name="threadType" required>
+                                <option value="">Select type...</option>
+                                <option value="assignment">Assignment Related</option>
+                                <option value="invoice">Invoice Related</option>
+                                <option value="general">General</option>
+                                <option value="support">Support</option>
+                            </select>
+                        </div>
+                        <div class="input-field" id="relatedAssignmentField" style="display: none;">
+                            <span>Related Assignment</span>
+                            <select id="relatedAssignment" name="relatedAssignment">
+                                <option value="">Select assignment...</option>
+                                <option value="1">ASG-2025-001</option>
+                                <option value="2">ASG-2025-002</option>
+                                <option value="3">ASG-2025-003</option>
+                            </select>
+                        </div>
+                        <div class="input-field" id="relatedInvoiceField" style="display: none;">
+                            <span>Related Invoice</span>
+                            <select id="relatedInvoice" name="relatedInvoice">
+                                <option value="">Select invoice...</option>
+                                <option value="1">INV-2025-045</option>
+                                <option value="2">INV-2025-046</option>
+                                <option value="3">INV-2025-047</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="input-field full-width">
+                            <span>Initial Message *</span>
+                            <textarea id="threadMessage" name="threadMessage" rows="4"
+                                placeholder="Start your conversation..." required></textarea>
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="input-field full-width">
+                            <span>Recipient</span>
+                            <select id="threadRecipient" name="threadRecipient">
+                                <option value="">Select recipient...</option>
+                                <optgroup label="Students">
+                                    <option value="student-1">Alex Johnson</option>
+                                    <option value="student-2">Emma Wilson</option>
+                                    <option value="student-3">Sarah Martinez</option>
+                                </optgroup>
+                                <optgroup label="Teachers">
+                                    <option value="teacher-1">Dr. Sarah Chen</option>
+                                    <option value="teacher-2">Dr. Michael Johnson</option>
+                                    <option value="teacher-3">Dr. Priya Sharma</option>
+                                </optgroup>
+                            </select>
+                            <small style="color: var(--muted); margin-top: 4px; display: block;">Leave empty to start a
+                                general thread</small>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="ghost-button" id="createThreadCancelBtn">Cancel</button>
+                <button type="button" class="primary-button" id="createThreadSubmitBtn">
+                    <i class="fas fa-paper-plane"></i> Create Thread
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Thread View Modal -->
+    <div class="modal-overlay" id="threadViewModal" style="display: none;">
+        <div class="modal-content large-modal">
+            <div class="modal-header">
+                <div>
+                    <h2 class="modal-title" id="threadViewSubject">Thread Subject</h2>
+                    <div class="thread-view-meta">
+                        <span class="thread-type-badge" id="threadViewType">General</span>
+                        <span id="threadViewAssignment" style="display: none;"><i class="fas fa-link"></i> Assignment:
+                            <span></span></span>
+                        <span id="threadViewInvoice" style="display: none;"><i class="fas fa-link"></i> Invoice:
+                            <span></span></span>
+                    </div>
+                    <div id="threadViewParticipants" class="thread-participants-list"></div>
+                </div>
+                <button class="modal-close" aria-label="Close" id="threadViewCloseBtn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body thread-view-body">
+                <div id="threadViewMessages" class="thread-messages-container">
+                    <!-- Messages will be loaded here -->
+                </div>
+                <div class="thread-composer">
+                    <textarea id="threadReplyInput" placeholder="Type your reply..." rows="4"></textarea>
+                    <div class="composer-actions">
+                        <button class="icon-btn" title="Attach file" id="csrepThreadAttachBtn">
+                            <i class="fas fa-paperclip"></i>
+                        </button>
+                        <input type="file" id="csrepThreadFileInput" style="display:none;" multiple
+                            accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt,.zip,.rar">
+                        <button class="primary-button" id="threadViewSendBtn">
+                            <i class="fas fa-paper-plane"></i> Send
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Invoice Request Modal -->
+    <div class="modal-overlay" id="createInvoiceRequestModal" style="display: none;">
+        <div class="modal-card large-modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Create Invoice Request</h2>
+                <button class="modal-close" onclick="closeCreateInvoiceRequestModal()" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="info-banner"
+                    style="background: rgba(17, 88, 229, 0.1); border-left: 4px solid var(--primary); padding: 12px 16px; margin-bottom: 24px; border-radius: 8px;">
+                    <i class="fas fa-info-circle" style="color: var(--primary); margin-right: 8px;"></i>
+                    <span style="color: var(--text-color); font-size: 0.9rem;">This invoice will be sent to admin for
+                        approval before being sent to the student.</span>
+                </div>
+                <form id="createInvoiceRequestForm" onsubmit="submitInvoiceRequest(event)">
+                    <div class="form-row">
+                        <div class="form-column">
+                            <div class="form-group">
+                                <label for="requestStudent" class="form-label">
+                                    Student <span class="required-indicator">*</span>
+                                </label>
+                                <select id="requestStudent" class="form-select" required onchange="loadStudentAssignmentsForRequest(this.value)">
+                                    <option value="">Select Student</option>
+                                    <!-- Populated dynamically -->
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-column">
+                            <div class="form-group">
+                                <label for="requestAssignment" class="form-label">
+                                    Assignment <span class="required-indicator">*</span>
+                                </label>
+                                <select id="requestAssignment" class="form-select" required>
+                                    <option value="">Select Assignment</option>
+                                    <!-- Populated dynamically -->
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-column">
+                            <div class="form-group">
+                                <label for="requestAmount" class="form-label">
+                                    Charge Amount (USD) <span class="required-indicator">*</span>
+                                </label>
+                                <div class="amount-input-wrapper">
+                                    <span class="currency-symbol">$</span>
+                                    <input type="number" id="requestAmount" class="form-input" placeholder="0.00"
+                                        step="0.01" min="0" required oninput="calculateRequestTotal()">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-column">
+                            <div class="form-group">
+                                <label class="form-label">Discount Type</label>
+                                <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
+                                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                        <input type="radio" name="reqDiscountType" value="amount" checked onchange="calculateRequestTotal()"> Amount ($)
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                        <input type="radio" name="reqDiscountType" value="percentage" onchange="calculateRequestTotal()"> Percentage (%)
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-column">
+                            <div class="form-group">
+                                <label for="requestDiscountValue" class="form-label">
+                                    Discount Value
+                                </label>
+                                <div class="amount-input-wrapper">
+                                    <span class="currency-symbol" id="reqDiscountSymbol">$</span>
+                                    <input type="number" id="requestDiscountValue" class="form-input" placeholder="0.00"
+                                        step="0.01" min="0" value="0.00" oninput="calculateRequestTotal()">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-column">
+                            <div class="form-group">
+                                <label for="requestTotal" class="form-label">
+                                    Total Payable Amount (USD)
+                                </label>
+                                <div class="amount-input-wrapper total-amount-wrapper">
+                                    <span class="currency-symbol">$</span>
+                                    <input type="number" id="requestTotal" class="form-input"
+                                        placeholder="0.00" step="0.01" min="0" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="requestNotes" class="form-label">Notes (Optional)</label>
+                        <textarea id="requestNotes" class="form-textarea" rows="3"
+                            placeholder="Add any additional notes or instructions for this invoice request..."></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary"
+                            onclick="closeCreateInvoiceRequestModal()">Cancel</button>
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-paper-plane"></i>
+                            Submit Request to Admin
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'java/toastNotifications.js' %}"></script>
+    <script src="{% static 'java/apiClient.js' %}"></script>
+    <script src="{% static 'java/realtimeDashboard.js' %}"></script>
+    <script>
+        window.currentUserId = "{{ request.user.id }}";
+        window.currentUserRole = "{{ request.user.role }}";
+    </script>
+    <script src="{% static 'java/messaging.js' %}"></script>
+    <script src="{% static 'java/threads.js' %}"></script>
+    <script src="{% static 'java/chatIntegration.js' %}"></script>
+    <script src="{% static 'java/cs_rep_dashboard.js' %}"></script>
+    <script src="{% static 'java/invoice_management.js' %}"></script>
+</body>
+
+</html>

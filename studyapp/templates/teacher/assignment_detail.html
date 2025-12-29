@@ -1,0 +1,69 @@
+{% extends "teacher/teacher_base.html" %}
+
+{% block content %}
+<div class="content-section" id="assignmentDetailSection" style="display: none;">
+    <div class="assignment-detail-header">
+        <h1 class="assignment-detail-title">Assignment Details</h1>
+        <button type="button" class="close-detail-btn" onclick="closeAssignmentDetail()">
+            <i class="fas fa-times"></i> Close
+        </button>
+    </div>
+
+    <div class="assignment-detail-card">
+        <div class="form-row">
+            <div class="form-column">
+                <label>Assignment Title</label>
+                <div id="detailTitle" class="detail-field"></div>
+            </div>
+            <div class="form-column">
+                <label>Service Type</label>
+                <div id="detailCourse" class="detail-field"></div>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-column">
+                <label>Submission Date</label>
+                <div id="detailSubmission" class="detail-field"></div>
+            </div>
+            <div class="form-column">
+                <label>Due Date</label>
+                <div id="detailDue" class="detail-field"></div>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-column full-width">
+                <label>Assignment Brief</label>
+                <textarea id="detailBrief" class="form-textarea" readonly rows="3"></textarea>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-column full-width">
+                <label>Content</label>
+                <textarea id="detailContent" class="form-textarea" readonly rows="5"></textarea>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-column">
+                <label>Priority</label>
+                <div id="detailPriority" class="detail-field"></div>
+            </div>
+        </div>
+
+        <div class="attachments-section">
+            <h4>Attachments Received</h4>
+            <div id="detailAttachments" class="attachments-list">
+                <!-- attachments injected here -->
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button type="button" class="cancel-btn" onclick="closeAssignmentDetail()">Back</button>
+            <button type="button" class="save-changes-btn" onclick="closeAssignmentDetail()">Done</button>
+        </div>
+    </div>
+</div>
+{% endblock %}

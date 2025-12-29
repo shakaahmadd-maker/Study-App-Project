@@ -1,0 +1,208 @@
+{% extends "csrep/csrep_base.html" %}
+{% block content %}
+
+<section class="content-section" id="invoicesSection" aria-labelledby="invoicesHeading">
+    <div class="section-header-modern">
+        <div class="header-left">
+            <h1 class="section-title" id="invoicesHeading">Invoice Management</h1>
+            <p class="section-subtitle">Request invoices for students and track their approval status.</p>
+        </div>
+        <div class="header-actions">
+            <button class="btn-primary-modern" onclick="openCreateInvoiceRequestModal()">
+                <i class="fas fa-plus"></i> Create Invoice Request
+            </button>
+        </div>
+    </div>
+
+    <!-- Summary Stats -->
+    <div class="invoice-stats-grid">
+        <div class="stat-card warning">
+            <div class="stat-icon">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-details">
+                <span class="stat-label">Pending Approval</span>
+                <h3 class="stat-value" id="csrepPendingRequestsCount">0</h3>
+            </div>
+        </div>
+        <div class="stat-card success">
+            <div class="stat-icon">
+                <i class="fas fa-check-double"></i>
+            </div>
+            <div class="stat-details">
+                <span class="stat-label">Approved & Sent</span>
+                <h3 class="stat-value" id="csrepApprovedRequestsCount">0</h3>
+            </div>
+        </div>
+        <div class="stat-card primary">
+            <div class="stat-icon">
+                <i class="fas fa-file-invoice"></i>
+            </div>
+            <div class="stat-details">
+                <span class="stat-label">Total Created</span>
+                <h3 class="stat-value" id="csrepTotalRequestsCount">0</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-card-modern">
+        <div class="table-header-inline">
+            <h2 class="table-title">Recent Invoice Requests</h2>
+            <div class="header-filters">
+                <button class="filter-chip active" onclick="filterCSRepInvoices('all', this)">All</button>
+                <button class="filter-chip" onclick="filterCSRepInvoices('request_pending', this)">Pending</button>
+                <button class="filter-chip" onclick="filterCSRepInvoices('paid', this)">Paid</button>
+            </div>
+        </div>
+        <div class="table-wrapper">
+            <table class="modern-table" id="invoiceTable">
+                <thead>
+                    <tr>
+                        <th>Invoice / Request</th>
+                        <th>Student</th>
+                        <th>Assignment</th>
+                        <th>Amount</th>
+                        <th>Discount (%)</th>
+                        <th>Total Payable</th>
+                        <th>Status</th>
+                        <th class="text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="csrepInvoiceTableBody">
+                    <!-- Populated dynamically -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Create Invoice Request Modal (CS-Rep) -->
+    <div class="modal-overlay" id="createInvoiceRequestModal" style="display: none;">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2 class="modal-title">Create Invoice Request</h2>
+                <button class="modal-close" onclick="closeCreateInvoiceRequestModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="createInvoiceRequestForm" onsubmit="submitInvoiceRequest(event)">
+                    <div class="form-group">
+                        <label class="form-label">Student <span class="required-indicator">*</span></label>
+                        <select id="requestStudent" class="form-select" required onchange="loadStudentAssignmentsForRequest(this.value)">
+                            <option value="">Select Student</option>
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Assignment <span class="required-indicator">*</span></label>
+                        <select id="requestAssignment" class="form-select" required>
+                            <option value="">Select Assignment</option>
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Charge Amount ($) <span class="required-indicator">*</span></label>
+                        <input type="number" id="requestAmount" class="form-input" step="0.01" min="0" required oninput="calculateRequestTotal()" placeholder="0.00">
+                    </div>
+                    <div class="form-row-modern">
+                        <div class="form-group" style="flex: 1.5;">
+                            <label class="form-label">Discount Type</label>
+                            <select id="requestDiscountType" class="form-select" onchange="calculateRequestTotal()">
+                                <option value="amount">Amount ($)</option>
+                                <option value="percentage">Percentage (%)</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label class="form-label">Value</label>
+                            <input type="number" id="requestDiscountValue" class="form-input" step="0.01" min="0" value="0" oninput="calculateRequestTotal()">
+                        </div>
+                    </div>
+                    <div class="form-group highlight-box">
+                        <label class="form-label">Total Payable ($)</label>
+                        <input type="number" id="requestTotal" class="form-input-readonly" readonly value="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Notes (Optional)</label>
+                        <textarea id="requestNotes" class="form-textarea" rows="3" placeholder="Add any special instructions for the admin..."></textarea>
+                    </div>
+                    <div class="form-actions-modern">
+                        <button type="button" class="btn-ghost" onclick="closeCreateInvoiceRequestModal()">Cancel</button>
+                        <button type="submit" class="btn-primary-modern">Submit to Admin</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Invoice Details Modal -->
+    <div class="modal-overlay" id="invoiceDetailsModal" style="display: none;">
+        <div class="modal-card detail-modal">
+            <div class="modal-header-modern">
+                <div class="header-content">
+                    <span class="invoice-badge" id="modalInvoiceBadge">Request</span>
+                    <h2 class="modal-title" id="modalInvoiceId">-</h2>
+                </div>
+                <button class="modal-close-circle" onclick="closeInvoiceDetailsModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="invoice-detail-grid">
+                    <div class="detail-row">
+                        <span class="detail-label">Status</span>
+                        <span class="detail-value" id="modalInvoiceStatus">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Created Date</span>
+                        <span class="detail-value" id="modalInvoiceCreated">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Due Date</span>
+                        <span class="detail-value" id="modalInvoiceDueDate">-</span>
+                    </div>
+                    
+                    <div class="detail-divider"></div>
+                    
+                    <div class="detail-row">
+                        <span class="detail-label">Student Name</span>
+                        <span class="detail-value" id="modalInvoiceStudentName" style="font-weight: 700;">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Assignment</span>
+                        <span class="detail-value" id="modalInvoiceAssignmentTitle">-</span>
+                    </div>
+                    
+                    <div class="detail-divider"></div>
+
+                    <div class="detail-row">
+                        <span class="detail-label">Charge Amount</span>
+                        <span class="detail-value" id="modalInvoiceAmount">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Discount</span>
+                        <span class="detail-value" id="modalInvoiceDiscount" style="color: #ef4444;">-</span>
+                    </div>
+                    <div class="detail-row total-highlight">
+                        <span class="detail-label" style="font-weight: 700;">Total Payable</span>
+                        <span class="detail-value amount-highlight" id="modalInvoiceTotalAmount">-</span>
+                    </div>
+
+                    <div id="modalInvoiceNotesSection" style="display: none;">
+                        <div class="detail-divider"></div>
+                        <span class="detail-label" style="display: block; margin-bottom: 0.5rem;">Internal Notes</span>
+                        <div class="notes-box" id="modalInvoiceNotes">-</div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer-modern">
+                <button type="button" class="btn-secondary-modern" style="width: 100%;" onclick="closeInvoiceDetailsModal()">Close</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+
+</style>
+
+{% endblock %}

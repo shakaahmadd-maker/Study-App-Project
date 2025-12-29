@@ -1,0 +1,179 @@
+{% extends "admin/admin_base.html" %}
+
+{% block content %}
+            <section class="content-section" id="notificationSection" aria-labelledby="notificationHeading">
+                <div class="section-header">
+                    <div class="header-left">
+                        <h1 class="section-title" id="notificationHeading">Notifications</h1>
+                        <p class="section-subtitle">Real-time activity feed for Admin actions.</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn-secondary" type="button" id="adminNotifMarkAllBtn">
+                            <i class="fas fa-check-double"></i>
+                            Mark All as Read
+                        </button>
+                        <button class="btn-secondary" type="button" id="adminNotifDeleteAllBtn">
+                            <i class="fas fa-trash"></i>
+                            Delete All
+                        </button>
+                        <button class="btn-secondary" type="button" id="adminNotifRefreshBtn">
+                            <i class="fas fa-rotate"></i>
+                            Refresh
+                        </button>
+                    </div>
+                </div>
+
+                <div class="notification-filters">
+                    <button class="filter-btn active" data-filter="all" type="button">All</button>
+                    <button class="filter-btn" data-filter="unread" type="button">Unread</button>
+                    <button class="filter-btn" data-filter="assignment" type="button">Assignments</button>
+                    <button class="filter-btn" data-filter="invoice" type="button">Invoices</button>
+                    <button class="filter-btn" data-filter="content" type="button">Content</button>
+                    <button class="filter-btn" data-filter="announcement" type="button">Announcements</button>
+                    <button class="filter-btn" data-filter="system" type="button">System</button>
+                </div>
+
+                <div class="notifications-container">
+                    <div class="notifications-list" id="adminNotificationsPageList"></div>
+                </div>
+
+                <div class="notifications-empty" id="adminNotificationsEmpty" style="display: none;">
+                    <div class="empty-state">
+                        <i class="fas fa-bell-slash"></i>
+                        <h3>No Notifications</h3>
+                        <p>You're all caught up! There are no notifications to display.</p>
+                    </div>
+                </div>
+            </section>
+
+            <script>
+                (function () {
+                    const listEl = document.getElementById('adminNotificationsPageList');
+                    const emptyEl = document.getElementById('adminNotificationsEmpty');
+                    const refreshBtn = document.getElementById('adminNotifRefreshBtn');
+                    const markAllBtn = document.getElementById('adminNotifMarkAllBtn');
+                    const deleteAllBtn = document.getElementById('adminNotifDeleteAllBtn');
+
+                    function formatTime(ts) {
+                        if (!ts) return '';
+                        const d = new Date(ts);
+                        return d.toLocaleString();
+                    }
+
+                    async function load() {
+                        if (!listEl || !emptyEl) return;
+                        if (!window.apiClient || typeof window.apiClient.getNotifications !== 'function') {
+                            listEl.innerHTML = '';
+                            emptyEl.style.display = 'block';
+                            return;
+                        }
+
+                        const resp = await window.apiClient.getNotifications({ role: 'admin', limit: 100 });
+                        const notifs = Array.isArray(resp) ? resp : (resp.results || []);
+
+                        if (!notifs.length) {
+                            listEl.innerHTML = '';
+                            emptyEl.style.display = 'block';
+                            return;
+                        }
+
+                        emptyEl.style.display = 'none';
+                        listEl.innerHTML = notifs.map(n => {
+                            const id = n.notification_id;
+                            const type = n.notification_type || 'system';
+                            const unread = n.is_read ? '' : 'unread';
+                            const title = (n.title || 'Notification').replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                            const msg = (n.message || '').replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                            return `
+                                <div class="notification-item ${unread}" data-type="${type}" data-id="${id}">
+                                    <div class="notification-icon ${type}">
+                                        <i class="fas fa-bell"></i>
+                                    </div>
+                                    <div class="notification-content">
+                                        <div class="notification-header">
+                                            <h4 class="notification-title">${title}</h4>
+                                            <span class="notification-time">${formatTime(n.created_at)}</span>
+                                        </div>
+                                        <p class="notification-message">${msg}</p>
+                                        <div class="notification-actions">
+                                            <button class="action-link" type="button" data-mark-read="${id}">
+                                                <i class="fas fa-check"></i>
+                                                Mark as Read
+                                            </button>
+                                            <button class="action-link" type="button" data-delete="${id}">
+                                                <i class="fas fa-trash"></i>
+                                                Delete
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('');
+
+                        async function openNotification(itemEl) {
+                            if (!itemEl) return;
+                            const id = itemEl.getAttribute('data-id');
+                            try { if (id) await window.apiClient.markNotificationRead(id); } catch (err) {}
+                        }
+
+                        listEl.querySelectorAll('button[data-mark-read]').forEach(btn => {
+                            btn.addEventListener('click', async (e) => {
+                                const id = e.currentTarget.getAttribute('data-mark-read');
+                                try { await window.apiClient.markNotificationRead(id); } catch (err) {}
+                                // UI is updated via ws/dashboard/ events (realtimeDashboard.js)
+                            });
+                        });
+
+                        listEl.querySelectorAll('button[data-delete]').forEach(btn => {
+                            btn.addEventListener('click', async (e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                const id = e.currentTarget.getAttribute('data-delete');
+                                try { await window.apiClient.deleteNotification(id); } catch (err) {}
+                                // UI is updated via ws/dashboard/ events (realtimeDashboard.js)
+                            });
+                        });
+
+                        // Click anywhere on the notification row to open it (except when clicking a button/link)
+                        listEl.querySelectorAll('.notification-item[data-id]').forEach(item => {
+                            if (item.dataset.clickToOpenBound) return;
+                            item.dataset.clickToOpenBound = '1';
+                            item.style.cursor = 'pointer';
+                            item.addEventListener('click', (e) => {
+                                if (e.target.closest('button') || e.target.closest('a')) return;
+                                openNotification(item);
+                            });
+                        });
+                    }
+
+                    if (refreshBtn) refreshBtn.addEventListener('click', load);
+                    if (markAllBtn) markAllBtn.addEventListener('click', async () => {
+                        try { await window.apiClient.markAllNotificationsRead(); } catch (e) {}
+                        // UI is updated via ws/dashboard/ events (realtimeDashboard.js)
+                    });
+                    if (deleteAllBtn) deleteAllBtn.addEventListener('click', async () => {
+                        try { await window.apiClient.deleteAllNotifications(); } catch (e) {}
+                        // UI is updated via ws/dashboard/ events (realtimeDashboard.js)
+                    });
+
+                    // Filters: simple client-side hide/show
+                    document.querySelectorAll('#notificationSection .filter-btn').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            document.querySelectorAll('#notificationSection .filter-btn').forEach(b => b.classList.remove('active'));
+                            btn.classList.add('active');
+                            const filter = btn.getAttribute('data-filter');
+                            document.querySelectorAll('#adminNotificationsPageList .notification-item').forEach(item => {
+                                const type = item.getAttribute('data-type');
+                                const isUnread = item.classList.contains('unread');
+                                const show = filter === 'all'
+                                    || (filter === 'unread' && isUnread)
+                                    || (filter !== 'unread' && filter === type);
+                                item.style.display = show ? '' : 'none';
+                            });
+                        });
+                    });
+
+                    load();
+                })();
+            </script>
+{% endblock %}

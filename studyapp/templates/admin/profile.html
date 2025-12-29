@@ -1,0 +1,301 @@
+{% extends "admin/admin_base.html" %}
+
+{% block content %}
+<section class="content-section" id="profileSection" aria-labelledby="profileHeading">
+    <h1 class="section-title" id="profileHeading">Profile</h1>
+    <p class="section-subtitle">Manage your admin account details and preferences.</p>
+
+    <!-- Profile Information Section -->
+    <div class="profile-form-container">
+        <div class="profile-info-wrapper">
+            <!-- Profile Picture Section -->
+            <div class="profile-picture-section">
+                <div class="profile-picture-container">
+                    <div class="current-picture">
+                        {% if profile_picture_url %}
+                        <img src="{{ profile_picture_url }}" alt="Current Profile Picture" id="currentProfilePicture">
+                        {% else %}
+                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face"
+                            alt="Current Profile Picture" id="currentProfilePicture" style="display: none;">
+                        {% endif %}
+                        <div class="picture-overlay">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                    </div>
+                    <input type="file" id="profilePictureInput" accept="image/*" style="display: none;">
+                    <button type="button" class="upload-picture-btn"
+                        onclick="document.getElementById('profilePictureInput').click()">
+                        <i class="fas fa-upload"></i>
+                        Upload New Picture
+                    </button>
+                </div>
+            </div>
+
+            <!-- Basic Information Form -->
+            <form class="profile-form" id="profileForm">
+                <div class="form-row">
+                    <div class="form-column">
+                        <div class="form-group">
+                            <label for="firstName" class="form-label">First Name</label>
+                            <input type="text" id="firstName" name="firstName" class="form-input"
+                                value="{{ first_name }}" required>
+                        </div>
+                    </div>
+                    <div class="form-column">
+                        <div class="form-group">
+                            <label for="lastName" class="form-label">Last Name</label>
+                            <input type="text" id="lastName" name="lastName" class="form-input" value="{{ last_name }}"
+                                required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="title" class="form-label">Title</label>
+                    <input type="text" id="title" name="title" class="form-input" value="{{ access_level }}"
+                        placeholder="e.g., System Administrator, Academic Coordinator">
+                </div>
+
+                <div class="form-group">
+                    <label for="email" class="form-label">Email Address</label>
+                    <input type="email" id="email" name="email" class="form-input" value="{{ email }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="phoneNumber" class="form-label">Phone Number</label>
+                    <input type="tel" id="phoneNumber" name="phoneNumber" class="form-input" value="{{ phone }}"
+                        placeholder="+1 (555) 123-4567">
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">
+                        Update Profile
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Password Update Section -->
+    <div class="password-update-section">
+        <h3 class="section-title">Change Password</h3>
+        <form class="password-form" id="passwordForm">
+            <div class="password-form-grid">
+                <div class="form-group">
+                    <label for="currentPassword" class="form-label">Current Password</label>
+                    <div class="password-input-wrapper">
+                        <input type="password" id="currentPassword" name="currentPassword" class="form-input" required>
+                        <button type="button" class="password-toggle" onclick="togglePassword('currentPassword')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="newPassword" class="form-label">New Password</label>
+                    <div class="password-input-wrapper">
+                        <input type="password" id="newPassword" name="newPassword" class="form-input" required>
+                        <button type="button" class="password-toggle" onclick="togglePassword('newPassword')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                    <div class="password-input-wrapper">
+                        <input type="password" id="confirmPassword" name="confirmPassword" class="form-input" required>
+                        <button type="button" class="password-toggle" onclick="togglePassword('confirmPassword')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions password-actions">
+                <button type="submit" class="btn-primary">
+                    Update Password
+                </button>
+            </div>
+        </form>
+    </div>
+</section>
+
+<script>
+    (function () {
+        // Get CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // Handle profile form submission
+        const profileForm = document.getElementById('profileForm');
+        if (profileForm) {
+            profileForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                const formData = new FormData();
+                formData.append('first_name', document.getElementById('firstName').value.trim());
+                formData.append('last_name', document.getElementById('lastName').value.trim());
+                formData.append('email', document.getElementById('email').value.trim());
+
+                // Admin-specific fields - title maps to access_level
+                const title = document.getElementById('title')?.value.trim();
+                if (title) {
+                    formData.append('title', title);
+                }
+
+                // Phone number
+                const phoneNumber = document.getElementById('phoneNumber')?.value.trim();
+                if (phoneNumber) {
+                    formData.append('phoneNumber', phoneNumber);
+                }
+
+                // Profile picture
+                const profilePictureInput = document.getElementById('profilePictureInput');
+                if (profilePictureInput && profilePictureInput.files.length > 0) {
+                    formData.append('profile_picture', profilePictureInput.files[0]);
+                }
+
+                try {
+                    const csrftoken = getCookie('csrftoken');
+                    const response = await fetch('/account/api/accounts/profile/', {
+                        method: 'POST',
+                        credentials: 'include',
+                        headers: {
+                            'X-CSRFToken': csrftoken || ''
+                        },
+                        body: formData
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        // Update header name and picture dynamically
+                        const firstName = document.getElementById('firstName').value.trim();
+                        if (typeof updateAdminHeaderName === 'function') {
+                            updateAdminHeaderName(firstName);
+                        }
+
+                        // Update profile picture if uploaded
+                        const profilePictureInput = document.getElementById('profilePictureInput');
+                        if (profilePictureInput && profilePictureInput.files.length > 0) {
+                            const reader = new FileReader();
+                            reader.onload = function (e) {
+                                if (typeof updateAdminHeaderAvatar === 'function') {
+                                    updateAdminHeaderAvatar(e.target.result);
+                                }
+                            };
+                            reader.readAsDataURL(profilePictureInput.files[0]);
+                        }
+
+                        alert('Profile updated successfully!');
+                        // Optionally reload to get latest data from server
+                        // location.reload();
+                    } else {
+                        alert('Error: ' + (data.error || 'Failed to update profile'));
+                    }
+                } catch (error) {
+                    console.error('Error updating profile:', error);
+                    alert('Error: An error occurred. Please try again.');
+                }
+            });
+        }
+
+        // Handle password form submission
+        const passwordForm = document.getElementById('passwordForm');
+        if (passwordForm) {
+            passwordForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                const currentPassword = document.getElementById('currentPassword').value;
+                const newPassword = document.getElementById('newPassword').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+
+                if (newPassword !== confirmPassword) {
+                    alert('New passwords do not match!');
+                    return;
+                }
+
+                try {
+                    const csrftoken = getCookie('csrftoken');
+                    const response = await fetch('/account/api/accounts/change-password/', {
+                        method: 'POST',
+                        credentials: 'include',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrftoken || ''
+                        },
+                        body: JSON.stringify({
+                            current_password: currentPassword,
+                            new_password: newPassword,
+                            confirm_password: confirmPassword
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        alert('Password updated successfully!');
+                        passwordForm.reset();
+                    } else {
+                        alert('Error: ' + (data.error || 'Failed to update password'));
+                    }
+                } catch (error) {
+                    console.error('Error updating password:', error);
+                    alert('Error: An error occurred. Please try again.');
+                }
+            });
+        }
+
+        // Handle profile picture preview
+        const profilePictureInput = document.getElementById('profilePictureInput');
+        if (profilePictureInput) {
+            profilePictureInput.addEventListener('change', function (e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const img = document.getElementById('currentProfilePicture');
+                        if (img) {
+                            img.src = e.target.result;
+                            img.style.display = 'block';
+                        }
+                        // Update header avatar preview immediately
+                        if (typeof updateAdminHeaderAvatar === 'function') {
+                            updateAdminHeaderAvatar(e.target.result);
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        // Toggle password visibility
+        window.togglePassword = function (inputId) {
+            const input = document.getElementById(inputId);
+            const toggle = input.nextElementSibling;
+            if (input.type === 'password') {
+                input.type = 'text';
+                toggle.querySelector('i').classList.remove('fa-eye');
+                toggle.querySelector('i').classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                toggle.querySelector('i').classList.remove('fa-eye-slash');
+                toggle.querySelector('i').classList.add('fa-eye');
+            }
+        };
+    })();
+</script>
+{% endblock %}

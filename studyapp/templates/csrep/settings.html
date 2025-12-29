@@ -1,0 +1,122 @@
+{% extends "csrep/csrep_base.html" %}
+
+{% block content %}
+{% csrf_token %}
+            <div class="content-section" id="settingsSection">
+                <!-- Header -->
+                <div class="content-header">
+                    <div class="header-left">
+                        <h1 class="page-title">Settings</h1>
+                        <p class="page-subtitle">Manage your notification preferences.</p>
+                    </div>
+                </div>
+
+                <!-- Settings Content -->
+                <div class="settings-content">
+                    <!-- Notification Settings -->
+                    <div class="settings-section-card">
+                        <h3 class="settings-section-title">
+                            <i class="fas fa-bell"></i>
+                            Notification Settings
+                        </h3>
+                        <div class="settings-options">
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <div class="setting-label">Enable Notifications</div>
+                                    <div class="setting-description">Receive notifications for important events and updates</div>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="csrepNotificationsEnabled" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="form-actions" style="margin-top: 2rem;">
+                        <button type="button" class="btn-secondary" onclick="resetSettings()">Reset to Default</button>
+                        <button type="button" class="btn-primary" onclick="saveSettings()">Save Settings</button>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                // CS-Rep Settings JavaScript
+                let csrepSettings = {};
+
+                // Load settings on page load
+                document.addEventListener('DOMContentLoaded', function() {
+                    loadCsrepSettings();
+                });
+
+                async function loadCsrepSettings() {
+                    try {
+                        const response = await fetch('/account/api/settings/', {
+                            method: 'GET',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value
+                            }
+                        });
+
+                        if (response.ok) {
+                            const data = await response.json();
+                            if (data.success) {
+                                csrepSettings = data.settings;
+                                // Update UI with loaded settings
+                                document.getElementById('csrepNotificationsEnabled').checked = csrepSettings.csrep_notifications_enabled || false;
+                            }
+                        } else {
+                            console.error('Failed to load settings');
+                        }
+                    } catch (error) {
+                        console.error('Error loading settings:', error);
+                    }
+                }
+
+                async function saveSettings() {
+                    const settings = {
+                        csrep_notifications_enabled: document.getElementById('csrepNotificationsEnabled').checked
+                    };
+
+                    try {
+                        const response = await fetch('/account/api/settings/', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value
+                            },
+                            body: JSON.stringify(settings)
+                        });
+
+                        const data = await response.json();
+
+                        if (data.success) {
+                            // Show success message
+                            if (typeof showToast === 'function') {
+                                showToast('Settings saved successfully!', 'success');
+                            } else {
+                                alert('Settings saved successfully!');
+                            }
+                        } else {
+                            throw new Error(data.error || 'Failed to save settings');
+                        }
+                    } catch (error) {
+                        console.error('Error saving settings:', error);
+                        if (typeof showToast === 'function') {
+                            showToast('Failed to save settings: ' + error.message, 'error');
+                        } else {
+                            alert('Failed to save settings: ' + error.message);
+                        }
+                    }
+                }
+
+                function resetSettings() {
+                    if (confirm('Are you sure you want to reset settings to default?')) {
+                        document.getElementById('csrepNotificationsEnabled').checked = true;
+                        saveSettings();
+                    }
+                }
+            </script>
+{% endblock %}

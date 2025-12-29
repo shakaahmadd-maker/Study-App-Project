@@ -1,0 +1,42 @@
+{% extends "csrep/csrep_base.html" %}
+{% block content %}
+
+<section class="content-section" id="announcementsSection" aria-labelledby="announcementsHeading">
+    <header class="section-header">
+        <div>
+            <h1 class="section-title" id="announcementsHeading">Announcements</h1>
+            <p class="section-subtitle">View important announcements from teachers and administrators.</p>
+        </div>
+    </header>
+
+    <!-- Announcements List -->
+    <div class="announcements-container">
+        <!-- Announcements will be loaded here dynamically -->
+    </div>
+
+    <!-- Empty State (hidden when announcements exist) -->
+    <div class="announcements-empty" id="announcementsEmpty" style="display: none;">
+        <div class="empty-state">
+            <i class="fas fa-bullhorn"></i>
+            <h3>No Announcements</h3>
+            <p>There are no announcements at this time.</p>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            function initAnnouncements() {
+                console.log('initAnnouncements called in CS Rep template');
+                if (typeof window.loadAnnouncements === 'function') {
+                    console.log('Calling window.loadAnnouncements()...');
+                    window.loadAnnouncements();
+                } else {
+                    console.log('window.loadAnnouncements not found, retrying...');
+                    setTimeout(initAnnouncements, 100);
+                }
+            }
+            initAnnouncements();
+        })();
+    </script>
+</section>
+{% endblock %}

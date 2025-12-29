@@ -1,0 +1,3150 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nano Problems</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&family=Open+Sans:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'css/home_style.css' %}">
+</head>
+
+<body id="top">
+    <!-- CSRF Token for JavaScript access -->
+    {% csrf_token %}
+    <div class="header">
+        <div class="need_help">
+            <img src="{% static 'SVGs/rectangle1.svg' %}">
+            <h1>Need Any Help? +1-917-730-4520</h1>
+        </div>
+        <div class="social">
+            Our Social:
+            <span class="social-icons">
+                <a href="https://wa.me/19177304520" target="_blank" rel="noopener noreferrer"
+                    aria-label="WhatsApp +19177304520">
+                    <img src="{% static 'SVGs/whatsapp.svg' %}" alt="WhatsApp">
+                </a>
+                <a href="https://www.linkedin.com/company/nano-problem" target="_blank" rel="noopener noreferrer">
+                    <img src="{% static 'SVGs/linkedIn.svg' %}" alt="LinkedIn">
+                </a>
+                <a href="https://www.facebook.com/nanoproblem" target="_blank" rel="noopener noreferrer">
+                    <img src="{% static 'SVGs/facebook.svg' %}" alt="Facebook">
+                </a>
+            </span>
+        </div>
+    </div>
+
+    <nav class="nav-bar">
+        <div class="nav-inner">
+            <!-- Mobile menu toggle added for responsive layout -->
+            <button class="mobile-menu-toggle" type="button" aria-label="Open navigation" aria-controls="mobileNav"
+                aria-expanded="false">
+                <span class="mobile-menu-toggle__bar"></span>
+                <span class="mobile-menu-toggle__bar"></span>
+                <span class="mobile-menu-toggle__bar"></span>
+            </button>
+
+            <div class="logo">
+                <h2>Nano <span class="brand-strong">Problem</span></h2>
+            </div>
+
+            <div class="nav-links">
+                <a href="#top">Home</a>
+                <a href="{% url 'study:services' %}">Services</a>
+                <a href="#faq">FAQs</a>
+                <a href="#contact">Contact</a>
+            </div>
+
+            <div class="nav-actions">
+                <a class="login" href="{% url 'account:register' %}?mode=signin">
+                    <img src="{% static 'SVGs/user.svg' %}" alt="User" class="icon"> Login
+                </a>
+
+                <a href="{% url 'account:register' %}" class="btn-register">Register Now</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile navigation overlay (added for responsive/mobile UI) -->
+    <div class="mobile-nav" id="mobileNav" aria-hidden="true">
+        <div class="mobile-nav__backdrop" data-mobile-close></div>
+        <div class="mobile-nav__panel">
+            <div class="mobile-nav__header">
+                <div class="mobile-nav__brand">
+                    <h2 class="mobile-nav__title">Nano <span class="brand-strong">Problem</span></h2>
+                </div>
+                <button class="mobile-nav__close" type="button" aria-label="Close navigation" data-mobile-close>
+                    <img src="{% static 'SVGs/cross.svg' %}" alt="Close menu">
+                </button>
+            </div>
+
+            <nav class="mobile-nav__links" aria-label="Mobile primary navigation">
+                <a href="#top">Home</a>
+                <a href="{% url 'study:services' %}">Services</a>
+                <a href="#faq">FAQs</a>
+                <a href="#contact">Contact</a>
+            </nav>
+
+            <div class="mobile-nav__actions">
+                <span class="actions-sep" aria-hidden="true"></span>
+                <a class="login" href="{% url 'account:register' %}?mode=signin">
+                    <img src="{% static 'SVGs/user.svg' %}" alt="User" class="icon"> Login
+                </a>
+                <a href="{% url 'account:register' %}" class="btn-register">Register Now</a>
+            </div>
+
+            <span class="mobile-nav__divider" aria-hidden="true"></span>
+
+            <div class="mobile-nav__social">
+                <span class="mobile-nav__social-label">Connect with us</span>
+                <div class="mobile-nav__social-links">
+                    <a class="icon-btn" href="https://wa.me/19177304520" target="_blank" rel="noopener noreferrer"
+                        aria-label="WhatsApp +19177304520">
+                        <img src="{% static 'SVGs/whatsapp.svg' %}" alt="WhatsApp">
+                    </a>
+                    <a class="icon-btn" href="https://www.linkedin.com/company/nano-problem" target="_blank"
+                        rel="noopener noreferrer" aria-label="LinkedIn">
+                        <img src="{% static 'SVGs/linkedIn.svg' %}" alt="LinkedIn">
+                    </a>
+                    <a class="icon-btn" href="https://www.facebook.com/nanoproblem" target="_blank"
+                        rel="noopener noreferrer" aria-label="Facebook">
+                        <img src="{% static 'SVGs/facebook.svg' %}" alt="Facebook">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <main class="hero-wrap">
+
+        <div class="container hero-grid">
+            <section class="hero-left">
+
+                <img src="{% static 'SVGs/yellowdot.svg' %}" alt="" class="decor-dot decor-yellow">
+                <img src="{% static 'SVGs/bluedot.svg' %}" alt="" class="decor-dot decor-blue">
+
+                <p class="eyebrow"><span class="eyebrow-blue">Expert</span></p>
+                <h1 class="hero-title">
+                    Helper
+                </h1>
+
+                <h3 class="hero-sub">
+                    For Your <span class="accent">CourseWork</span>
+                </h3>
+
+                <p class="hero-lead">Get <a class="link-accent" href="#">Online</a> Class Help!</p>
+
+                <div class="hero-actions">
+                    <a href="{% url 'account:register' %}" class="btn-primary">Get Started Now</a>
+                </div>
+
+                <p class="hero-small">Start Your Education Journey, <span class="highlight">For a Better Future!</span>
+                </p>
+            </section>
+
+            <section class="hero-right">
+                <!-- decorative grid SVG (replace with your SVGs/grid.svg if available) -->
+                <img src="{% static 'SVGs/grids.svg' %}" alt="" class="dec-grid">
+
+                <!-- top image -->
+                <img src="{% static 'SVGs/student.png' %}" alt="student" class="img-top" width="473px" height="349px">
+
+                <!-- bottom image -->
+                <img src="{% static 'SVGs/tutor.png' %}" alt="tutor" class="img-bottom" width="473px" height="349px">
+
+                <!-- decorative dotted svg -->
+                <img src="{% static 'SVGs/yellowdot.svg' %}" alt="" class="dec-dots">
+            </section>
+        </div>
+
+        <div class="hero-bottom">
+            <div class="bottom-services">
+                <div class="bottom-service-item">
+                    <img src="{% static 'SVGs/clipboard.svg' %}" alt="Assignments">
+                    <p>Expert help for all your assignments and homework.</p>
+                </div>
+                <div class="bottom-service-item">
+                    <img src="{% static 'SVGs/progress.svg' %}" alt="Quizzes">
+                    <p>Interactive quizzes with instant feedback to track progress.</p>
+                </div>
+                <div class="bottom-service-item">
+                    <img src="{% static 'SVGs/report.svg' %}" alt="Exams">
+                    <p>Secure and reliable online examination platform.</p>
+                </div>
+                <div class="bottom-service-item">
+                    <img src="{% static 'SVGs/user.svg' %}" alt="Tutoring">
+                    <p>Personalized 1-on-1 tutoring sessions with experts.</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+
+
+
+
+    <section class="why-choose">
+        <img src="{% static 'SVGs/yellowbigdot.svg' %}" alt="" class="yellow-big-dot" aria-hidden="true">
+        <div class="container">
+            <h2>Why Choose Nano-Problems?</h2>
+            <img src="{% static 'SVGs/seprator.svg' %}" alt="" class="sep" aria-hidden="true">
+            <p class="why-lead">Transform Your Academic Journey</p>
+            <p class="why-desc">We offer a comprehensive platform designed to support students at every stage of their
+                academic journey with cutting-edge technology and expert guidance.</p>
+
+            <div class="choose-grid">
+                <div class="choose-card">
+                    <div class="text-box">
+                        <h2>Instant Help When You Need It</h2>
+                    </div>
+
+                    <div class="card-content">
+                        <div class="icon-box">
+                            <img src="{% static 'SVGs/message.svg' %}" alt="icon-box">
+                        </div>
+                        <p>Get immediate assistance through our live chat feature, connecting you with experts who can
+                            quickly resolve your questions and concerns, ensuring you never feel stuck.</p>
+                    </div>
+                </div>
+                <div class="choose-card">
+                    <div class="text-box">
+                        <h2>24/7 Access to Real Representatives</h2>
+                    </div>
+
+                    <div class="card-content">
+                        <div class="icon-box">
+                            <img src="{% static 'SVGs/pc.svg' %}" alt="">
+                        </div>
+                        <p>Access study materials, videos, practice exercises, and direct support from our team anytime,
+                            anywhere—our round-the-clock availability means you can study at your own pace, even in the
+                            late hours.</p>
+                    </div>
+                </div>
+                <div class="choose-card">
+                    <div class="text-box">
+                        <h2>Accessible Learning for All</h2>
+                    </div>
+
+                    <div class="card-content">
+                        <div class="icon-box">
+                            <img src="{% static 'SVGs/clipboard.svg' %}" alt="">
+                        </div>
+                        <p>Our platform is designed to be flexible and accessible at every stage of your academic
+                            journey. Whether you're on your phone, tablet, or computer, you can continue learning
+                            wherever you are.</p>
+                    </div>
+                </div>
+                <div class="choose-card">
+                    <div class="text-box">
+                        <h2>Expert-Driven Academic Support</h2>
+                    </div>
+
+                    <div class="card-content">
+                        <div class="icon-box">
+                            <img src="{% static 'SVGs/report.svg' %}" alt="">
+                        </div>
+                        <p>Get personalized assistance from top-rated experts who provide in-depth understanding and
+                            guidance on complex topics, helping you navigate academic challenges with ease.</p>
+                    </div>
+                </div>
+                <div class="choose-card">
+                    <div class="text-box">
+                        <h2>Real-Time Progress Monitoring</h2>
+                    </div>
+
+                    <div class="card-content">
+                        <div class="icon-box">
+                            <img src="{% static 'SVGs/progress.svg' %}" alt="">
+                        </div>
+                        <p>Stay on top of your academic performance with a live progress dashboard that helps you track
+                            assignments, deadlines, and improvements, allowing you to visualize your success in
+                            real-time.</p>
+                    </div>
+                </div>
+                <div class="choose-card">
+                    <div class="text-box">
+                        <h2>Affordable, Transparent Pricing</h2>
+                    </div>
+
+                    <div class="card-content">
+                        <div class="icon-box">
+                            <img src="{% static 'SVGs/message.svg' %}" alt="">
+                        </div>
+                        <p>We offer affordable pricing with no hidden fees, ensuring that quality education remains
+                            accessible to every student, without the stress of surprise charges.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+
+
+
+
+    <section class="how-it-works">
+        <img src="{% static 'SVGs/bigdotleft.svg' %}" alt="" class="big-dot-left" aria-hidden="true">
+        <div class="container">
+            <h2 class="how-title">How It Works</h2>
+            <img src="{% static 'SVGs/seprator.svg' %}" alt="" class="how-sep" aria-hidden="true">
+
+            <div class="how-grid-new">
+                <div class="how-step-card">
+                    <div class="step-badge">Step 1</div>
+                    <div class="step-icon">
+                        <img src="{% static 'SVGs/message.svg' %}" alt="">
+                    </div>
+                    <h3>Submit Your Request</h3>
+                    <div class="step-flow">
+                        <div class="flow-item you">
+                            <strong>You Do:</strong>
+                            <p>Fill out our simple form with your subject and deadline.</p>
+                        </div>
+                        <div class="flow-item we">
+                            <strong>We Do:</strong>
+                            <p>We analyze your requirements and calculate the best plan.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="how-step-card">
+                    <div class="step-badge">Step 2</div>
+                    <div class="step-icon">
+                        <img src="{% static 'SVGs/user.svg' %}" alt="">
+                    </div>
+                    <h3>Get Matched</h3>
+                    <div class="step-flow">
+                        <div class="flow-item you">
+                            <strong>You Do:</strong>
+                            <p>Review your tailored quote and confirm your order.</p>
+                        </div>
+                        <div class="flow-item we">
+                            <strong>We Do:</strong>
+                            <p>We assign a top-tier expert specifically for your subject.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="how-step-card">
+                    <div class="step-badge">Step 3</div>
+                    <div class="step-icon">
+                        <img src="{% static 'SVGs/progress.svg' %}" alt="">
+                    </div>
+                    <h3>Expert Collaboration</h3>
+                    <div class="step-flow">
+                        <div class="flow-item you">
+                            <strong>You Do:</strong>
+                            <p>Chat with your expert and track progress in real-time.</p>
+                        </div>
+                        <div class="flow-item we">
+                            <strong>We Do:</strong>
+                            <p>Our expert works on your task ensuring high quality.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="how-step-card">
+                    <div class="step-badge">Step 4</div>
+                    <div class="step-icon">
+                        <img src="{% static 'SVGs/report.svg' %}" alt="">
+                    </div>
+                    <h3>Approve & Download</h3>
+                    <div class="step-flow">
+                        <div class="flow-item you">
+                            <strong>You Do:</strong>
+                            <p>Review the final result and download your completed work.</p>
+                        </div>
+                        <div class="flow-item we">
+                            <strong>We Do:</strong>
+                            <p>We deliver plagiarism-free work well before the deadline.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="trust-us-section" style="background: transparent;">
+        <div class="container">
+            <h2 class="section-title">Why Students <span class="accent-blue">Trust Us</span> for Online Class &
+                Assignment Help</h2>
+            <img src="{% static 'SVGs/seprator.svg' %}" alt="" class="sep" aria-hidden="true">
+            <p class="trust-lead">Balancing multiple subjects, tight deadlines, and online exams can be overwhelming. At
+                NanoProblem, we help students thrive by offering expert support. Here's why students choose us:</p>
+
+            <div class="trust-grid">
+                <div class="trust-card">
+                    <div class="trust-card-header">
+                        <div class="trust-icon-box">
+                            <img src="{% static 'SVGs/clipboard.svg' %}" alt="">
+                        </div>
+                        <h3>Guaranteed On-Time Submission</h3>
+                    </div>
+                    <p>We ensure every assignment, project, or exam is completed well before the deadline, giving you
+                        peace of mind.</p>
+                </div>
+
+                <div class="trust-card">
+                    <div class="trust-card-header">
+                        <div class="trust-icon-box">
+                            <img src="{% static 'SVGs/user.svg' %}" alt="">
+                        </div>
+                        <h3>Personalized Learning Support</h3>
+                    </div>
+                    <p>Whether it's one-on-one tutoring, course help, or exam preparation, we tailor our support to meet
+                        your needs.</p>
+                </div>
+
+                <div class="trust-card">
+                    <div class="trust-card-header">
+                        <div class="trust-icon-box">
+                            <img src="{% static 'SVGs/message.svg' %}" alt="">
+                        </div>
+                        <h3>Expert Tutors Available 24/7</h3>
+                    </div>
+                    <p>Our team of experts is available around the clock to assist with urgent requests, questions, and
+                        last-minute help.</p>
+                </div>
+
+                <div class="trust-card">
+                    <div class="trust-card-header">
+                        <div class="trust-icon-box">
+                            <img src="{% static 'SVGs/progress.svg' %}" alt="">
+                        </div>
+                        <h3>Course Management & Progress Tracking</h3>
+                    </div>
+                    <p>We help you stay on track with your coursework by navigating online platforms and keeping you
+                        organized.</p>
+                </div>
+
+                <div class="trust-card">
+                    <div class="trust-card-header">
+                        <div class="trust-icon-box">
+                            <img src="{% static 'SVGs/resource_cap.svg' %}" alt="">
+                        </div>
+                        <h3>Top Grades, Guaranteed</h3>
+                    </div>
+                    <p>We strive for excellence, guaranteeing at least a B grade when you get help with your online
+                        classes.</p>
+                </div>
+
+                <div class="trust-card">
+                    <div class="trust-card-header">
+                        <div class="trust-icon-box">
+                            <img src="{% static 'SVGs/report.svg' %}" alt="">
+                        </div>
+                        <h3>Plagiarism-Free, AI-Approved Work</h3>
+                    </div>
+                    <p>All work is original and passes AI plagiarism detection tools to ensure integrity and
+                        authenticity.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="lms-section">
+        <div class="container">
+            <h2 class="section-title">Top <span class="accent-blue">LMS We Mastered</span> for Online Class Help</h2>
+            <p class="lms-lead">What makes us one of the go-to choices for students looking for online class help? Our
+                experience and excellence with top LMS platforms where we take online classes. Here are the platforms we
+                come across most frequently.</p>
+
+            <div class="lms-grid">
+                <div class="lms-card">
+                    <div class="lms-logo-box">
+                        <img src="{% static 'logos/canvas.png' %}" alt="Canvas">
+                    </div>
+                    <h3>Canvas</h3>
+                </div>
+                <div class="lms-card">
+                    <div class="lms-logo-box">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Moodle-logo.svg/250px-Moodle-logo.svg.png"
+                            alt="Moodle">
+                    </div>
+                    <h3>Moodle</h3>
+                </div>
+                <div class="lms-card">
+                    <div class="lms-logo-box">
+                        <img src="{% static 'logos/d2l.png' %}" alt="D2L">
+                    </div>
+                    <h3>D2L</h3>
+                </div>
+                <div class="lms-card">
+                    <div class="lms-logo-box">
+                        <img src="{% static 'logos/pearson.png' %}" alt="Pearson">
+                    </div>
+                    <h3>Pearson</h3>
+                </div>
+                <div class="lms-card">
+                    <div class="lms-logo-box">
+                        <img src="{% static 'logos/straighterline.png' %}" alt="Straighterline & Others">
+                    </div>
+                    <h3>Straighterline</h3>
+                </div>
+                <div class="lms-card">
+                    <div class="lms-logo-box">
+                        <img src="{% static 'logos/blackboard.png' %}" alt="Blackboard">
+                    </div>
+                    <h3>Blackboard</h3>
+                </div>
+                <div class="lms-card">
+                    <div class="lms-logo-box">
+                        <img src="{% static 'logos/edgenuity.png' %}" alt="Edgenuity">
+                    </div>
+                    <h3>Edgenuity</h3>
+                </div>
+                <div class="lms-card">
+                    <div class="lms-logo-box">
+                        <img src="{% static 'logos/edmentum.png' %}" alt="Edmentum">
+                    </div>
+                    <h3>Edmentum</h3>
+                </div>
+            </div>
+
+            <p class="lms-footer-text">Lack of experience with online classes can lead to poor navigation in LMS and
+                missing crucial class announcements and deadlines. Our online class helpers, with an average of three
+                years’ experience, are LMS pros—meaning no missed announcements and lightning-fast course submissions.
+            </p>
+        </div>
+    </section>
+
+    <section class="assisted-section">
+        <div class="container">
+            <h2 class="assisted-title">Assisted More than 10,000+ Students</h2>
+            <p class="assisted-subtitle">500+ Qualified Professionals at Your Service</p>
+
+            <div class="slider-container">
+                <div class="slider-track">
+                    <!-- Original set of logos -->
+                    <div class="uni-card"><img src="{% static 'uni/SNHU.png' %}" alt="SNHU"></div>
+                    <div class="uni-card"><img src="{% static 'uni/libertyuni.png' %}" alt="Liberty University"></div>
+                    <div class="uni-card"><img src="{% static 'uni/GCU.jpg' %}" alt="GCU"></div>
+                    <div class="uni-card"><img src="{% static 'uni/UMGC.png' %}" alt="UMGC"></div>
+                    <div class="uni-card"><img src="{% static 'uni/Purdue.png' %}" alt="Purdue Global"></div>
+                    <div class="uni-card"><img src="{% static 'uni/ASU.png' %}" alt="ASU Online"></div>
+                    <div class="uni-card"><img src="{% static 'uni/PennState.jpg' %}" alt="Penn State"></div>
+                    <div class="uni-card"><img src="{% static 'uni/Pearson.png' %}" alt="Pearson"></div>
+                    <div class="uni-card"><img src="{% static 'logos/Blackboard.png' %}" alt="Blackboard"></div>
+                    <div class="uni-card"><img src="{% static 'uni/VU.png' %}" alt="Virtual University">
+                    </div>
+                    <div class="uni-card"><img src="{% static 'uni/UCF.png' %}" alt="UCF"></div>
+                    <div class="uni-card"><img src="{% static 'uni/FIU.png' %}" alt="FIU"></div>
+                    <div class="uni-card"><img src="{% static 'uni/GMU.png' %}" alt="George Mason"></div>
+                    <div class="uni-card"><img src="{% static 'uni/Phoenix.png' %}" alt="University of Phoenix"></div>
+                    <div class="uni-card"><img src="{% static 'uni/UF.png' %}" alt="University of Florida"></div>
+                    <div class="uni-card"><img src="{% static 'uni/DeVry.jpg' %}" alt="DeVry University"></div>
+
+                    <!-- Duplicate set for seamless loop -->
+                    <div class="uni-card"><img src="{% static 'uni/SNHU.png' %}" alt="SNHU"></div>
+                    <div class="uni-card"><img src="{% static 'uni/libertyuni.png' %}" alt="Liberty University"></div>
+                    <div class="uni-card"><img src="{% static 'uni/GCU.jpg' %}" alt="GCU"></div>
+                    <div class="uni-card"><img src="{% static 'uni/UMGC.png' %}" alt="UMGC"></div>
+                    <div class="uni-card"><img src="{% static 'uni/Purdue.png' %}" alt="Purdue Global"></div>
+                    <div class="uni-card"><img src="{% static 'uni/ASU.png' %}" alt="ASU Online"></div>
+                    <div class="uni-card"><img src="{% static 'uni/PennState.jpg' %}" alt="Penn State"></div>
+                    <div class="uni-card"><img src="{% static 'uni/Pearson.png' %}" alt="Pearson"></div>
+                    <div class="uni-card"><img src="{% static 'logos/Blackboard.png' %}" alt="Blackboard"></div>
+                    <div class="uni-card"><img src="{% static 'uni/VU.png' %}" alt="Virtual University">
+                    </div>
+                </div>
+    </section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <section class="tutors-section">
+        <img src="{% static 'SVGs/bigdotright.svg' %}" alt="" class="big-dot-right" aria-hidden="true">
+        <div class="container">
+            <h2 class="section-title">Meet Our Tutors</h2>
+            <img src="{% static 'SVGs/seprator.svg' %}" alt="" class="section-sep" aria-hidden="true">
+
+            <div class="tutor-slider-wrapper">
+                <button class="tutor-nav-btn prev" id="prevTutor" type="button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M15 18l-6-6 6-6" />
+                    </svg>
+                </button>
+
+                <div class="tutor-cards-stack" id="tutorStack">
+                    <!-- Tutor 1 -->
+                    <div class="tutor-stack-card active">
+                        <div class="tutor-inner-grid">
+                            <div class="tutor-visual">
+                                <img src="{% static 'tutors/James Thompson.png' %}" alt="James Thompson" class="tutor-stack-img">
+                            </div>
+                            <div class="tutor-info">
+                                <h3 class="tutor-stack-name">James Thompson</h3>
+                                <p class="tutor-stack-tag">Applied Mathematics Expert</p>
+                                <p class="tutor-stack-desc">At NanoProblem, James Thompson brings over 12 years of experience in applied mathematics, specializing in computational mathematics and numerical methods. He is dedicated to helping students master complex mathematical concepts and their real-world applications.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Tutor 2 -->
+                    <div class="tutor-stack-card">
+                        <div class="tutor-inner-grid">
+                            <div class="tutor-visual">
+                                <img src="{% static 'tutors/Emily Carter.png' %}" alt="Emily Carter" class="tutor-stack-img">
+                            </div>
+                            <div class="tutor-info">
+                                <h3 class="tutor-stack-name">Emily Carter</h3>
+                                <p class="tutor-stack-tag">Astrophysics Expert</p>
+                                <p class="tutor-stack-desc">With more than 8 years of teaching and research experience, Emily Carter specializes in quantum mechanics and thermodynamics. As part of NanoProblem, she helps students explore the universe and understand physical principles.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Tutor 3 -->
+                    <div class="tutor-stack-card">
+                        <div class="tutor-inner-grid">
+                            <div class="tutor-visual">
+                                <img src="{% static 'tutors/William Harris.png' %}" alt="William Harris" class="tutor-stack-img">
+                            </div>
+                            <div class="tutor-info">
+                                <h3 class="tutor-stack-name">William Harris</h3>
+                                <p class="tutor-stack-tag">Molecular Genetics Expert</p>
+                                <p class="tutor-stack-desc">At NanoProblem, William Harris brings over 10 years of expertise in molecular genetics and cell biology. His passion for mentoring students helps them engage with cutting-edge biological research and its practical applications in biotechnology.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Tutor 4 -->
+                    <div class="tutor-stack-card">
+                        <div class="tutor-inner-grid">
+                            <div class="tutor-visual">
+                                <img src="{% static 'tutors/Sarah Matthews.png' %}" alt="Sarah Matthews" class="tutor-stack-img">
+                            </div>
+                            <div class="tutor-info">
+                                <h3 class="tutor-stack-name">Sarah Matthews</h3>
+                                <p class="tutor-stack-tag">Chemical Engineering & Materials Science Expert</p>
+                                <p class="tutor-stack-desc">With over 9 years of teaching experience, Sarah Matthews specializes in chemical engineering and materials science. As part of NanoProblem, she provides students with a hands-on understanding of chemical processes and encourages critical thinking for solving real-world problems.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Tutor 5 -->
+                    <div class="tutor-stack-card">
+                        <div class="tutor-inner-grid">
+                            <div class="tutor-visual">
+                                <img src="{% static 'tutors/Nathaniel White.png' %}" alt="Nathaniel White" class="tutor-stack-img">
+                            </div>
+                            <div class="tutor-info">
+                                <h3 class="tutor-stack-name">Nathaniel White</h3>
+                                <p class="tutor-stack-tag">AI & Data Science Expert</p>
+                                <p class="tutor-stack-desc">Dr. Nathaniel White has over 8 years of experience in academia and industry. As an expert in AI and data science, he empowers students to develop innovative solutions and become leaders in the AI field at NanoProblem.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Tutor 6 -->
+                    <div class="tutor-stack-card">
+                        <div class="tutor-inner-grid">
+                            <div class="tutor-visual">
+                                <img src="{% static 'tutors/Jessica Lee.png' %}" alt="Jessica Lee" class="tutor-stack-img">
+                            </div>
+                            <div class="tutor-info">
+                                <h3 class="tutor-stack-name">Jessica Lee</h3>
+                                <p class="tutor-stack-tag">Environmental Science Expert</p>
+                                <p class="tutor-stack-desc">With more than 7 years of experience, Jessica Lee specializes in ecology and environmental sustainability. At NanoProblem, she helps students understand global environmental challenges and provides tools to drive change toward a more sustainable future.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Tutor 7 -->
+                    <div class="tutor-stack-card">
+                        <div class="tutor-inner-grid">
+                            <div class="tutor-visual">
+                                <img src="{% static 'tutors/Michael Davis.png' %}" alt="Michael Davis" class="tutor-stack-img">
+                            </div>
+                            <div class="tutor-info">
+                                <h3 class="tutor-stack-name">Michael Davis</h3>
+                                <p class="tutor-stack-tag">Economics Expert</p>
+                                <p class="tutor-stack-desc">With over 5 years of teaching experience, Michael Davis specializes in macroeconomics and public policy. As a key part of NanoProblem, he brings a wealth of knowledge to students, helping them understand the complexities of the global economy.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Tutor 8 -->
+                    <div class="tutor-stack-card">
+                        <div class="tutor-inner-grid">
+                            <div class="tutor-visual">
+                                <img src="{% static 'tutors/Linda Xu.png' %}" alt="Linda Xu" class="tutor-stack-img">
+                            </div>
+                            <div class="tutor-info">
+                                <h3 class="tutor-stack-name">Linda Xu</h3>
+                                <p class="tutor-stack-tag">Robotics & Automation Expert</p>
+                                <p class="tutor-stack-desc">Linda Xu has more than 18 years of teaching experience in robotics and automation. At NanoProblem, she helps students master the technical and theoretical aspects of robotics and guides them to innovate in the field of automation.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Tutor 9 -->
+                    <div class="tutor-stack-card">
+                        <div class="tutor-inner-grid">
+                            <div class="tutor-visual">
+                                <img src="{% static 'tutors/Daniel Brown.png' %}" alt="Daniel Brown" class="tutor-stack-img">
+                            </div>
+                            <div class="tutor-info">
+                                <h3 class="tutor-stack-name">Daniel Brown</h3>
+                                <p class="tutor-stack-tag">History Expert</p>
+                                <p class="tutor-stack-desc">With over 12 years of experience, Daniel Brown specializes in American history and political science. As part of NanoProblem, he encourages students to explore historical events in-depth and apply historical knowledge to current political scenarios.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Tutor 10 -->
+                    <div class="tutor-stack-card">
+                        <div class="tutor-inner-grid">
+                            <div class="tutor-visual">
+                                <img src="{% static 'tutors/Maria Rodriguez.png' %}" alt="Maria Rodriguez" class="tutor-stack-img">
+                            </div>
+                            <div class="tutor-info">
+                                <h3 class="tutor-stack-name">Maria Rodriguez</h3>
+                                <p class="tutor-stack-tag">Psychology Expert</p>
+                                <p class="tutor-stack-desc">Dr. Maria Rodriguez brings over 12 years of teaching and research experience in behavioral psychology and neuropsychology. As part of NanoProblem, she helps students understand the workings of the human mind, cognition, and mental health disorders.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Tutor 11 -->
+                    <div class="tutor-stack-card">
+                        <div class="tutor-inner-grid">
+                            <div class="tutor-visual">
+                                <img src="{% static 'tutors/Caroline Wright.png' %}" alt="Caroline Wright" class="tutor-stack-img">
+                            </div>
+                            <div class="tutor-info">
+                                <h3 class="tutor-stack-name">Caroline Wright</h3>
+                                <p class="tutor-stack-tag">Political Science Expert</p>
+                                <p class="tutor-stack-desc">Caroline Wright brings over 9 years of experience in international relations, political theory, and global governance. As part of NanoProblem, she helps students analyze complex political dynamics and understand global affairs.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Tutor 12 -->
+                    <div class="tutor-stack-card">
+                        <div class="tutor-inner-grid">
+                            <div class="tutor-visual">
+                                <img src="{% static 'tutors/David King.png' %}" alt="David King" class="tutor-stack-img">
+                            </div>
+                            <div class="tutor-info">
+                                <h3 class="tutor-stack-name">David King</h3>
+                                <p class="tutor-stack-tag">Sociology Expert</p>
+                                <p class="tutor-stack-desc">David King specializes in social stratification, urban sociology, and social movements, with more than 8 years of teaching experience. He is a vital member of NanoProblem, guiding students through the complexities of societal structures and their impact on contemporary issues.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Tutor 13 -->
+                    <div class="tutor-stack-card">
+                        <div class="tutor-inner-grid">
+                            <div class="tutor-visual">
+                                <img src="{% static 'tutors/Rebecca Lee.png' %}" alt="Rebecca Lee" class="tutor-stack-img">
+                            </div>
+                            <div class="tutor-info">
+                                <h3 class="tutor-stack-name">Rebecca Lee</h3>
+                                <p class="tutor-stack-tag">Public Health Expert</p>
+                                <p class="tutor-stack-desc">Rebecca Lee specializes in epidemiology and global health, with over 5 years of experience. At NanoProblem, she teaches students about health crises, disease prevention, and global public health solutions.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Tutor 14 -->
+                    <div class="tutor-stack-card">
+                        <div class="tutor-inner-grid">
+                            <div class="tutor-visual">
+                                <img src="{% static 'tutors/John Harris.png' %}" alt="John Harris" class="tutor-stack-img">
+                            </div>
+                            <div class="tutor-info">
+                                <h3 class="tutor-stack-name">John Harris</h3>
+                                <p class="tutor-stack-tag">Philosophy Expert</p>
+                                <p class="tutor-stack-desc">With over 7 years of experience, John Harris specializes in ethics, logic, and metaphysics. As part of NanoProblem, he helps students explore philosophical inquiries and critically engage with complex moral and logical questions.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Tutor 15 -->
+                    <div class="tutor-stack-card">
+                        <div class="tutor-inner-grid">
+                            <div class="tutor-visual">
+                                <img src="{% static 'tutors/Stephanie Taylor.png' %}" alt="Stephanie Taylor" class="tutor-stack-img">
+                            </div>
+                            <div class="tutor-info">
+                                <h3 class="tutor-stack-name">Stephanie Taylor</h3>
+                                <p class="tutor-stack-tag">Literature Expert</p>
+                                <p class="tutor-stack-desc">Stephanie Taylor has over 8 years of experience in comparative literature, literary criticism, and postcolonial studies. At NanoProblem, she teaches students to explore diverse literary traditions and critical theories.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Tutor 16 -->
+                    <div class="tutor-stack-card">
+                        <div class="tutor-inner-grid">
+                            <div class="tutor-visual">
+                                <img src="{% static 'tutors/Jason Miller.png' %}" alt="Jason Miller" class="tutor-stack-img">
+                            </div>
+                            <div class="tutor-info">
+                                <h3 class="tutor-stack-name">Jason Miller</h3>
+                                <p class="tutor-stack-tag">Marketing Expert</p>
+                                <p class="tutor-stack-desc">With over 9 years of experience in digital marketing and consumer behavior, Jason Miller helps students understand modern marketing strategies at NanoProblem. His expertise in brand management and digital strategies ensures students can apply marketing principles in the digital age.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Tutor 17 -->
+                    <div class="tutor-stack-card">
+                        <div class="tutor-inner-grid">
+                            <div class="tutor-visual">
+                                <img src="{% static 'tutors/Alice Murphy.png' %}" alt="Alice Murphy" class="tutor-stack-img">
+                            </div>
+                            <div class="tutor-info">
+                                <h3 class="tutor-stack-name">Alice Murphy</h3>
+                                <p class="tutor-stack-tag">Architecture Expert</p>
+                                <p class="tutor-stack-desc">With over 10 years of experience, Alice Murphy specializes in urban planning, sustainable design, and architectural theory. As part of NanoProblem, she teaches students how to create sustainable, innovative architectural solutions for the future.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Tutor 18 -->
+                    <div class="tutor-stack-card">
+                        <div class="tutor-inner-grid">
+                            <div class="tutor-visual">
+                                <img src="{% static 'tutors/Hoda El-Gamal.png' %}" alt="Hoda El-Gamal" class="tutor-stack-img">
+                            </div>
+                            <div class="tutor-info">
+                                <h3 class="tutor-stack-name">Hoda El-Gamal</h3>
+                                <p class="tutor-stack-tag">Anthropology Expert</p>
+                                <p class="tutor-stack-desc">Hoda El-Gamal has more than 8 years of experience in cultural anthropology and archaeology. At NanoProblem, she helps students understand the evolution of human societies, cultures, and the forces that shaped modern civilizations.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Tutor 19 -->
+                    <div class="tutor-stack-card">
+                        <div class="tutor-inner-grid">
+                            <div class="tutor-visual">
+                                <img src="{% static 'tutors/Olivia Johnson.png' %}" alt="Olivia Johnson" class="tutor-stack-img">
+                            </div>
+                            <div class="tutor-info">
+                                <h3 class="tutor-stack-name">Olivia Johnson</h3>
+                                <p class="tutor-stack-tag">Mechanical Engineering Expert</p>
+                                <p class="tutor-stack-desc">With more than 4 years of experience in mechanical systems, Olivia Johnson specializes in materials science, thermodynamics, and mechanical engineering. As part of NanoProblem, she teaches students to solve real-world engineering problems and create innovative designs.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Tutor 20 -->
+                    <div class="tutor-stack-card">
+                        <div class="tutor-inner-grid">
+                            <div class="tutor-visual">
+                                <img src="{% static 'tutors/Javeed Ashiq.png' %}" alt="Javeed Ashiq" class="tutor-stack-img">
+                            </div>
+                            <div class="tutor-info">
+                                <h3 class="tutor-stack-name">Javeed Ashiq</h3>
+                                <p class="tutor-stack-tag">Finance Expert</p>
+                                <p class="tutor-stack-desc">With over 4.5 years of experience, Javeed Ashiq specializes in investment strategies, corporate finance, and risk management. As part of NanoProblem, he helps students understand financial markets and investment practices.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Tutor 21 -->
+                    <div class="tutor-stack-card">
+                        <div class="tutor-inner-grid">
+                            <div class="tutor-visual">
+                                <img src="{% static 'tutors/Laura Green.png' %}" alt="Laura Green" class="tutor-stack-img">
+                            </div>
+                            <div class="tutor-info">
+                                <h3 class="tutor-stack-name">Laura Green</h3>
+                                <p class="tutor-stack-tag">Linguistics Expert</p>
+                                <p class="tutor-stack-desc">With over 8 years of teaching experience, Laura Green specializes in phonetics, syntax, and sociolinguistics. As a member of NanoProblem, she helps students understand language structures and the social aspects of communication.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Tutor 22 -->
+                    <div class="tutor-stack-card">
+                        <div class="tutor-inner-grid">
+                            <div class="tutor-visual">
+                                <img src="{% static 'tutors/Anthony Scott.png' %}" alt="Anthony Scott" class="tutor-stack-img">
+                            </div>
+                            <div class="tutor-info">
+                                <h3 class="tutor-stack-name">Anthony Scott</h3>
+                                <p class="tutor-stack-tag">Education Expert</p>
+                                <p class="tutor-stack-desc">With more than 7 years of experience in pedagogy and curriculum development, Anthony Scott specializes in educational psychology. At NanoProblem, he uses evidence-based strategies to help students achieve academic success through effective teaching methods.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Tutor 23 -->
+                    <div class="tutor-stack-card">
+                        <div class="tutor-inner-grid">
+                            <div class="tutor-visual">
+                                <img src="{% static 'tutors/Isabella Cooper.png' %}" alt="Isabella Cooper" class="tutor-stack-img">
+                            </div>
+                            <div class="tutor-info">
+                                <h3 class="tutor-stack-name">Isabella Cooper</h3>
+                                <p class="tutor-stack-tag">Criminology & Sociology Expert</p>
+                                <p class="tutor-stack-desc">Isabella Cooper specializes in criminology, social deviance, and juvenile justice, with over 20 years of experience. As part of NanoProblem, she teaches students about the social factors influencing crime and the justice system.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Tutor 24 -->
+                    <div class="tutor-stack-card">
+                        <div class="tutor-inner-grid">
+                            <div class="tutor-visual">
+                                <img src="{% static 'tutors/Henry White.png' %}" alt="Henry White" class="tutor-stack-img">
+                            </div>
+                            <div class="tutor-info">
+                                <h3 class="tutor-stack-name">Henry White</h3>
+                                <p class="tutor-stack-tag">Astronomy Expert</p>
+                                <p class="tutor-stack-desc">Henry White specializes in cosmology, stellar evolution, and observational astronomy, with over 22 years of teaching and research experience. At NanoProblem, he guides students through the study of the universe, from stars to galaxies.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Tutor 25 -->
+                    <div class="tutor-stack-card">
+                        <div class="tutor-inner-grid">
+                            <div class="tutor-visual">
+                                <img src="{% static 'tutors/Sophia Adams.png' %}" alt="Sophia Adams" class="tutor-stack-img">
+                            </div>
+                            <div class="tutor-info">
+                                <h3 class="tutor-stack-name">Sophia Adams</h3>
+                                <p class="tutor-stack-tag">Neuroscience Expert</p>
+                                <p class="tutor-stack-desc">With over 6 years of experience in cognitive neuroscience and brain development, Sophia Adams helps students understand the complexities of the brain and neurological disorders. As part of NanoProblem, she teaches students about human cognition and mental health.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="tutor-nav-btn next" id="nextTutor" type="button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M9 18l6-6-6-6" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Mobile Navigation Buttons -->
+            <div class="tutor-nav-mobile">
+                <button class="nav-btn" id="prevTutorMobile" aria-label="Previous tutor">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="nav-btn" id="nextTutorMobile" aria-label="Next tutor">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+
+        </div>
+    </section>
+
+
+
+
+
+
+
+
+    <section class="hire-expert-section">
+        <div class="container">
+            <h2 class="section-title">Hire an Expert to Take your Online Class<br><span class="accent-blue">(Course
+                    Assignments & Exams)</span></h2>
+            <img src="{% static 'SVGs/seprator.svg' %}" alt="" class="sep" aria-hidden="true">
+
+            <!-- Top Row -->
+            <div class="top-features-row">
+                <div class="top-feature-item">
+                    <div class="top-feature-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <div class="top-feature-text">
+                        Every team member is required to uphold the <strong>highest quality of work ethic</strong>, as
+                        prescribed in Online Class Help's privacy standards.
+                    </div>
+                </div>
+                <div class="top-feature-item">
+                    <div class="top-feature-icon">
+                        <i class="fas fa-award"></i>
+                    </div>
+                    <div class="top-feature-text">
+                        Our professionals provide top-notch service that meets the strict citation rules of accredited
+                        American universities. <strong>No plagiarism, no shortcuts.</strong>
+                    </div>
+                </div>
+                <div class="top-feature-item">
+                    <div class="top-feature-icon">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <div class="top-feature-text">
+                        <strong>Domestic Logins</strong>: A domestic login guarantees that your location is <strong>safe
+                            from being flagged</strong> by online institutions.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Grid -->
+            <div class="features-grid">
+                <!-- Card 1 -->
+                <div class="feature-card">
+                    <div class="feature-card-icon">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <h3>Encrypted Comms</h3>
+                    <p>Your connection to our website and apps are protected with 2048-bit RSA encryption – which is
+                        highly secure. All messages you exchange with us are purged on a 30-day rolling basis
+                        automatically.</p>
+                </div>
+                <!-- Card 2 -->
+                <div class="feature-card">
+                    <div class="feature-card-icon">
+                        <i class="fas fa-wifi"></i>
+                    </div>
+                    <h3>IP Check Safe</h3>
+                    <p>We have a custom built VPN network across America that allows us to bypass pesky IP checks. Our
+                        tutors submit all work using our VPN so the traffic will appear to be from your city and state.
+                    </p>
+                </div>
+                <!-- Card 3 -->
+                <div class="feature-card">
+                    <div class="feature-card-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h3>Real Americans</h3>
+                    <p>You can certain you are dealing with brilliant tutors and customer support who are all based in
+                        America. Call us Mon-Fri 09:00 AM – 09:00 PM EST to verify this yourself.</p>
+                </div>
+                <!-- Card 4 -->
+                <div class="feature-card">
+                    <div class="feature-card-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3>Quick Responses</h3>
+                    <p>Whether it's updating online class guidelines, changing assignment requests, or communicating
+                        with tutors, our team ensures prompt and efficient handling of all your needs.</p>
+                </div>
+                <!-- Card 5 -->
+                <div class="feature-card">
+                    <div class="feature-card-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3>Proactive Monitoring</h3>
+                    <p>We proactively monitor all order components. Our scheduling system has multiple fail-safe
+                        mechanisms to make sure that each component is completed diligently.</p>
+                </div>
+                <!-- Card 6 -->
+                <div class="feature-card">
+                    <div class="feature-card-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Deep Bench</h3>
+                    <p>With over 90 full time tutors and 100 part-time tutors (who have attended the best Universities
+                        in America) we have a deep bench and are able to handle variety of subjects competently.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="services" class="comprehensive-services">
+        <div class="container">
+            <h2 class="comprehensive-title">Comprehensive & Academic Services</h2>
+            <img src="{% static 'SVGs/seprator.svg' %}" alt="" class="comprehensive-sep" aria-hidden="true">
+
+            <div class="services-slider-container">
+                <div class="services-slider-track">
+                    <!-- Set 1 -->
+                    <article class="service-slide-card">
+                        <div class="service-slide-icon"><i class="fas fa-laptop-code"></i></div>
+                        <h3>Online Class Help</h3>
+                        <p>Complete management of your online classes, including lectures, assignments, and exams with
+                            guaranteed grades.</p>
+                    </article>
+                    <article class="service-slide-card">
+                        <div class="service-slide-icon"><i class="fas fa-file-alt"></i></div>
+                        <h3>Assignment Writing</h3>
+                        <p>Expertly crafted assignments tailored to your specific requirements, ensuring top marks and
+                            academic integrity.</p>
+                    </article>
+                    <article class="service-slide-card">
+                        <div class="service-slide-icon"><i class="fas fa-pen-fancy"></i></div>
+                        <h3>Essay & Paper Writing</h3>
+                        <p>Professional writing for essays, research papers, and case studies across all academic levels
+                            and subjects.</p>
+                    </article>
+                    <article class="service-slide-card">
+                        <div class="service-slide-icon"><i class="fas fa-graduation-cap"></i></div>
+                        <h3>PhD & Master’s Support</h3>
+                        <p>Advanced assistance for graduate students, including thesis guidance, research data, and
+                            dissertation writing.</p>
+                    </article>
+                    <article class="service-slide-card">
+                        <div class="service-slide-icon"><i class="fas fa-clock"></i></div>
+                        <h3>Exam & Quiz Assistance</h3>
+                        <p>Real-time help for timed exams and quizzes, ensuring you perform at your best under pressure.
+                        </p>
+                    </article>
+                    <article class="service-slide-card">
+                        <div class="service-slide-icon"><i class="fas fa-comments"></i></div>
+                        <h3>Discussion Board Help</h3>
+                        <p>Active participation in online discussion boards, providing thoughtful and high-quality
+                            responses consistently.</p>
+                    </article>
+                    <article class="service-slide-card">
+                        <div class="service-slide-icon"><i class="fas fa-book-reader"></i></div>
+                        <h3>Subject-Specific Tutoring</h3>
+                        <p>One-on-one sessions with experts in fields like Mathematics, Nursing, Engineering, and
+                            Business.</p>
+                    </article>
+                    <article class="service-slide-card">
+                        <div class="service-slide-icon"><i class="fas fa-tasks"></i></div>
+                        <h3>Full Course Management</h3>
+                        <p>Hassle-free course handling where we take care of every requirement from orientation to final
+                            submission.</p>
+                    </article>
+
+                    <!-- Set 2 (Duplicate for seamless loop) -->
+                    <article class="service-slide-card">
+                        <div class="service-slide-icon"><i class="fas fa-laptop-code"></i></div>
+                        <h3>Online Class Help</h3>
+                        <p>Complete management of your online classes, including lectures, assignments, and exams with
+                            guaranteed grades.</p>
+                    </article>
+                    <article class="service-slide-card">
+                        <div class="service-slide-icon"><i class="fas fa-file-alt"></i></div>
+                        <h3>Assignment Writing</h3>
+                        <p>Expertly crafted assignments tailored to your specific requirements, ensuring top marks and
+                            academic integrity.</p>
+                    </article>
+                    <article class="service-slide-card">
+                        <div class="service-slide-icon"><i class="fas fa-pen-fancy"></i></div>
+                        <h3>Essay & Paper Writing</h3>
+                        <p>Professional writing for essays, research papers, and case studies across all academic levels
+                            and subjects.</p>
+                    </article>
+                    <article class="service-slide-card">
+                        <div class="service-slide-icon"><i class="fas fa-graduation-cap"></i></div>
+                        <h3>PhD & Master’s Support</h3>
+                        <p>Advanced assistance for graduate students, including thesis guidance, research data, and
+                            dissertation writing.</p>
+                    </article>
+                    <article class="service-slide-card">
+                        <div class="service-slide-icon"><i class="fas fa-clock"></i></div>
+                        <h3>Exam & Quiz Assistance</h3>
+                        <p>Real-time help for timed exams and quizzes, ensuring you perform at your best under pressure.
+                        </p>
+                    </article>
+                    <article class="service-slide-card">
+                        <div class="service-slide-icon"><i class="fas fa-comments"></i></div>
+                        <h3>Discussion Board Help</h3>
+                        <p>Active participation in online discussion boards, providing thoughtful and high-quality
+                            responses consistently.</p>
+                    </article>
+                    <article class="service-slide-card">
+                        <div class="service-slide-icon"><i class="fas fa-book-reader"></i></div>
+                        <h3>Subject-Specific Tutoring</h3>
+                        <p>One-on-one sessions with experts in fields like Mathematics, Nursing, Engineering, and
+                            Business.</p>
+                    </article>
+                    <article class="service-slide-card">
+                        <div class="service-slide-icon"><i class="fas fa-tasks"></i></div>
+                        <h3>Full Course Management</h3>
+                        <p>Hassle-free course handling where we take care of every requirement from orientation to final
+                            submission.</p>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="why-paying-section">
+        <div class="container">
+            <h2 class="why-paying-title">Why Should You Consider Paying for Online Class Help?</h2>
+            <p class="why-paying-lead">Online education can be tough to manage. Many students face challenges like
+                balancing work, personal life, and academics, which can lead them to seek help with their online
+                classes. Here are a few reasons why students choose to hire professionals to handle their coursework:
+            </p>
+
+            <div class="reasons-grid">
+                <div class="reason-card">
+                    <div class="reason-header">
+                        <div class="reason-icon"><i class="far fa-clock"></i></div>
+                        <h3>Not Enough Time</h3>
+                    </div>
+                    <p>Balancing multiple responsibilities, such as work, family, or extracurricular activities, can
+                        leave students with limited time to focus on their classes. Hiring professional help ensures
+                        they meet deadlines and maintain their academic standing without sacrificing other aspects of
+                        their life.</p>
+                </div>
+
+                <div class="reason-card">
+                    <div class="reason-header">
+                        <div class="reason-icon"><i class="far fa-gem"></i></div>
+                        <h3>Subjects are Hard</h3>
+                    </div>
+                    <p>Some courses are more challenging than others, and students often seek assistance from experts
+                        who can help them understand difficult concepts. Hiring a professional can provide guidance and
+                        support, making challenging subjects easier to handle.</p>
+                </div>
+
+                <div class="reason-card">
+                    <div class="reason-header">
+                        <div class="reason-icon"><i class="far fa-smile"></i></div>
+                        <h3>Less Stress</h3>
+                    </div>
+                    <p>Online learning can be stressful, especially when managing multiple assignments and exams at
+                        once. Paying for online class help can significantly reduce stress levels by ensuring that
+                        tasks are completed on time and to a high standard, leaving students with more time to relax
+                        and focus on their well-being.</p>
+                </div>
+
+                <div class="reason-card">
+                    <div class="reason-header">
+                        <div class="reason-icon"><i class="far fa-check-circle"></i></div>
+                        <h3>Saving Grades</h3>
+                    </div>
+                    <p>Some students may be at risk of failing their courses or losing scholarships due to poor grades.
+                        By hiring an expert to help with assignments and exams, they can improve their grades and
+                        protect their academic standing.</p>
+                </div>
+
+                <div class="reason-card">
+                    <div class="reason-header">
+                        <div class="reason-icon"><i class="fas fa-sync-alt"></i></div>
+                        <h3>Temporary Problems</h3>
+                    </div>
+                    <p>Life can throw unexpected challenges at students, such as health issues or personal problems. In
+                        such cases, hiring someone to manage their classes ensures they don’t fall behind and can stay
+                        on track without compromising their academic performance.</p>
+                </div>
+
+                <div class="reason-card cta-reason-card">
+                    <p>Find the right help for your online course today.</p>
+                    <a href="{% url 'account:register' %}" class="btn-connect-expert">Connect with an Expert</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="student-reviews">
+        <div class="container">
+            <div class="review-slider-card">
+                <div class="review-slider-track" id="reviewSlider">
+                    <!-- Slide 1 -->
+                    <div class="review-slide active">
+                        <div class="review-grid">
+                            <div class="student-profile">
+                                <div class="photo-wrap">
+                                    <img src="{% static 'pics/tutor1.png' %}" alt="Student">
+                                </div>
+                            </div>
+                            <div class="review-content">
+                                <div class="review-stars">
+                                    <span class="star-icon">★</span>
+                                    <span class="star-icon">★</span>
+                                    <span class="star-icon">★</span>
+                                    <span class="star-icon">★</span>
+                                    <span class="star-icon">★</span>
+                                </div>
+                                <p class="review-quote">"I have waited my entire life for a tutoring platform like this
+                                    - nearly my entire life. With NanoProblem, academic success is truly guaranteed.
+                                    Period."</p>
+                                <div class="review-author">
+                                    <h4>— Vermillion D. White</h4>
+                                    <p>Senior at State University</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Slide 2 -->
+                    <div class="review-slide">
+                        <div class="review-grid">
+                            <div class="student-profile">
+                                <div class="photo-wrap">
+                                    <img src="{% static 'pics/tutor2.png' %}" alt="Student">
+                                </div>
+                            </div>
+                            <div class="review-content">
+                                <div class="review-stars">
+                                    <span class="star-icon">★</span>
+                                    <span class="star-icon">★</span>
+                                    <span class="star-icon">★</span>
+                                    <span class="star-icon">★</span>
+                                    <span class="star-icon">★</span>
+                                </div>
+                                <p class="review-quote">"The assignment help I received was outstanding. The level of
+                                    detail and accuracy exceeded my expectations. I can't imagine finishing my semester
+                                    without them!"</p>
+                                <div class="review-author">
+                                    <h4>— Julian Rodriguez</h4>
+                                    <p>Business Major</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Slide 3 -->
+                    <div class="review-slide">
+                        <div class="review-grid">
+                            <div class="student-profile">
+                                <div class="photo-wrap">
+                                    <img src="{% static 'pics/tutor3.png' %}" alt="Student">
+                                </div>
+                            </div>
+                            <div class="review-content">
+                                <div class="review-stars">
+                                    <span class="star-icon">★</span>
+                                    <span class="star-icon">★</span>
+                                    <span class="star-icon">★</span>
+                                    <span class="star-icon">★</span>
+                                    <span class="star-icon">★</span>
+                                </div>
+                                <p class="review-quote">"Highly professional and always on time. NanoProblem is the most
+                                    reliable academic partner I've ever worked with. Truly a game-changer for online
+                                    learners."</p>
+                                <div class="review-author">
+                                    <h4>— Emily Thompson</h4>
+                                    <p>Postgraduate Candidate</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="review-footer">
+                    <div class="review-nav">
+                        <button class="nav-btn" id="prevReview" aria-label="Previous review">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <div class="nav-dots" id="reviewDots"></div>
+                        <button class="nav-btn" id="nextReview" aria-label="Next review">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="benefit-section">
+        <div class="container">
+            <h2 class="benefit-title">Who Can Benefit From Our Take My Online Class Services?</h2>
+            <p class="benefit-lead">Students may need help with their online classes for various reasons. Here are some
+                types of individuals who benefit from our expert support:</p>
+
+            <div class="benefit-grid">
+                <!-- Card 1 -->
+                <div class="benefit-card">
+                    <div class="benefit-card-header">
+                        <div class="benefit-card-icon"><i class="fas fa-briefcase"></i></div>
+                        <h3>Busy People</h3>
+                    </div>
+                    <p>Many students juggle work, family, and academic responsibilities. We help them manage everything
+                        effortlessly by ensuring their coursework is completed on time and to a high standard.</p>
+                </div>
+                <!-- Card 2 -->
+                <div class="benefit-card">
+                    <div class="benefit-card-header">
+                        <div class="benefit-card-icon"><i class="fas fa-user-graduate"></i></div>
+                        <h3>Adults Going Back to School</h3>
+                    </div>
+                    <p>Adults who are returning to school or looking to change careers often face busy schedules. Our
+                        services help them keep up with their classes and stay on top of assignments.</p>
+                </div>
+                <!-- Card 3 -->
+                <div class="benefit-card">
+                    <div class="benefit-card-header">
+                        <div class="benefit-card-icon"><i class="fas fa-language"></i></div>
+                        <h3>People Who Don’t Speak English Well</h3>
+                    </div>
+                    <p>Students who may not be fluent in English can benefit from our assistance in ensuring their
+                        schoolwork is written clearly and correctly, helping them succeed academically.</p>
+                </div>
+                <!-- Card 4 -->
+                <div class="benefit-card">
+                    <div class="benefit-card-header">
+                        <div class="benefit-card-icon"><i class="fas fa-chart-line"></i></div>
+                        <h3>Students Who Want Better Grades</h3>
+                    </div>
+                    <p>Whether in a challenging course or simply aiming for higher marks, our experts provide the
+                        support needed to get better grades and excel in school.</p>
+                </div>
+                <!-- Card 5 -->
+                <div class="benefit-card">
+                    <div class="benefit-card-header">
+                        <div class="benefit-card-icon"><i class="fas fa-hands-helping"></i></div>
+                        <h3>Students Who Need Extra Help</h3>
+                    </div>
+                    <p>Some students may struggle to understand course material. We offer one-on-one tutoring to explain
+                        difficult concepts in a way that makes sense to them.</p>
+                </div>
+                <!-- Card 6 -->
+                <div class="benefit-card">
+                    <div class="benefit-card-header">
+                        <div class="benefit-card-icon"><i class="fas fa-lightbulb"></i></div>
+                        <h3>Students Who Want Clearer Explanations</h3>
+                    </div>
+                    <p>If students need help understanding concepts from a different perspective, our tutors can offer
+                        clearer explanations that make learning easier.</p>
+                </div>
+                <!-- Card 7 -->
+                <div class="benefit-card">
+                    <div class="benefit-card-header">
+                        <div class="benefit-card-icon"><i class="fas fa-university"></i></div>
+                        <h3>People in Online Colleges and Beyond</h3>
+                    </div>
+                    <p>Whether pursuing a degree or taking advanced studies, adults in online college programs or
+                        beyond can rely on our support to help them excel in their coursework.</p>
+                </div>
+                <!-- Card 8 -->
+                <div class="benefit-card">
+                    <div class="benefit-card-header">
+                        <div class="benefit-card-icon"><i class="fas fa-file-signature"></i></div>
+                        <h3>Students Getting Ready for Big Tests</h3>
+                    </div>
+                    <p>Preparing for major exams, including finals or standardized tests, can be stressful. We provide
+                        practice tests and study materials to help students feel ready and confident.</p>
+                </div>
+                <!-- Card 9 -->
+                <div class="benefit-card">
+                    <div class="benefit-card-header">
+                        <div class="benefit-card-icon"><i class="fas fa-mouse-pointer"></i></div>
+                        <h3>People Who Are Not Good with Computers</h3>
+                    </div>
+                    <p>Some students need assistance with using online learning platforms and technology. We guide them
+                        through the process so they can become more comfortable with their online studies.</p>
+                </div>
+                <!-- Card 10 -->
+                <div class="benefit-card">
+                    <div class="benefit-card-header">
+                        <div class="benefit-card-icon"><i class="fas fa-brain"></i></div>
+                        <h3>People Who Want to Learn New Things</h3>
+                    </div>
+                    <p>In addition to traditional coursework, anyone looking to gain new skills or knowledge—whether for
+                        personal growth or passion—can benefit from our services.</p>
+                </div>
+
+                <!-- CTA Container from Image -->
+                <div class="benefit-cta-box">
+                    <p class="benefit-cta-text">No matter your reason for seeking help, NanoProblem is here to guide you
+                        toward academic success.</p>
+                    <a href="{% url 'account:register' %}" class="btn-benefit-contact">Contact Us Today to Get the
+                        Support You Need!</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="faq" class="faq-section">
+        <div class="container">
+            <h2 class="faq-title">Frequently Asked Questions (<span>FAQs</span>)</h2>
+            <p class="faq-subtitle">Get answers to common questions about our services and how we can help you.</p>
+            <div class="faq-separator">
+                <img src="{% static 'SVGs/seprator.svg' %}" alt="separator">
+            </div>
+
+            <div class="faq-container">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>1. How Does the Process Work Once I Sign Up?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>When you sign up, we first review your course details and add important deadlines into our
+                            project management system. We then assign a qualified expert who specializes in your
+                            subject. Shortly after, you’ll receive a welcome email from your dedicated account manager,
+                            who will guide you through the process. Most of the time, you'll see results in 1-2 business
+                            days. If you're dealing with an urgent deadline (e.g., same day or next day), make sure to
+                            inform us so we can prioritize your request.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>2. Can I Pay Someone to Take My Online Class in All Subjects?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Absolutely! Whether you're dealing with challenging subjects like Sociology, Economics,
+                            Mathematics, Physics, or Accounting, our team of professionals is here to help you master
+                            every aspect of your online course. Our experts are highly skilled in a wide range of
+                            academic disciplines and will help you complete your coursework and exams with confidence.
+                            Rest assured, we provide tailored support to ensure you achieve high grades in every subject
+                            you need assistance with.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>3. What Services Does Online Class Help Provide?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We offer comprehensive assistance for all your online educational needs. Whether you're
+                            looking for help with individual assignments, quizzes, exams, or full course completion,
+                            we’ve got you covered. We also provide expert support for online discussion boards and
+                            essays. Our goal is to ensure you perform at your best throughout your online studies by
+                            offering 24/7 support.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>4. Can You Handle Multiple Courses Simultaneously?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes! We’re fully equipped to handle multiple courses at once. Whether you’re managing several
+                            classes across different subjects or dealing with complex schedules, our team is here to
+                            support you in balancing all of your coursework. We have a large pool of experts ready to
+                            assist with everything from exams to assignments, ensuring each course receives the
+                            dedicated attention it requires.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>5. Can You Help Me with Everything, Including Discussion Posts?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Definitely! From exams and homework to participation in online discussion posts and projects,
+                            we offer end-to-end support for your online classes. Our team is here to handle all aspects
+                            of your coursework, so you don’t have to worry about falling behind. Simply let us know what
+                            you need, and we’ll take care of the rest!</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>6. Do You Offer 'Entire Course' Package Deals?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes, we offer customizable package deals for entire courses. Since every course is unique and
+                            has different workloads, the pricing and details vary based on the subject, number of
+                            assignments, and exams involved. For a tailored package, simply reach out to us, and we’ll
+                            design a plan that fits your needs. We’re happy to discuss how we can support you through
+                            every part of your course.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>7. How Do You Determine Pricing for Each Course?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Pricing is customized for each course based on several key factors:<br>
+                            <strong>Subject and Difficulty Level:</strong> Advanced subjects or highly specialized
+                            courses may require more effort.<br><br>
+                            <strong>Course Length and Structure:</strong> Longer courses with multiple assignments or
+                            exams will be priced accordingly.<br><br>
+                            <strong>Amount of Work Involved:</strong> The number of exams, quizzes, and assignments all
+                            influence pricing.<br><br>
+                            <strong>Urgency:</strong> If you need help on short notice, we consider the time frame when
+                            pricing the service.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>8. Can You Help Me with a Test That’s Due Tonight?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes, we can! We understand that last-minute assignments happen. If you have a test or
+                            assignment due tonight, simply call us as soon as possible, and we will do our best to meet
+                            the deadline. We recommend giving at least 24 hours’ notice for optimal preparation, but
+                            we’re here to help in urgent situations too.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>9. Do I Need to Buy Textbooks for My Online Course?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Typically, no. We can work without needing the textbooks, as we focus on delivering the right
+                            solutions using your course materials and resources. However, in some cases, if your
+                            assignments are directly based on specific textbook content or if you're enrolled in a very
+                            niche course, textbooks might be required. Don’t worry—we’ll let you know if this is the
+                            case.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>10. How Safe Is It to Use Online Class Help?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Your privacy and security are our top priorities. We use secure payment methods, encrypted
+                            communications, and domestic logins to avoid any issues with educational institutions. You
+                            can rest assured that all your personal information remains confidential and your academic
+                            integrity is maintained.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>11. What If I'm Not Satisfied with the Work Provided?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We strive for perfection in everything we do. If you’re not fully satisfied with the work
+                            provided, we offer a full refund. Your satisfaction is our priority, and we’ll work with you
+                            to make sure you’re happy with the results. If there’s ever an issue, we’re always ready to
+                            resolve it promptly.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>12. How Does Online Class Help Guarantee Quality and Authenticity?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Our team consists of highly qualified professionals who are experts in their respective
+                            fields. We follow strict academic standards to ensure all work is original, plagiarism-free,
+                            and meets the citation guidelines of accredited American universities. When you choose us,
+                            you’re choosing quality and authenticity.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>13. How Quickly Can I Expect a Response from Your Team?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Our customer support team is known for its fast and efficient responses. Whether you have a
+                            question about your coursework or need an update on an assignment, we ensure quick
+                            communication to keep your academic journey on track. You can count on us to respond to all
+                            your queries promptly.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>14. Are Your Tutors and Staff Based in the USA?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes, all of our tutors and customer support staff are based in the United States. This
+                            ensures a deep understanding of the American education system and allows us to provide the
+                            highest level of service to students across the country.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>15. Can You Handle Master’s and Ph.D. Online Degree Programs?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes, we specialize in handling online courses for higher education programs, including
+                            master’s and Ph.D. degrees. Whether you’re studying Business Administration, Arts, Public
+                            Health, or Social Work, our expert tutors are here to help you tackle the complexity of
+                            advanced online degree programs. With our support, you can navigate even the most demanding
+                            courses with ease.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>16. Will My School Know I’m Logging in From a Different IP Address?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Not at all. We’ve worked with thousands of students, and there have been no issues with IP
+                            addresses. While logging in from another country could raise concerns, we exclusively work
+                            with tutors based in the US to ensure no red flags are triggered by your educational
+                            institution.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>17. Can You Handle My Online Exams and Quizzes?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes! We can handle your online exams and quizzes with the utmost care and professionalism.
+                            Our experts are skilled at taking exams in various subjects, ensuring that you achieve the
+                            grades you deserve. Whether it's multiple-choice questions, essays, or timed exams, we’re
+                            here to help you succeed.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>18. What If My Course Requires Participation in Live Classes or Discussions?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We can handle both live class participation and online discussions! If your course requires
+                            you to attend live sessions or participate in virtual discussions, our tutors are
+                            well-equipped to manage these aspects too. We will attend sessions on your behalf and
+                            contribute meaningfully to discussions, ensuring that you don’t miss out on any
+                            participation points.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>19. What Happens If I Need Help Mid-Semester or Halfway Through the Course?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>No problem at all! Whether you need help from the very beginning of your course or partway
+                            through, we’re here to assist you. Just let us know your current progress, and we’ll step in
+                            to help you get back on track, ensuring you meet all upcoming deadlines and assignments.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>20. Can I Choose My Tutor or Expert?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>While we don’t allow specific tutor selection, we match you with the most qualified expert
+                            based on your course requirements. We carefully assess the skills and experience of our
+                            tutors and assign you one who is best suited to your academic needs. Rest assured, all our
+                            tutors are highly experienced and dedicated to helping you succeed.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>21. How Can I Track the Progress of My Course or Assignments?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We offer easy tracking! You’ll be able to communicate directly with your account manager, who
+                            will keep you updated on the status of your coursework. You can ask for progress reports or
+                            updates at any time, and we’ll be happy to provide them. This transparency ensures you’re
+                            always in the loop and confident in the work being done.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>22. How Do You Ensure My Course Work is Original and Plagiarism-Free?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>All work provided by our team is thoroughly checked for plagiarism before submission. We use
+                            industry-standard plagiarism detection tools to ensure that every assignment, exam, and
+                            paper is 100% original. You can be confident that your academic integrity will be upheld.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>23. Can You Help Me With Specialized or Niche Courses?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes! Our team consists of professionals with expertise in a wide range of subjects, including
+                            niche or specialized courses. Whether it’s a unique elective or a highly technical field, we
+                            have the knowledge to assist. Let us know the details of your course, and we will assign the
+                            right expert for the job.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>24. What If I Need Assistance With a Final Project or Thesis?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We specialize in final projects and theses! Whether it’s a comprehensive research project or
+                            a complex thesis, we have experts who can help you at every stage—research, writing,
+                            editing, and formatting. Our team will help you craft a high-quality final project that
+                            meets your university's requirements and exceeds expectations.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>25. Can You Help with Online Courses That Have Group Projects?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes! If your online course involves group projects, we can help you navigate the
+                            collaboration process. While we handle the assignments on your behalf, we’ll make sure all
+                            aspects of the project are completed to a high standard. We can also assist in coordinating
+                            and communicating with your project partners if necessary.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>26. What Happens If I Miss a Deadline or Forget an Assignment?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We understand that things can get busy, and sometimes deadlines slip through the cracks. If
+                            you miss a deadline or forget about an assignment, don’t worry—we’ll do our best to help you
+                            catch up. Our team will work quickly to get everything back on track so you can still meet
+                            the course requirements and avoid penalties.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>27. How Do You Handle Changes in Course Deadlines or Requirements?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>If there are changes in your course deadlines or requirements, simply notify your account
+                            manager as soon as possible. We’ll adapt to the new schedule and adjust our strategy
+                            accordingly. Flexibility is key to our service, and we’ll ensure that all new requirements
+                            are met on time.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>28. How Do I Communicate with My Tutor During the Course?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>You can easily communicate with your assigned expert or account manager through email,
+                            messaging, or our platform's communication tools. We ensure that you're always able to ask
+                            questions, get updates, or clarify any doubts throughout your course.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>29. Do You Provide Help for Short-Term or One-Time Projects?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes, we offer assistance for short-term or one-time projects! Whether it’s a single
+                            assignment, exam, or a small portion of a course that you need help with, we’re happy to
+                            provide one-off support. Just let us know the details, and we’ll tailor our services to suit
+                            your needs.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>30. Can You Help Me Prepare for Online Class Exams or Final Assessments?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Absolutely! If you have upcoming exams or final assessments, we can assist with preparation.
+                            We offer test prep services, including practice exams, review sessions, and guidance on how
+                            to approach different types of questions. Our goal is to ensure you're fully prepared and
+                            confident going into your exams.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>31. Will My Personal Information Be Kept Confidential?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes, we take your privacy seriously. All of your personal information and course details are
+                            kept confidential. We use encrypted communication channels to protect your data, and we
+                            never share any of your information with third parties. Your academic journey remains
+                            completely private.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>32. What Happens If My Course Has Unexpected Complications or Issues?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We handle any complications with ease. If your course has unexpected complications or if
+                            anything goes wrong, let us know immediately. We’ll quickly assess the situation and come up
+                            with a solution to resolve any issues while ensuring that you still meet all requirements
+                            and deadlines.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>33. Do You Offer Discounts or Special Offers?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes, we occasionally offer discounts and special promotions to new and returning clients.
+                            Stay in touch with us to learn about any current offers, and don’t hesitate to reach out for
+                            information on available discounts or pricing packages.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>34. Can I Cancel My Service if I Change My Mind?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We offer flexible cancellation policies. If you decide to cancel the service before work
+                            begins, we’ll gladly refund your payment. However, if work has already started, we’ll
+                            discuss the terms of cancellation based on the progress made. Your satisfaction is important
+                            to us, and we’ll work to accommodate your needs.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="get-quote-section">
+        <div class="container">
+            <h2 class="quote-main-title">What Are You Waiting For?</h2>
+            <p class="quote-main-lead">Pay Someone To Take Your Online Course & Get The Grade You Desire.</p>
+
+            <div class="quote-card">
+                <div class="quote-card-inner">
+                    <h3>How can we get in touch?</h3>
+
+                    <form action="#" class="quote-form" id="visitorForm" method="post">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <input type="text" name="first_name" id="visitor_first_name" placeholder="First Name"
+                                    required>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" name="last_name" id="visitor_last_name" placeholder="Last Name"
+                                    required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" name="email" id="visitor_email" placeholder="Email Address" required>
+                        </div>
+                        <div class="form-group">
+                            <textarea name="details" id="visitor_details" placeholder="How can we help you"
+                                required></textarea>
+                        </div>
+                        <button type="submit" class="btn-quote-submit" id="visitorSubmitBtn">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact" class="site-footer">
+        <div class="footer-panel">
+            <div class="container footer-grid">
+                <div class="footer-col about">
+                    <h4>About Us</h4>
+                    <p>Get help with assignments tailored to your subject and requirements with expert guidance. Get
+                        help with assignments tailored to your subject and requirements with expert guidance.</p>
+                </div>
+
+                <div class="footer-col links">
+                    <h4>Quick Links</h4>
+                    <ul class="quick-links">
+                        <li><img src="{% static 'SVGs/arrow.svg' %}" alt="" aria-hidden="true"> About Us</li>
+                        <li><img src="{% static 'SVGs/arrow.svg' %}" alt="" aria-hidden="true"> Contact Us</li>
+                        <li><img src="{% static 'SVGs/arrow.svg' %}" alt="" aria-hidden="true"> Careers</li>
+                        <li><a href="{% url 'study:services' %}" style="text-decoration: none; color: inherit;"><img
+                                    src="{% static 'SVGs/arrow.svg' %}" alt="" aria-hidden="true"> Services</a></li>
+                        <li><img src="{% static 'SVGs/arrow.svg' %}" alt="" aria-hidden="true"> Others</li>
+                    </ul>
+                </div>
+
+                <div class="footer-col follow">
+                    <h4>Follow US</h4>
+                    <ul class="social-list">
+                        <li>
+                            <img src="{% static 'SVGs/whatsapp.svg' %}" alt="WhatsApp">
+                            <a href="https://wa.me/19177304520" target="_blank"
+                                rel="noopener noreferrer">+1-917-730-4520</a>
+                            </a>
+                        </li>
+                        <li>
+                            <img src="{% static 'SVGs/facebook.svg' %}" alt="facebook">
+                            <a href="https://www.facebook.com/nanoproblem" target="_blank"
+                                rel="noopener noreferrer">Nano Problem</a>
+                        </li>
+                        <li>
+                            <img src="{% static 'SVGs/linkedIn.svg' %}" alt="linkedin">
+                            <a href="https://www.linkedin.com/company/nano-problem" target="_blank"
+                                rel="noopener noreferrer">Nano Problem</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="footer-col contact">
+                    <h4>Get In Touch</h4>
+                    <p class="contact-line"><img src="{% static 'SVGs/gps.svg' %}" alt="" aria-hidden="true">
+                        OfficeNo.10, Sabzazar,
+                        Multan Road, Lahore.</p>
+                    <p class="contact-line"><img src="{% static 'SVGs/phone.svg' %}" alt="" aria-hidden="true">
+                        +1-917-730-4520</p>
+                    <p class="contact-line"><img src="{% static 'SVGs/email.svg' %}" alt="" aria-hidden="true">
+                        nanoproblems@gmail.com
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="container">
+                <hr class="footer-hr">
+                <p class="copyright">2025 Nano-Problem. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- single script include (keep your external JS if needed) -->
+    <script src="{% static 'java/home_script.js' %}"></script>
+
+    <script>
+        // Visitor form submission handler
+        (function () {
+            function getCookie(name) {
+                // First, try to get from hidden input field (Django's {% csrf_token %})
+                if (name === 'csrftoken') {
+                    const csrfInput = document.querySelector('input[name="csrfmiddlewaretoken"]');
+                    if (csrfInput && csrfInput.value) {
+                        return csrfInput.value;
+                    }
+                }
+                
+                // Second, try to get from cookies (with proper decoding)
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+
+            function showNotification(message, type = 'success') {
+                // Create a simple notification element
+                const notification = document.createElement('div');
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: ${type === 'success' ? '#10b981' : '#ef4444'};
+                    color: white;
+                    padding: 16px 24px;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                    z-index: 10000;
+                    font-family: 'Open Sans', sans-serif;
+                    font-size: 14px;
+                    font-weight: 500;
+                    max-width: 400px;
+                    animation: slideIn 0.3s ease-out;
+                `;
+                notification.textContent = message;
+                
+                // Add animation
+                const style = document.createElement('style');
+                style.textContent = `
+                    @keyframes slideIn {
+                        from {
+                            transform: translateX(100%);
+                            opacity: 0;
+                        }
+                        to {
+                            transform: translateX(0);
+                            opacity: 1;
+                        }
+                    }
+                `;
+                document.head.appendChild(style);
+                
+                document.body.appendChild(notification);
+                
+                // Remove after 5 seconds
+                setTimeout(() => {
+                    notification.style.animation = 'slideIn 0.3s ease-out reverse';
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.parentNode.removeChild(notification);
+                        }
+                    }, 300);
+                }, 5000);
+            }
+
+            // Attach handler immediately and also on DOMContentLoaded
+            function attachFormHandler() {
+                const visitorForm = document.getElementById('visitorForm');
+                if (!visitorForm) {
+                    console.log('Visitor form not found, will retry on DOMContentLoaded');
+                    return;
+                }
+                
+                // Remove any existing handlers to prevent duplicates
+                const newForm = visitorForm.cloneNode(true);
+                visitorForm.parentNode.replaceChild(newForm, visitorForm);
+                
+                newForm.addEventListener('submit', async function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Form submission intercepted');
+
+                        const submitBtn = document.getElementById('visitorSubmitBtn');
+                        const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+
+                        // Disable submit button and show loading state
+                        if (submitBtn) {
+                            submitBtn.disabled = true;
+                            submitBtn.textContent = 'Submitting...';
+                        }
+
+                        try {
+                            // Get CSRF token - try multiple methods
+                            let csrfToken = getCookie('csrftoken');
+                            
+                            // If not found via getCookie, try direct DOM access
+                            if (!csrfToken) {
+                                const csrfInput = document.querySelector('input[name="csrfmiddlewaretoken"]');
+                                if (csrfInput && csrfInput.value) {
+                                    csrfToken = csrfInput.value;
+                                }
+                            }
+                            
+                            console.log('CSRF Token retrieved:', csrfToken ? 'Found (' + csrfToken.substring(0, 10) + '...)' : 'Not found');
+                            
+                            // Get form data
+                            const firstNameEl = document.getElementById('visitor_first_name');
+                            const lastNameEl = document.getElementById('visitor_last_name');
+                            const emailEl = document.getElementById('visitor_email');
+                            const detailsEl = document.getElementById('visitor_details');
+
+                            if (!firstNameEl || !lastNameEl || !emailEl || !detailsEl) {
+                                showNotification('Form fields not found. Please refresh the page.', 'error');
+                                if (submitBtn) {
+                                    submitBtn.disabled = false;
+                                    submitBtn.textContent = originalText;
+                                }
+                                return;
+                            }
+
+                            const formData = {
+                                first_name: firstNameEl.value.trim(),
+                                last_name: lastNameEl.value.trim(),
+                                email: emailEl.value.trim(),
+                                details: detailsEl.value.trim()
+                            };
+
+                            // Validate form data
+                            if (!formData.first_name || !formData.last_name || !formData.email || !formData.details) {
+                                showNotification('Please fill in all required fields.', 'error');
+                                if (submitBtn) {
+                                    submitBtn.disabled = false;
+                                    submitBtn.textContent = originalText;
+                                }
+                                return;
+                            }
+
+                            // Build headers - always include CSRF token if found
+                            const headers = {
+                                'Content-Type': 'application/json'
+                            };
+                            
+                            // Add CSRF token if available
+                            if (csrfToken) {
+                                headers['X-CSRFToken'] = csrfToken;
+                                console.log('Sending request with CSRF token');
+                            } else {
+                                console.warn('CSRF token not found, but endpoint is csrf_exempt so request should still work');
+                            }
+
+                            console.log('Submitting form to /account/api/visitor/submit/');
+                            const response = await fetch('/account/api/visitor/submit/', {
+                                method: 'POST',
+                                headers: headers,
+                                body: JSON.stringify(formData),
+                                credentials: 'same-origin' // Include cookies
+                            });
+
+                            if (!response.ok) {
+                                const errorText = await response.text();
+                                console.error('Server error:', response.status, errorText);
+                                
+                                // Try to parse as JSON if possible
+                                let errorMessage = 'Failed to submit form. Please try again.';
+                                try {
+                                    const errorJson = JSON.parse(errorText);
+                                    errorMessage = errorJson.error || errorJson.message || errorMessage;
+                                } catch (e) {
+                                    if (response.status === 403) {
+                                        errorMessage = 'Access forbidden. Please refresh the page and try again.';
+                                    } else {
+                                        errorMessage = `Server error (${response.status}). Please try again.`;
+                                    }
+                                }
+                                showNotification(errorMessage, 'error');
+                                if (submitBtn) {
+                                    submitBtn.disabled = false;
+                                    submitBtn.textContent = originalText;
+                                }
+                                return;
+                            }
+
+                            const result = await response.json();
+
+                            if (result.success) {
+                                // Show success notification with the message from server
+                                showNotification(result.message || 'Thank you for submitting the form. We have received your concern and will get back to you in a moment.', 'success');
+
+                                // Reset form
+                                visitorForm.reset();
+                            } else {
+                                // Show error notification
+                                showNotification(result.error || 'Failed to submit form. Please try again.', 'error');
+                            }
+                        } catch (error) {
+                            console.error('Error submitting visitor form:', error);
+                            showNotification('An error occurred. Please check your connection and try again.', 'error');
+                        } finally {
+                            // Re-enable submit button
+                            if (submitBtn) {
+                                submitBtn.disabled = false;
+                                submitBtn.textContent = originalText;
+                            }
+                        }
+                    });
+                }
+            
+            // Try to attach immediately
+            attachFormHandler();
+            
+            // Also try on DOMContentLoaded in case form loads later
+            document.addEventListener('DOMContentLoaded', attachFormHandler);
+        })();
+    </script>
+
+
+
+
+
+
+
+    <div class="float-wrap" aria-hidden="false" data-chat-open="false">
+
+        <!-- float toggle button -->
+
+        <div class="float-toggle-wrap">
+            <div class="float-toggle-title">
+                <p>Need Help?</p>
+            </div>
+            <button class="float-toggle" type="button" aria-expanded="false">
+                <img src="{% static 'SVGs/float_button.svg' %}" alt="Need Help">
+            </button>
+        </div>
+
+
+
+        <aside class="chat-widget" role="dialog" aria-label="Help chat" aria-hidden="true" hidden>
+            <header class="chat-header">
+                <div class="chat-logo">
+                    <strong>Nano <span class="brand-strong">Problem</span></strong>
+                </div>
+
+                <!-- cross button uses provided SVG and is positioned overlapping top-right -->
+                <button class="chat-close" aria-label="Close chat">
+                    <img src="{% static 'SVGs/cross.svg' %}" alt="Close">
+                </button>
+            </header>
+
+            <div class="chat-body" tabindex="0">
+                <ul class="chat-list" aria-live="polite">
+                    <!-- Populated by real-time data and automated welcome flow in the script below. -->
+                </ul>
+            </div>
+
+            <!-- single container input with overlapping send button -->
+            <div class="chat-input-wrap">
+                <input id="chat-input" class="chat-input" type="text" placeholder="Type a message" />
+                <button class="chat-send" aria-label="Send">
+                    <img src="{% static 'SVGs/send.svg' %}" alt="send">
+                </button>
+            </div>
+
+        </aside>
+    </div>
+
+    <style>
+        /* Floating + chat base */
+        .float-wrap {
+            position: fixed;
+            right: 30px;
+            bottom: 50px;
+            z-index: 99999;
+            display: flex;
+            align-items: flex-end;
+            height: 100px;
+        }
+
+        .float-toggle-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: space-evenly;
+            gap: 0px;
+            flex-direction: row;
+            height: 50px;
+        }
+
+        .float-toggle-title {
+            background: #FFA600;
+            padding: 10px 15px;
+            width: 200px;
+            height: 40px;
+            border-radius: 35px;
+            text-align: center;
+        }
+
+        .float-toggle-title p {
+            font-size: 20px;
+            font-style: bold;
+            font-weight: 700;
+            font-family: 'open sans', sans-serif;
+            color: #FFFFFF;
+        }
+
+        .float-toggle {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            width: 125px;
+            height: 125px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 260ms cubic-bezier(0.25, 0.8, 0.25, 1),
+                box-shadow 260ms ease;
+        }
+
+        .float-toggle:hover {
+            transform: translateY(-6px) scale(1.08);
+        }
+
+        .float-toggle:focus-visible {
+            transform: translateY(-6px) scale(1.08);
+            outline: 3px solid rgba(255, 166, 0, 0.55) !important;
+            outline-offset: 4px;
+        }
+
+        .float-toggle img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: contain;
+            transition: transform 260ms cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .float-toggle:hover img,
+        .float-toggle:focus-visible img {
+            transform: scale(1.04);
+        }
+
+        @media (max-width: 1024px) {
+            .float-wrap {
+                right: 22px;
+                bottom: 36px;
+            }
+
+            .float-toggle-title {
+                width: 160px;
+                font-size: 18px;
+            }
+
+            .float-toggle {
+                width: 110px;
+                height: 110px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .float-wrap {
+                right: 18px;
+                bottom: 28px;
+            }
+
+            .float-toggle-title {
+                display: none;
+            }
+
+            .float-toggle {
+                width: 92px;
+                height: 92px;
+            }
+        }
+
+        /* Chat widget */
+        .chat-widget {
+            width: 360px;
+            max-width: calc(100vw - 40px);
+            height: 520px;
+            background: #f1f3f5;
+            border-radius: 18px;
+            box-shadow: 0 18px 40px rgba(11, 30, 60, 0.18);
+            position: absolute;
+            right: 0;
+            bottom: 86px;
+            display: flex;
+            flex-direction: column;
+            transform-origin: bottom right;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transform: translateY(16px) scale(0.94);
+            transition: opacity 220ms cubic-bezier(.2, .9, .3, 1), transform 220ms cubic-bezier(.2, .9, .3, 1), visibility 220ms linear;
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            overflow: visible;
+        }
+
+
+        .chat-widget.chat-widget--visible {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: translateY(0) scale(1);
+        }
+
+        /* header */
+        .chat-header {
+            background: #0868d6;
+            color: #fff;
+            padding: 18px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            position: relative;
+            /* for close btn overlap */
+            border-top-left-radius: 18px;
+            border-top-right-radius: 18px;
+        }
+
+        .chat-logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .chat-logo strong {
+            font-size: 20px;
+            letter-spacing: -0.02em;
+        }
+
+        .chat-logo .brand-strong {
+            color: #FFA600;
+        }
+
+        /* close button overlapping the top by 50% */
+        .chat-close {
+            position: absolute;
+            right: 22px;
+            top: -22px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: none;
+            background: #e9f2ff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 18px rgba(8, 40, 100, 0.14);
+            cursor: pointer;
+            padding: 6px;
+        }
+
+        .chat-close img {
+            width: 18px;
+            height: 18px;
+            display: block;
+        }
+
+        /* body */
+        .chat-body {
+            padding: 22px;
+            overflow: auto;
+            flex: 1;
+            background: #EFF1F4;
+        }
+
+        .chat-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 26px;
+        }
+
+        .chat-item {
+            display: flex;
+            align-items: flex-end;
+            gap: 12px;
+        }
+
+        .chat-item.other {
+            justify-content: flex-start;
+        }
+
+        .chat-item.me {
+            justify-content: flex-end;
+        }
+
+        .bubble {
+            display: inline-block;
+            padding: 12px 16px;
+            border-radius: 8px;
+            max-width: 72%;
+            box-shadow: 0 8px 20px rgba(12, 40, 90, 0.06);
+            background: #fff;
+            color: #0b2546;
+            font-size: 14px;
+            line-height: 1.35;
+        }
+
+        .chat-item.me .bubble {
+            background: #0868d6;
+            color: #fff;
+            box-shadow: 0 8px 20px rgba(8, 104, 214, 0.16);
+        }
+
+
+        /* footer - input bar with overlapping send button */
+
+        .chat-input-wrap {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-around;
+            gap: 12px;
+            padding: 5px;
+            background: #0868d6;
+            border-radius: 30px;
+            margin: 10px;
+        }
+
+        /* main input: large, fully blue, white text & placeholder */
+        .chat-input {
+            height: 45px;
+            width: 90%;
+            padding: 16px;
+            border: none;
+            color: #ffffff;
+            font-size: 16px;
+            line-height: 1;
+            box-shadow: inset 0 -3px 10px rgba(0, 0, 0, 0.06), 0 6px 18px rgba(8, 104, 214, 0.10);
+            outline: none;
+            border-top-left-radius: 30px;
+            border-bottom-left-radius: 30px;
+            background: #0868d6;
+        }
+
+        /* placeholder color */
+        .chat-input::placeholder {
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        /* send button: circular white button that overlaps the input (about 50% outside) */
+        .chat-send {
+            margin-right: 10px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 12px 30px rgba(8, 104, 214, 0.18);
+            cursor: pointer;
+            padding: 10px;
+        }
+
+        /* send icon: keep original colors (do not invert) */
+        .chat-send img {
+            margin-top: 4px;
+            width: 24px;
+            height: 24px;
+        }
+
+        /* focus state */
+        .chat-input:focus {
+            box-shadow: 0 6px 22px rgba(8, 104, 214, 0.12), inset 0 -2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        /* responsive tweaks */
+        @media (max-width:420px) {
+            .chat-input {
+                height: 56px;
+                padding: 12px 86px 12px 16px;
+                border-radius: 32px;
+                font-size: 15px;
+            }
+
+            .chat-send {
+                right: -22px;
+                width: 56px;
+                height: 56px;
+            }
+        }
+
+        /* responsive */
+        @media (max-width:420px) {
+            .float-wrap {
+                right: 12px;
+                bottom: 22px;
+            }
+
+            .float-toggle {
+                width: 78px;
+                height: 78px;
+            }
+
+            .chat-widget {
+                right: 10px;
+                bottom: 72px;
+                width: 92vw;
+                height: 70vh;
+            }
+
+            .chat-close {
+                right: -16px;
+                top: -16px;
+                width: 40px;
+                height: 40px;
+            }
+
+            .chat-send {
+                right: -22px;
+                width: 56px;
+                height: 56px;
+            }
+        }
+    </style>
+
+    <script>
+        // Search functionality
+        function handleSearch(event) {
+            event.preventDefault();
+            const searchInput = document.getElementById('hero-search');
+            const query = searchInput.value ? searchInput.value.trim().toLowerCase() : "";
+
+            if (!query) {
+                // If no query, scroll to services section
+                document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' });
+                return;
+            }
+
+            // Search functionality - can be enhanced later
+            // For now, scroll to services section
+            document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' });
+
+            // Highlight matching content (can be enhanced)
+            console.log('Searching for:', query);
+        }
+
+        // Intersection Observer for scroll animations
+        document.addEventListener('DOMContentLoaded', () => {
+            // Tutor Slider Logic (Moved to top to prevent failures from other scripts)
+            const tutorStack = document.getElementById('tutorStack');
+            if (tutorStack) {
+                const tutorCards = tutorStack.querySelectorAll('.tutor-stack-card');
+                const prevTutorBtn = document.getElementById('prevTutor');
+                const nextTutorBtn = document.getElementById('nextTutor');
+                const prevTutorMobileBtn = document.getElementById('prevTutorMobile');
+                const nextTutorMobileBtn = document.getElementById('nextTutorMobile');
+                let currentTutor = 0;
+                let autoRotateTimer = null;
+
+                function updateTutorSlider() {
+                    tutorCards.forEach((card, index) => {
+                        card.classList.remove('active', 'prev', 'next');
+                        if (index === currentTutor) {
+                            card.classList.add('active');
+                        } else if (index === (currentTutor - 1 + tutorCards.length) % tutorCards.length) {
+                            card.classList.add('prev');
+                        } else if (index === (currentTutor + 1) % tutorCards.length) {
+                            card.classList.add('next');
+                        }
+                    });
+                }
+
+                function startAutoRotate() {
+                    // Clear any existing timer
+                    if (autoRotateTimer) {
+                        clearInterval(autoRotateTimer);
+                    }
+                    // Start auto-rotation every 5 seconds
+                    autoRotateTimer = setInterval(() => {
+                        currentTutor = (currentTutor + 1) % tutorCards.length;
+                        updateTutorSlider();
+                    }, 5000);
+                }
+
+                function stopAutoRotate() {
+                    if (autoRotateTimer) {
+                        clearInterval(autoRotateTimer);
+                        autoRotateTimer = null;
+                    }
+                }
+
+                function navigateTutor(direction) {
+                    stopAutoRotate();
+                    if (direction === 'next') {
+                        currentTutor = (currentTutor + 1) % tutorCards.length;
+                    } else {
+                        currentTutor = (currentTutor - 1 + tutorCards.length) % tutorCards.length;
+                    }
+                    updateTutorSlider();
+                    // Restart auto-rotation after manual navigation
+                    startAutoRotate();
+                }
+
+                if (nextTutorBtn) {
+                    nextTutorBtn.addEventListener('click', () => navigateTutor('next'));
+                }
+                if (prevTutorBtn) {
+                    prevTutorBtn.addEventListener('click', () => navigateTutor('prev'));
+                }
+                if (nextTutorMobileBtn) {
+                    nextTutorMobileBtn.addEventListener('click', () => navigateTutor('next'));
+                }
+                if (prevTutorMobileBtn) {
+                    prevTutorMobileBtn.addEventListener('click', () => navigateTutor('prev'));
+                }
+
+                // Pause auto-rotation on hover
+                tutorStack.addEventListener('mouseenter', stopAutoRotate);
+                tutorStack.addEventListener('mouseleave', startAutoRotate);
+
+                // Initial call and start auto-rotation
+                updateTutorSlider();
+                startAutoRotate();
+            }
+
+            // Student Reviews Carousel Logic
+            const reviewSlider = document.getElementById('reviewSlider');
+            if (reviewSlider) {
+                const slides = reviewSlider.querySelectorAll('.review-slide');
+                const dotsContainer = document.getElementById('reviewDots');
+                const prevBtn = document.getElementById('prevReview');
+                const nextBtn = document.getElementById('nextReview');
+                let currentSlide = 0;
+                let autoScrollTimer;
+
+                // Create dots
+                slides.forEach((_, index) => {
+                    const dot = document.createElement('div');
+                    dot.classList.add('dot');
+                    if (index === 0) dot.classList.add('active');
+                    dot.addEventListener('click', () => goToSlide(index));
+                    dotsContainer.appendChild(dot);
+                });
+
+                const dots = dotsContainer.querySelectorAll('.dot');
+
+                function updateSlider() {
+                    slides.forEach((slide, index) => {
+                        slide.classList.toggle('active', index === currentSlide);
+                    });
+                    dots.forEach((dot, index) => {
+                        dot.classList.toggle('active', index === currentSlide);
+                    });
+                }
+
+                function nextSlide() {
+                    currentSlide = (currentSlide + 1) % slides.length;
+                    updateSlider();
+                }
+
+                function prevSlide() {
+                    currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+                    updateSlider();
+                }
+
+                function goToSlide(index) {
+                    currentSlide = index;
+                    updateSlider();
+                    resetTimer();
+                }
+
+                function resetTimer() {
+                    clearInterval(autoScrollTimer);
+                    autoScrollTimer = setInterval(nextSlide, 5000); // 5 seconds auto-scroll
+                }
+
+                if (nextBtn) {
+                    nextBtn.addEventListener('click', () => {
+                        nextSlide();
+                        resetTimer();
+                    });
+                }
+
+                if (prevBtn) {
+                    prevBtn.addEventListener('click', () => {
+                        prevSlide();
+                        resetTimer();
+                    });
+                }
+
+                // Initial timer
+                resetTimer();
+            }
+
+            const observerOptions = {
+                threshold: 0.15,
+                rootMargin: "0px 0px -50px 0px"
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    }
+                });
+            }, observerOptions);
+
+            const revealElements = document.querySelectorAll('.reveal, .stagger-reveal, .reveal-left, .reveal-right');
+            revealElements.forEach(el => observer.observe(el));
+        });
+
+        // Pre-Sign-In Chat Implementation
+        (function () {
+            const floatWrap = document.querySelector('.float-wrap');
+            if (!floatWrap) return;
+
+            const chatWidget = floatWrap.querySelector('.chat-widget');
+            const toggleButton = floatWrap.querySelector('.float-toggle');
+            const closeButton = floatWrap.querySelector('.chat-close');
+            const chatBody = chatWidget?.querySelector('.chat-body');
+            const chatList = chatWidget?.querySelector('.chat-list');
+            const chatInput = chatWidget?.querySelector('#chat-input');
+            const sendButton = chatWidget?.querySelector('.chat-send');
+
+            const OPEN_CLASS = 'chat-widget--visible';
+            let socket = null;
+            let sessionId = localStorage.getItem('pre_signin_session_id');
+            let visitorName = localStorage.getItem('pre_signin_visitor_name');
+            let isWaitingForInfo = false;
+
+            // Initial messages
+            const welcomeMsg = "Hi! I'm your Nano Problem assistant. To help you better, could you please share your full name and what you're looking for today?";
+
+            function addMessage(content, role = 'other', isSystem = false) {
+                if (!chatList) return;
+
+                // If it's a "live agent" system message, closing note, or connect prompt
+                const isAgentPrefix = content.includes("A live agent will assist you shortly.") || content.includes("Thanks for providing your name") || content.includes("Your chat has been closed");
+                const isBusyPrefix = content.includes("current all agents are bussy");
+                const isConnectPrompt = content.includes("please type Hi to start a new conversation");
+
+                const li = document.createElement('li');
+                // Handle role properly - 'csrep' should be treated as 'other' for display
+                const displayRole = (role === 'visitor' || role === 'me') ? 'me' : 'other';
+                li.className = `chat-item ${displayRole}`;
+                if (isSystem || isAgentPrefix || isBusyPrefix || isConnectPrompt) li.classList.add('system');
+
+                li.innerHTML = `<span class="bubble">${content}</span>`;
+                chatList.appendChild(li);
+
+                // Trigger reflow for animation
+                window.requestAnimationFrame(() => {
+                    if (chatBody) {
+                        chatBody.scrollTop = chatBody.scrollHeight;
+                    }
+                });
+            }
+
+            function initWebSocket(id = null) {
+                // Close existing socket if any
+                if (socket && socket.readyState !== WebSocket.CLOSED) {
+                    socket.close();
+                }
+
+                const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                const url = id ? `${protocol}//${window.location.host}/ws/presignin/${id}/` : `${protocol}//${window.location.host}/ws/presignin/`;
+
+                socket = new WebSocket(url);
+
+                socket.onopen = function() {
+                    console.log('WebSocket connected for session:', id || 'new');
+                };
+
+                socket.onerror = function(error) {
+                    console.error('WebSocket error:', error);
+                };
+
+                socket.onclose = function(event) {
+                    console.log('WebSocket closed:', event.code, event.reason);
+                    // Reconnect if session exists and not a normal closure
+                    if (sessionId && event.code !== 1000) {
+                        setTimeout(() => {
+                            if (sessionId) {
+                                console.log('Attempting to reconnect...');
+                                initWebSocket(sessionId);
+                            }
+                        }, 3000);
+                    }
+                };
+
+                socket.onmessage = function (e) {
+                    try {
+                        const data = JSON.parse(e.data);
+                        console.log('Received WebSocket message:', data);
+                        
+                        if (data.type === 'chat_message') {
+                            // Display CS-rep messages and system messages
+                            if (data.message && (data.message.sender_role === 'csrep' || data.message.is_system)) {
+                                addMessage(data.message.content, data.message.sender_role || 'other', data.message.is_system);
+                            }
+                            
+                            // Handle closed session
+                            if (data.message && data.message.is_closed) {
+                                sessionId = null;
+                                localStorage.removeItem('pre_signin_session_id');
+                                addMessage("If you need assistance again, please type 'Hi' to start a new conversation.", "other", true);
+                            }
+                        } else if (data.type === 'session_created') {
+                            sessionId = data.session_id;
+                            localStorage.setItem('pre_signin_session_id', sessionId);
+
+                            // Display system message if provided
+                            if (data.system_message) {
+                                addMessage(data.system_message.content, 'other', data.system_message.is_system);
+                            }
+
+                            if (localStorage.getItem('pre_signin_reinit') === 'true') {
+                                addMessage("Someone will contact you in a moment. Currently all agents are busy assisting others.", "other", true);
+                                localStorage.removeItem('pre_signin_reinit');
+                            }
+
+                            // Close initial connection and reconnect to session-specific endpoint
+                            // Use close code 1000 (normal closure) instead of letting it error
+                            if (socket.readyState === WebSocket.OPEN) {
+                                socket.close(1000, 'Reconnecting to session');
+                            }
+                            setTimeout(() => {
+                                initWebSocket(sessionId);
+                            }, 100);
+                        } else if (data.type === 'error') {
+                            // Handle server errors gracefully
+                            console.error('Server error:', data.message);
+                            addMessage(data.message || 'An error occurred. Please try again.', "other", true);
+                        }
+                    } catch (error) {
+                        console.error('Error parsing WebSocket message:', error, e.data);
+                    }
+                };
+            }
+
+            function handleSend() {
+                const content = chatInput.value.trim();
+                if (!content) return;
+
+                if (isWaitingForInfo) {
+                    // Initial info submission - use full content as visitor name
+                    visitorName = content.trim() || "Visitor";
+                    localStorage.setItem('pre_signin_visitor_name', visitorName);
+                    addMessage(content, 'visitor');
+                    chatInput.value = '';
+                    isWaitingForInfo = false;
+                    if (!socket || socket.readyState !== WebSocket.OPEN) initWebSocket();
+                    const sendNewSession = () => {
+                        if (socket && socket.readyState === WebSocket.OPEN) {
+                            socket.send(JSON.stringify({
+                                'type': 'new_session',
+                                'visitor_name': visitorName,
+                                'visitor_concern': content
+                            }));
+                        } else if (socket && socket.readyState === WebSocket.CONNECTING) {
+                            setTimeout(sendNewSession, 100);
+                        } else {
+                            initWebSocket();
+                            setTimeout(sendNewSession, 500);
+                        }
+                    };
+                    sendNewSession();
+                } else if (sessionId) {
+                    // Active session
+                    addMessage(content, 'visitor');
+                    chatInput.value = '';
+                    
+                    // Ensure websocket is connected
+                    if (!socket || socket.readyState === WebSocket.CLOSED || socket.readyState === WebSocket.CLOSING) {
+                        initWebSocket(sessionId);
+                        // Wait for connection before sending
+                        const sendMessage = () => {
+                            if (socket && socket.readyState === WebSocket.OPEN) {
+                                socket.send(JSON.stringify({
+                                    'type': 'chat_message',
+                                    'content': content,
+                                    'visitor_name': visitorName
+                                }));
+                            } else if (socket && socket.readyState === WebSocket.CONNECTING) {
+                                setTimeout(sendMessage, 100);
+                            } else {
+                                console.error('Failed to send message: WebSocket not connected');
+                            }
+                        };
+                        setTimeout(sendMessage, 100);
+                    } else if (socket.readyState === WebSocket.OPEN) {
+                        socket.send(JSON.stringify({
+                            'type': 'chat_message',
+                            'content': content,
+                            'visitor_name': visitorName
+                        }));
+                    } else if (socket.readyState === WebSocket.CONNECTING) {
+                        // Wait for connection
+                        const sendMessage = () => {
+                            if (socket && socket.readyState === WebSocket.OPEN) {
+                                socket.send(JSON.stringify({
+                                    'type': 'chat_message',
+                                    'content': content,
+                                    'visitor_name': visitorName
+                                }));
+                            } else if (socket && socket.readyState === WebSocket.CONNECTING) {
+                                setTimeout(sendMessage, 100);
+                            }
+                        };
+                        setTimeout(sendMessage, 100);
+                    }
+                } else if (visitorName && content.toLowerCase() === 'hi') {
+                    // Closed session re-engagement
+                    localStorage.setItem('pre_signin_reinit', 'true');
+                    addMessage(content, 'visitor');
+                    chatInput.value = '';
+                    initWebSocket();
+                    const sendNewSession = () => {
+                        if (socket.readyState === WebSocket.OPEN) {
+                            socket.send(JSON.stringify({
+                                'type': 'new_session',
+                                'visitor_name': visitorName,
+                                'visitor_concern': "Visitor re-connected"
+                            }));
+                        } else setTimeout(sendNewSession, 100);
+                    };
+                    sendNewSession();
+                } else if (!sessionId && visitorName) {
+                    // Prompt to type 'Hi' if they send something else
+                    addMessage("If you need assistance again, please type 'Hi' to start a new conversation.", "other", true);
+                    chatInput.value = '';
+                }
+            }
+
+            function setState(shouldOpen) {
+                const isCurrentlyOpen = floatWrap.dataset.chatOpen === 'true';
+                if (shouldOpen && isCurrentlyOpen) return;
+                if (!shouldOpen && !isCurrentlyOpen) return;
+
+                if (shouldOpen) {
+                    chatWidget.hidden = false;
+                    window.requestAnimationFrame(() => {
+                        floatWrap.dataset.chatOpen = 'true';
+                        chatWidget.classList.add(OPEN_CLASS);
+                        chatWidget.setAttribute('aria-hidden', 'false');
+                        toggleButton.setAttribute('aria-expanded', 'true');
+
+                        // If this is the first time, show welcome
+                        if (!sessionId && chatList.children.length === 0) {
+                            addMessage(welcomeMsg, 'other');
+                            isWaitingForInfo = true;
+                        } else if (sessionId) {
+                            // Resume session - reconnect if socket doesn't exist or is closed
+                            if (!socket || socket.readyState === WebSocket.CLOSED || socket.readyState === WebSocket.CLOSING) {
+                                initWebSocket(sessionId);
+                            }
+                            // Load history if needed (could fetch from API)
+                            fetch(`/pre-signin/api/sessions/${sessionId}/messages/`)
+                                .then(r => r.json())
+                                .then(data => {
+                                    if (data.messages && data.messages.length > 0) {
+                                        chatList.innerHTML = '';
+                                        data.messages.forEach(m => {
+                                            const role = m.sender_role === 'visitor' ? 'visitor' : 'other';
+                                            addMessage(m.content, role, m.is_system);
+                                        });
+                                    }
+                                })
+                                .catch(err => {
+                                    console.error('Error loading message history:', err);
+                                });
+                        }
+
+                        window.requestAnimationFrame(() => {
+                            chatInput?.focus();
+                        });
+                    });
+                    return;
+                }
+
+                chatWidget.classList.remove(OPEN_CLASS);
+                chatWidget.setAttribute('aria-hidden', 'true');
+                floatWrap.dataset.chatOpen = 'false';
+                toggleButton.setAttribute('aria-expanded', 'false');
+
+                const handleTransitionEnd = (event) => {
+                    if (event.target !== chatWidget) return;
+                    chatWidget.hidden = true;
+                };
+                chatWidget.addEventListener('transitionend', handleTransitionEnd, { once: true });
+            }
+
+            toggleButton.addEventListener('click', () => {
+                setState(floatWrap.dataset.chatOpen !== 'true');
+            });
+
+            closeButton?.addEventListener('click', () => setState(false));
+
+            sendButton?.addEventListener('click', handleSend);
+            chatInput?.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') handleSend();
+            });
+
+            // Initialise to closed state
+            floatWrap.dataset.chatOpen = 'false';
+            chatWidget.hidden = true;
+        }());
+
+        // FAQ Accordion Functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            const faqItems = document.querySelectorAll('.faq-item');
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question');
+                question.addEventListener('click', () => {
+                    const isActive = item.classList.contains('active');
+
+                    // Close all other FAQ items
+                    faqItems.forEach(otherItem => {
+                        if (otherItem !== item) {
+                            otherItem.classList.remove('active');
+                            otherItem.querySelector('.faq-toggle').textContent = '+';
+                        }
+                    });
+
+                    // Toggle current item
+                    item.classList.toggle('active');
+                    const toggle = item.querySelector('.faq-toggle');
+                    toggle.textContent = item.classList.contains('active') ? '-' : '+';
+                });
+            });
+        });
+    </script>
+
+</body>
+
+</html>

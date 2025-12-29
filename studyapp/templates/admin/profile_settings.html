@@ -1,0 +1,271 @@
+{% extends "admin/admin_base.html" %}
+
+{% block content %}
+{% csrf_token %}
+            <section class="content-section" id="settingsSection" aria-labelledby="settingsHeading">
+                <h1 class="section-title" id="settingsHeading">Settings</h1>
+                <p class="section-subtitle">Manage your notification preferences, reminders, and other system settings.
+                </p>
+
+                <!-- Settings Form Container -->
+                <div class="settings-form-container">
+                    <!-- Notification Settings -->
+                    <div class="settings-section-card">
+                        <h3 class="settings-section-title">
+                            <i class="fas fa-bell"></i>
+                            Notification Settings
+                        </h3>
+                        <div class="settings-options">
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <div class="setting-label">Email Notifications</div>
+                                    <div class="setting-description">Receive email notifications for important events
+                                    </div>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="emailNotifications" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <div class="setting-label">Push Notifications</div>
+                                    <div class="setting-description">Receive browser push notifications</div>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="pushNotifications" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <div class="setting-label">New Assignment Requests</div>
+                                    <div class="setting-description">Get notified when new assignment requests are
+                                        submitted</div>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="assignmentNotifications" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <div class="setting-label">Invoice Requests</div>
+                                    <div class="setting-description">Get notified when CS reps submit invoice requests
+                                    </div>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="invoiceNotifications" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <div class="setting-label">Content Review Alerts</div>
+                                    <div class="setting-description">Get notified when content needs review</div>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="contentReviewNotifications" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <div class="setting-label">System Alerts</div>
+                                    <div class="setting-description">Receive notifications for system maintenance and
+                                        alerts</div>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="systemNotifications" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reminder Settings -->
+                    <div class="settings-section-card">
+                        <h3 class="settings-section-title">
+                            <i class="fas fa-clock"></i>
+                            Reminder Settings
+                        </h3>
+                        <div class="settings-options">
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <div class="setting-label">Assignment Deadline Reminders</div>
+                                    <div class="setting-description">Get reminders before assignment deadlines</div>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="deadlineReminders" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <div class="setting-label">Reminder Frequency</div>
+                                    <div class="setting-description">How often to receive reminders</div>
+                                </div>
+                                <select class="form-select" id="reminderFrequency">
+                                    <option value="daily">Daily</option>
+                                    <option value="weekly" selected>Weekly</option>
+                                    <option value="monthly">Monthly</option>
+                                </select>
+                            </div>
+
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <div class="setting-label">Reminder Time</div>
+                                    <div class="setting-description">Preferred time to receive reminders</div>
+                                </div>
+                                <input type="time" class="form-input" id="reminderTime" value="09:00">
+                            </div>
+
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <div class="setting-label">Invoice Payment Reminders</div>
+                                    <div class="setting-description">Get reminders for overdue invoices</div>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="paymentReminders" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="resetAdminSettings()">Reset to Default</button>
+                        <button type="button" class="btn-primary" onclick="saveAdminSettings()">Save Settings</button>
+                    </div>
+                </div>
+            </section>
+
+            <script>
+                // Admin Settings JavaScript
+                let adminSettings = {};
+
+                // Load settings on page load
+                document.addEventListener('DOMContentLoaded', function() {
+                    loadAdminSettings();
+                });
+
+                async function loadAdminSettings() {
+                    try {
+                        const response = await fetch('/account/api/accounts/settings/', {
+                            method: 'GET',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value
+                            }
+                        });
+
+                        if (response.ok) {
+                            const data = await response.json();
+                            if (data.success) {
+                                adminSettings = data.settings;
+                                // Update UI with loaded settings
+                                updateAdminUI();
+                            }
+                        } else {
+                            console.error('Failed to load settings');
+                        }
+                    } catch (error) {
+                        console.error('Error loading settings:', error);
+                    }
+                }
+
+                function updateAdminUI() {
+                    // Notification settings
+                    document.getElementById('emailNotifications').checked = adminSettings.email_notifications || false;
+                    document.getElementById('pushNotifications').checked = adminSettings.push_notifications || false;
+                    document.getElementById('assignmentNotifications').checked = adminSettings.assignment_requests || false;
+                    document.getElementById('invoiceNotifications').checked = adminSettings.invoice_notifications || false;
+                    document.getElementById('contentReviewNotifications').checked = adminSettings.content_review_alerts || false;
+                    document.getElementById('systemNotifications').checked = adminSettings.system_alerts || false;
+
+                    // Reminder settings
+                    document.getElementById('deadlineReminders').checked = adminSettings.assignment_due_reminders || false;
+                    document.getElementById('reminderFrequency').value = adminSettings.reminder_frequency || 'weekly';
+                    document.getElementById('reminderTime').value = adminSettings.reminder_time || '09:00';
+                    document.getElementById('paymentReminders').checked = adminSettings.payment_reminders || false;
+                }
+
+                async function saveAdminSettings() {
+                    const settings = {
+                        // Notifications
+                        email_notifications: document.getElementById('emailNotifications').checked,
+                        push_notifications: document.getElementById('pushNotifications').checked,
+                        assignment_requests: document.getElementById('assignmentNotifications').checked,
+                        invoice_notifications: document.getElementById('invoiceNotifications').checked,
+                        content_review_alerts: document.getElementById('contentReviewNotifications').checked,
+                        system_alerts: document.getElementById('systemNotifications').checked,
+
+                        // Reminders
+                        assignment_due_reminders: document.getElementById('deadlineReminders').checked,
+                        meeting_reminders_enabled: document.getElementById('deadlineReminders').checked, // Reuse
+                        reminder_frequency: document.getElementById('reminderFrequency').value,
+                        reminder_time: document.getElementById('reminderTime').value,
+                        payment_reminders: document.getElementById('paymentReminders').checked,
+                    };
+
+                    try {
+                        const response = await fetch('/account/api/accounts/settings/', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value
+                            },
+                            body: JSON.stringify(settings)
+                        });
+
+                        const data = await response.json();
+
+                        if (data.success) {
+                            // Show success message
+                            if (typeof showToast === 'function') {
+                                showToast('Settings saved successfully!', 'success');
+                            } else {
+                                alert('Settings saved successfully!');
+                            }
+                        } else {
+                            throw new Error(data.error || 'Failed to save settings');
+                        }
+                    } catch (error) {
+                        console.error('Error saving settings:', error);
+                        if (typeof showToast === 'function') {
+                            showToast('Failed to save settings: ' + error.message, 'error');
+                        } else {
+                            alert('Failed to save settings: ' + error.message);
+                        }
+                    }
+                }
+
+                function resetAdminSettings() {
+                    if (confirm('Are you sure you want to reset settings to default?')) {
+                        // Reset to defaults
+                        document.getElementById('emailNotifications').checked = true;
+                        document.getElementById('pushNotifications').checked = true;
+                        document.getElementById('assignmentNotifications').checked = true;
+                        document.getElementById('invoiceNotifications').checked = true;
+                        document.getElementById('contentReviewNotifications').checked = true;
+                        document.getElementById('systemNotifications').checked = true;
+                        document.getElementById('deadlineReminders').checked = true;
+                        document.getElementById('reminderFrequency').value = 'weekly';
+                        document.getElementById('reminderTime').value = '09:00';
+                        document.getElementById('paymentReminders').checked = true;
+                        saveAdminSettings();
+                    }
+                }
+
+                // Make functions globally available
+                window.saveAdminSettings = saveAdminSettings;
+                window.resetAdminSettings = resetAdminSettings;
+            </script>
+{% endblock %}

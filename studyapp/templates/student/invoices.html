@@ -1,0 +1,139 @@
+{% extends "student/student_base.html" %}
+
+{% block content %}
+<section class="content-section" id="invoicesSection" aria-labelledby="invoicesHeading">
+    <div class="section-header-modern">
+        <div class="header-left">
+            <h1 class="section-title" id="invoicesHeading">My Invoices</h1>
+            <p class="section-subtitle">Manage payments and view history for your assignments.</p>
+        </div>
+    </div>
+
+    <!-- Summary Stats -->
+    <div class="invoice-stats-grid">
+        <div class="stat-card primary">
+            <div class="stat-icon">
+                <i class="fas fa-file-invoice-dollar"></i>
+            </div>
+            <div class="stat-details">
+                <span class="stat-label">Pending</span>
+                <h3 class="stat-value" id="pendingInvoicesCount">0</h3>
+            </div>
+        </div>
+        <div class="stat-card success">
+            <div class="stat-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-details">
+                <span class="stat-label">Paid</span>
+                <h3 class="stat-value" id="paidInvoicesCount">0</h3>
+            </div>
+        </div>
+        <div class="stat-card warning">
+            <div class="stat-icon">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-details">
+                <span class="stat-label">In Review</span>
+                <h3 class="stat-value" id="reviewInvoicesCount">0</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- Invoices Table -->
+    <div class="table-card-modern">
+        <div class="table-wrapper">
+            <table class="modern-table" id="invoicesTable">
+                <thead>
+                    <tr>
+                        <th>Invoice #</th>
+                        <th>Assignment</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th class="text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="invoicesTableBody">
+                    <!-- Populated dynamically -->
+                </tbody>
+            </table>
+            <div id="invoicesEmptyState" class="empty-state-modern" style="display: none;">
+                <div class="empty-state-icon">
+                    <i class="fas fa-receipt"></i>
+                </div>
+                <h3>No invoices found</h3>
+                <p>You don't have any invoices at the moment.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirm Payment Modal -->
+    <div class="modal-overlay" id="confirmPaymentModal" style="display: none;">
+        <div class="modal-card mini-modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Confirm Payment</h2>
+                <button class="modal-close" onclick="closeConfirmPaymentModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="confirmPaymentForm" onsubmit="submitPaymentConfirmation(event)">
+                    <input type="hidden" id="confirmPaymentInvoiceId" value="">
+                    <div class="upload-zone" id="uploadZone">
+                        <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                        <p>Upload payment screenshot</p>
+                        <input type="file" id="paymentScreenshot" class="file-input-hidden" accept="image/*" required
+                            onchange="handleFileSelect(this)">
+                        <label for="paymentScreenshot" class="btn-outline-primary">Choose File</label>
+                        <span id="fileNameDisplay" class="file-name-hint">Supported: JPG, PNG, WEBP</span>
+                    </div>
+
+                    <div class="form-actions-modern">
+                        <button type="button" class="btn-ghost" onclick="closeConfirmPaymentModal()">Cancel</button>
+                        <button type="submit" class="btn-primary">Submit Proof</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Invoice Details Modal (Student) -->
+    <div class="modal-overlay" id="studentInvoiceDetailsModal" style="display: none;">
+        <div class="modal-card detail-modal">
+            <div class="modal-header-modern">
+                <div class="header-content">
+                    <span class="invoice-badge" id="modalInvoiceBadge">Invoice</span>
+                    <h2 class="modal-title" id="modalInvoiceNumberText">#INV-0000</h2>
+                </div>
+                <button class="modal-close-circle" onclick="closeStudentInvoiceDetailsModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="studentInvoiceDetailsContent" class="invoice-detail-grid">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+            <div class="modal-footer-modern">
+                <button class="btn-secondary-modern" onclick="closeStudentInvoiceDetailsModal()">Close</button>
+                <button class="btn-primary-modern" id="studentConfirmBtn" style="display: none;">
+                    <i class="fas fa-check"></i> Confirm Payment
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<script>
+    function handleFileSelect(input) {
+        const display = document.getElementById('fileNameDisplay');
+        if (input.files && input.files[0]) {
+            display.textContent = `Selected: ${input.files[0].name}`;
+            display.style.color = 'var(--primary)';
+            display.style.fontWeight = '600';
+        }
+    }
+</script>
+{% endblock %}

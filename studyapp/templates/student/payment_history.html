@@ -1,0 +1,35 @@
+{% extends "student/student_base.html" %}
+
+{% block content %}
+<section class="content-section" id="paymentHistorySection" aria-labelledby="paymentsHeading">
+    <h1 class="section-title" id="paymentsHeading">Payment History</h1>
+    <p class="section-subtitle">View your completed payment transactions.</p>
+    <div class="table-wrapper">
+        <table id="paymentHistoryTable">
+            <thead>
+                <tr>
+                    <th>Invoice #</th>
+                    <th>Assignment</th>
+                    <th>Amount Paid</th>
+                    <th>Payment Date</th>
+                    <th>Payment Method</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="paymentHistoryTableBody">
+                <tr>
+                    <td><code>INV-2025-002</code></td>
+                    <td>Literature Essay - The Great Gatsby</td>
+                    <td>$150.00</td>
+                    <td>Jan 20, 2025</td>
+                    <td>Credit Card</td>
+                    <td><span class="status-badge completed">Completed</span></td>
+                </tr>
+            </tbody>
+        </table>
+        <div id="paymentHistoryEmptyState" class="empty-state" style="display: none;">
+            <p>No payment history yet</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

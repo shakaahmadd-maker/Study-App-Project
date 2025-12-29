@@ -1,0 +1,234 @@
+{% extends "admin/admin_base.html" %}
+
+{% block content %}
+<section class="content-section" id="invoice-managementSection" aria-labelledby="invoiceManagementHeading" style="display: none;">
+    <div class="section-header-modern">
+        <div class="header-left">
+            <h1 class="section-title" id="invoiceManagementHeading">Invoice Management</h1>
+            <p class="section-subtitle">Review CS-Rep requests, track student payments, and manage invoices.</p>
+        </div>
+        <div class="header-actions">
+            <button class="btn-primary-modern" onclick="openCreateInvoiceModal()">
+                <i class="fas fa-plus"></i> Create Direct Invoice
+            </button>
+        </div>
+    </div>
+
+    <!-- Admin Stats Grid -->
+    <div class="invoice-stats-grid">
+        <div class="stat-card warning">
+            <div class="stat-icon">
+                <i class="fas fa-user-clock"></i>
+            </div>
+            <div class="stat-details">
+                <span class="stat-label">CS-Rep Requests</span>
+                <h3 class="stat-value" id="adminPendingRequestsCount">0</h3>
+            </div>
+        </div>
+        <div class="stat-card primary">
+            <div class="stat-icon">
+                <i class="fas fa-hourglass-half"></i>
+            </div>
+            <div class="stat-details">
+                <span class="stat-label">Awaiting Proof</span>
+                <h3 class="stat-value" id="adminPendingPaymentCount">0</h3>
+            </div>
+        </div>
+        <div class="stat-card success">
+            <div class="stat-icon">
+                <i class="fas fa-file-signature"></i>
+            </div>
+            <div class="stat-details">
+                <span class="stat-label">Payment Review</span>
+                <h3 class="stat-value" id="adminPaymentReviewCount">0</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 1: CS-Rep Requests -->
+    <div class="table-card-modern" style="margin-bottom: 3rem;">
+        <div class="table-header-inline">
+            <div class="header-with-badge">
+                <h2 class="table-title">Requests from CS Reps</h2>
+                <span class="table-badge warning">Action Required</span>
+            </div>
+            <div class="header-filters">
+                <select class="minimal-select" id="invoiceRequestFilter" onchange="filterInvoiceRequests()">
+                    <option value="all">All Requests</option>
+                    <option value="request_pending">Pending Only</option>
+                </select>
+            </div>
+        </div>
+        <div class="table-wrapper">
+            <table class="modern-table">
+                <thead>
+                    <tr>
+                        <th>Student / CS-Rep</th>
+                        <th>Assignment</th>
+                        <th>Amount</th>
+                        <th>Discount</th>
+                        <th>Payable</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="invoiceRequestsTableBody">
+                    <!-- Populated dynamically -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Section 2: Invoice Status Overview -->
+    <div class="table-card-modern">
+        <div class="table-header-inline">
+            <h2 class="table-title">Invoices Status Overview</h2>
+            <div class="header-filters">
+                <select class="minimal-select" id="invoiceStatusFilter" onchange="filterInvoiceStatus()">
+                    <option value="all">All Statuses</option>
+                    <option value="pending_payment">Pending Payment</option>
+                    <option value="payment_review">Payment Review</option>
+                    <option value="paid">Paid</option>
+                    <option value="cancelled">Cancelled</option>
+                </select>
+            </div>
+        </div>
+        <div class="table-wrapper">
+            <table class="modern-table">
+                <thead>
+                    <tr>
+                        <th>Invoice #</th>
+                        <th>Student</th>
+                        <th>Total</th>
+                        <th>Payment Link</th>
+                        <th>Status</th>
+                        <th class="text-center">Payment Proof</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="invoiceStatusTableBody">
+                    <!-- Populated dynamically -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Invoice Details Modal -->
+    <div class="modal-overlay" id="invoiceDetailsModal" style="display: none;">
+        <div class="modal-card large-modal">
+            <div class="modal-header-modern">
+                <div class="header-content">
+                    <span class="invoice-badge" id="modalInvoiceBadge">Invoice</span>
+                    <h2 class="modal-title" id="modalInvoiceId">#INV-0000</h2>
+                </div>
+                <button class="modal-close-circle" onclick="closeInvoiceDetailsModal(event)">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="modalInvoiceIdValue" value="">
+                
+                <div class="admin-detail-grid">
+                    <!-- Top Info Bar -->
+                    <div class="info-bar">
+                        <div class="info-bar-item">
+                            <span class="label">Status</span>
+                            <span class="value" id="modalInvoiceStatus">-</span>
+                        </div>
+                        <div class="info-bar-item">
+                            <span class="label">Created</span>
+                            <span class="value" id="modalInvoiceCreated">-</span>
+                        </div>
+                        <div class="info-bar-item">
+                            <span class="label">Due Date</span>
+                            <span class="value" id="modalInvoiceDueDate">-</span>
+                        </div>
+                    </div>
+
+                    <div class="detail-columns">
+                        <!-- Left Column: Entities -->
+                        <div class="detail-col">
+                            <div class="detail-group">
+                                <h4 class="group-title"><i class="fas fa-user-graduate"></i> Student Info</h4>
+                                <div class="entity-card">
+                                    <div class="entity-name" id="modalInvoiceStudentName">-</div>
+                                    <div class="entity-email" id="modalInvoiceStudentEmail">-</div>
+                                    <div class="entity-id">ID: <span id="modalInvoiceStudentId">-</span></div>
+                                </div>
+                            </div>
+
+                            <div class="detail-group" id="modalInvoiceCSRepSection" style="display: none;">
+                                <h4 class="group-title"><i class="fas fa-headset"></i> CS-Rep Info</h4>
+                                <div class="entity-card secondary">
+                                    <div class="entity-name" id="modalInvoiceCSRepName">-</div>
+                                    <div class="entity-email" id="modalInvoiceCSRepEmail">-</div>
+                                </div>
+                            </div>
+
+                            <div class="detail-group">
+                                <h4 class="group-title"><i class="fas fa-book"></i> Assignment</h4>
+                                <div class="entity-card info">
+                                    <div class="entity-name" id="modalInvoiceAssignmentTitle">-</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column: Financials & Links -->
+                        <div class="detail-col">
+                            <div class="detail-group financials">
+                                <h4 class="group-title"><i class="fas fa-money-bill-wave"></i> Payment Details</h4>
+                                <div class="financial-row">
+                                    <span>Charge Amount</span>
+                                    <span id="modalInvoiceAmount">-</span>
+                                </div>
+                                <div class="financial-row">
+                                    <span>Discount</span>
+                                    <span id="modalInvoiceDiscount" style="color: #ef4444;">-</span>
+                                </div>
+                                <div class="financial-row total">
+                                    <span>Total Payable</span>
+                                    <span id="modalInvoiceTotalAmount" class="amount-highlight">-</span>
+                                </div>
+                            </div>
+
+                            <div class="detail-group" id="modalInvoiceLinkSection" style="display: none;">
+                                <h4 class="group-title"><i class="fas fa-link"></i> Payment Link</h4>
+                                <div class="link-box">
+                                    <a href="#" id="modalInvoiceLink" target="_blank" class="truncate-link">-</a>
+                                </div>
+                            </div>
+
+                            <div class="detail-group" id="modalInvoiceNotesSection" style="display: none;">
+                                <h4 class="group-title"><i class="fas fa-sticky-note"></i> Admin Notes</h4>
+                                <div class="notes-box" id="modalInvoiceNotes">-</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Proof (Full Width) -->
+                    <div class="detail-group" id="modalInvoiceScreenshotSection" style="display: none;">
+                        <h4 class="group-title"><i class="fas fa-camera"></i> Student Payment Proof</h4>
+                        <div class="proof-container">
+                            <img src="" id="modalInvoiceScreenshot" class="proof-img">
+                            <div class="proof-actions">
+                                <a href="#" id="modalInvoiceScreenshotDownload" class="btn-primary-modern small" download>
+                                    <i class="fas fa-download"></i> Download Proof
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer-modern">
+                <button type="button" class="btn-ghost" onclick="closeInvoiceDetailsModal(event)">Cancel</button>
+                <button type="button" class="btn-primary-modern" onclick="markAsPaidFromModal()" id="modalMarkPaidBtn" style="display: none;">
+                    <i class="fas fa-check-circle"></i> Verify & Mark as Paid
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+
+</style>
+{% endblock %}

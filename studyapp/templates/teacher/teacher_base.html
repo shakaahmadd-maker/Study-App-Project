@@ -1,0 +1,845 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="">
+    <title>Teacher Dashboard</title>
+    <script>
+        // Function to extract and set CSRF token in meta tag
+        function setCsrfTokenInMeta() {
+            // Try to get from hidden input first (most reliable)
+            let token = null;
+            const csrfInputs = document.querySelectorAll('input[name="csrfmiddlewaretoken"]');
+            for (let input of csrfInputs) {
+                if (input.value) {
+                    token = input.value;
+                    break;
+                }
+            }
+            
+            // Set in meta tag if found
+            if (token) {
+                const metaTag = document.querySelector('meta[name="csrf-token"]');
+                if (metaTag) {
+                    metaTag.setAttribute('content', token);
+                }
+                // Also store globally for easy access
+                window.csrfToken = token;
+            }
+        }
+        
+        // Run multiple times to ensure we catch it
+        // Run immediately (in case DOM is already ready)
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', setCsrfTokenInMeta);
+        } else {
+            setCsrfTokenInMeta();
+        }
+        // Also run after a short delay to catch dynamically loaded content
+        setTimeout(setCsrfTokenInMeta, 100);
+        setTimeout(setCsrfTokenInMeta, 500);
+    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="{% static 'css/teacher_dash.css' %}" rel="stylesheet">
+    <link href="{% static 'css/Admin_Dash1.css' %}" rel="stylesheet">
+</head>
+
+<body>
+    <header class="top-header">
+        <div class="header-actions header-actions-left">
+            <button class="icon-button" id="sidebarToggle" title="Toggle menu" aria-label="Toggle menu">
+                <i class="fas fa-bars"></i>
+            </button>
+            <button class="dark-mode-toggle" id="themeToggle" title="Toggle theme" aria-label="Toggle theme">
+                <i class="fas fa-moon"></i>
+            </button>
+            <button class="icon-button" id="teacherNotificationsNavButton" data-open-section="notifications"
+                title="Notifications" aria-label="Notifications">
+                <i class="fas fa-bell"></i>
+                <span class="header-notification-badge" id="teacherNotificationsUnreadBadge"
+                    aria-label="Unread notifications" style="display: inline-flex;">0</span>
+            </button>
+        </div>
+        <div class="header-actions header-actions-right">
+            <div class="user-profile-menu" role="button" tabindex="0">
+                <div class="user-profile-avatar"
+                    style="position: relative; width: 40px; height: 40px; border-radius: 50%; overflow: hidden; background-color: #f3f4f6; display: flex; align-items: center; justify-content: center;">
+                    {% if profile_picture_url %}
+                    <img id="headerProfilePicture" src="{{ profile_picture_url }}" alt="Teacher"
+                        style="width: 100%; height: 100%; object-fit: cover; display: block;" />
+                    {% else %}
+                    <img id="headerProfilePicture" src="" alt="Teacher"
+                        style="width: 100%; height: 100%; object-fit: cover; display: none;" />
+                    <i class="fas fa-user" id="headerProfileIcon" style="font-size: 20px; color: #9ca3af;"></i>
+                    {% endif %}
+                </div>
+                <div class="user-profile-info">
+                    <span class="user-profile-name" id="headerUserName">{{ first_name }}{% if title %} {{ title }}{% endif %}</span>
+                    <!-- do not disturb this as this is will make chantges int provides -->
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="user-dropdown" role="menu">
+                    <a class="dropdown-item" href="#" data-open-section="profile">Profile Management</a>
+                    <a class="dropdown-item" href="#" data-open-section="settings">Settings</a>
+                    <form action="{% url 'account:logout' %}" method="POST" id="logoutForm" style="display: none;">
+                        {% csrf_token %}
+                    </form>
+                    <a class="dropdown-item logout-link" href="#"
+                        onclick="event.preventDefault(); if(confirm('Are you sure you want to logout?')) document.getElementById('logoutForm').submit();">
+                        <i class="fas fa-right-from-bracket"></i> Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="layout">
+        <aside class="sidebar">
+            <nav class="nav-menu" aria-label="Primary">
+                <ul class="nav-list">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#" data-section="dashboard">
+                            <i class="fas fa-home"></i><span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="my_assignments">
+                            <i class="fas fa-book-open"></i><span>My Assignments</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="student_management">
+                            <i class="fas fa-users"></i><span>Student Management</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="messages">
+                            <i class="fas fa-envelope"></i>
+                            <span>Messages</span>
+                            <span class="notification-dot" data-badge-dot="messages" style="display:none;"></span>
+                            <span class="nav-badge" data-badge-key="messages" style="display:none;">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="threads">
+                            <i class="fas fa-layer-group"></i>
+                            <span>Threads</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="meetings">
+                            <i class="fas fa-video"></i><span>Meetings</span>
+                            <span class="notification-dot" data-badge-dot="meetings" style="display:none;"></span>
+                            <span class="nav-badge" data-badge-key="meetings" style="display:none;">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="notifications">
+                            <i class="fas fa-bell"></i><span>Notifications</span>
+                            <span class="notification-dot" data-badge-dot="notifications" style="display:none;"></span>
+                            <span class="nav-badge" data-badge-key="notifications" style="display:none;">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="online_exam">
+                            <i class="fas fa-clipboard-check"></i><span>Online Exams</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="homework">
+                            <i class="fas fa-book"></i><span>Homework</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="announcements">
+                            <i class="fas fa-bullhorn"></i><span>Announcements</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="feedback">
+                            <i class="fas fa-comments"></i><span>Feedback from Admin</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main">
+            <!-- Dynamic Content Container -->
+            <div id="dynamicContentContainer" class="main-content">
+                {% block content %}
+                {% endblock %}
+                <!-- Toast Notification -->
+                <div class="toast-container" id="toastContainer"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Feedback Modal -->
+    <div class="modal-overlay" id="feedbackModal" style="display: none;">
+        <div class="modal-content modern-modal feedback-modal-content">
+            <div class="modern-modal-header">
+                <div>
+                    <h2 class="modern-modal-title">Submit Feedback</h2>
+                    <p class="modern-modal-subtitle" id="feedbackStudentInfo">Student information will appear here</p>
+                </div>
+                <button class="modern-close-btn" onclick="closeFeedbackModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modern-modal-body">
+                <form id="feedbackForm" class="modern-form">
+                    <input type="hidden" id="feedbackStudentId" name="student_id">
+
+                    <div class="modern-form-group">
+                        <label for="feedbackSubject" class="modern-label">Subject <span
+                                class="required">*</span></label>
+                        <input type="text" id="feedbackSubject" name="subject" class="modern-input"
+                            placeholder="Brief subject line" required>
+                    </div>
+
+                    <div class="modern-form-row">
+                        <div class="modern-form-group">
+                            <label for="feedbackType" class="modern-label">Type <span class="required">*</span></label>
+                            <select id="feedbackType" name="feedback_type" class="modern-select" required>
+                                <option value="">Choose type</option>
+                                <option value="positive">Positive</option>
+                                <option value="improvement">Areas for Improvement</option>
+                                <option value="concern">Concern</option>
+                                <option value="general">General</option>
+                            </select>
+                        </div>
+                        <div class="modern-form-group">
+                            <label for="feedbackPriority" class="modern-label">Priority <span
+                                    class="required">*</span></label>
+                            <select id="feedbackPriority" name="priority" class="modern-select" required>
+                                <option value="low">Low</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="high">High</option>
+                                <option value="urgent">Urgent</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="modern-form-group">
+                        <label for="feedbackMessage" class="modern-label">Feedback Message <span
+                                class="required">*</span></label>
+                        <textarea id="feedbackMessage" name="message" class="modern-textarea"
+                            placeholder="Provide detailed feedback about the student..." rows="6" required></textarea>
+                    </div>
+
+                    <div class="modern-form-actions">
+                        <button type="button" class="modern-btn-secondary"
+                            onclick="closeFeedbackModal()">Cancel</button>
+                        <button type="submit" class="modern-btn-primary">
+                            <i class="fas fa-paper-plane"></i>
+                            Submit Feedback
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Report Modal -->
+    <div class="modal-overlay" id="reportModal" style="display: none;">
+        <div class="modal-content modern-modal report-modal-content">
+            <div class="modern-modal-header">
+                <div>
+                    <h2 class="modern-modal-title">Submit Report</h2>
+                    <p class="modern-modal-subtitle" id="reportStudentInfo">Student information will appear here</p>
+                </div>
+                <button class="modern-close-btn" onclick="closeReportModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modern-modal-body">
+                <form id="reportForm" class="modern-form">
+                    <input type="hidden" id="reportStudentId" name="student_id">
+
+                    <div class="modern-form-group">
+                        <label for="reportTitle" class="modern-label">Report Title <span
+                                class="required">*</span></label>
+                        <input type="text" id="reportTitle" name="title" class="modern-input"
+                            placeholder="Enter report title" required>
+                    </div>
+
+                    <div class="modern-form-row">
+                        <div class="modern-form-group">
+                            <label for="reportType" class="modern-label">Report Type <span
+                                    class="required">*</span></label>
+                            <select id="reportType" name="report_type" class="modern-select" required>
+                                <option value="">Choose type</option>
+                                <option value="academic">Academic Performance</option>
+                                <option value="behavior">Behavioral Issue</option>
+                                <option value="attendance">Attendance</option>
+                                <option value="progress">Progress Report</option>
+                                <option value="incident">Incident Report</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="modern-form-group">
+                            <label for="reportSeverity" class="modern-label">Severity <span
+                                    class="required">*</span></label>
+                            <select id="reportSeverity" name="severity" class="modern-select" required>
+                                <option value="low">Low</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="high">High</option>
+                                <option value="critical">Critical</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="modern-form-group">
+                        <label for="reportDate" class="modern-label">Incident/Report Date <span
+                                class="required">*</span></label>
+                        <input type="date" id="reportDate" name="report_date" class="modern-input" required>
+                    </div>
+
+                    <div class="modern-form-group">
+                        <label for="reportDescription" class="modern-label">Description <span
+                                class="required">*</span></label>
+                        <textarea id="reportDescription" name="description" class="modern-textarea"
+                            placeholder="Provide detailed information about the report..." rows="6" required></textarea>
+                    </div>
+
+                    <div class="modern-form-actions">
+                        <button type="button" class="modern-btn-secondary" onclick="closeReportModal()">Cancel</button>
+                        <button type="submit" class="modern-btn-primary">
+                            <i class="fas fa-paper-plane"></i>
+                            Submit Report
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Student Assignments Modal -->
+    <div class="modal-overlay" id="studentAssignmentsModal" style="display: none;">
+        <div class="modal-content assignments-modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="studentAssignmentsModalTitle">Student Assignments</h2>
+                <button class="modal-close-btn" onclick="closeStudentAssignmentsModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="assignments-table-container">
+                    <table class="assignments-table">
+                        <thead>
+                            <tr>
+                                <th>ASSIGNMENT ID</th>
+                                <th>TITLE</th>
+                                <th>SERVICE TYPE</th>
+                                <th>ACTIONS</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentAssignmentsTableBody">
+                            <!-- Assignments will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Todo Modal -->
+    <div class="modal-overlay" id="todoModal" style="display: none;"
+        onclick="if(event.target===this && typeof closeTodoModal==='function') closeTodoModal();">
+        <div class="modal-content modern-modal todo-modal-content">
+            <div class="modern-modal-header">
+                <div class="modal-header-content">
+                    <div class="modal-icon-wrapper">
+                        <i class="fas fa-tasks"></i>
+                    </div>
+                    <div>
+                        <h2 class="modern-modal-title" id="todoModalTitle">Add New Todo</h2>
+                        <p class="modern-modal-subtitle" id="todoModalSubtitle">Create a new task to stay organized</p>
+                    </div>
+                </div>
+                <button class="modern-close-btn" onclick="if(typeof closeTodoModal==='function') closeTodoModal();"
+                    aria-label="Close modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modern-modal-body">
+                <form id="todoForm" class="modern-form todo-form">
+                    <input type="hidden" id="todoId" name="todo_id">
+
+                    <!-- Title Field -->
+                    <div class="modern-form-group">
+                        <label for="todoTitle" class="modern-label">
+                            <i class="fas fa-heading"></i>
+                            Title <span class="required">*</span>
+                        </label>
+                        <input type="text" id="todoTitle" name="title" class="modern-input"
+                            placeholder="e.g., Review student essays" required autocomplete="off">
+                        <small class="form-hint">Give your todo a clear, descriptive title</small>
+                    </div>
+
+                    <!-- Description Field -->
+                    <div class="modern-form-group">
+                        <label for="todoDescription" class="modern-label">
+                            <i class="fas fa-align-left"></i>
+                            Description
+                        </label>
+                        <textarea id="todoDescription" name="description" class="modern-textarea"
+                            placeholder="Add more details about this task (optional)" rows="4"></textarea>
+                        <small class="form-hint">Provide additional context or notes</small>
+                    </div>
+
+                    <!-- Category and Priority Row -->
+                    <div class="modern-form-row">
+                        <div class="modern-form-group">
+                            <label for="todoVariety" class="modern-label">
+                                <i class="fas fa-tag"></i>
+                                Category <span class="required">*</span>
+                            </label>
+                            <div class="select-wrapper">
+                                <select id="todoVariety" name="variety" class="modern-select" required>
+                                    <option value="">Choose category</option>
+                                    <option value="academic">Academic</option>
+                                    <option value="administrative">Administrative</option>
+                                    <option value="meeting">Meeting</option>
+                                    <option value="grading">Grading</option>
+                                    <option value="preparation">Preparation</option>
+                                    <option value="personal">Personal</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modern-form-group">
+                            <label for="todoPriority" class="modern-label">
+                                <i class="fas fa-exclamation-circle"></i>
+                                Priority <span class="required">*</span>
+                            </label>
+                            <div class="select-wrapper">
+                                <select id="todoPriority" name="priority" class="modern-select priority-select"
+                                    required>
+                                    <option value="low">Low</option>
+                                    <option value="medium" selected>Medium</option>
+                                    <option value="high">High</option>
+                                    <option value="urgent">Urgent</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Due Date Field -->
+                    <div class="modern-form-group">
+                        <label for="todoDueDate" class="modern-label">
+                            <i class="fas fa-calendar-alt"></i>
+                            Due Date
+                        </label>
+                        <div class="date-input-wrapper">
+                            <input type="date" id="todoDueDate" name="due_date" class="modern-input date-input">
+                            <button type="button" class="date-clear-btn"
+                                onclick="if(typeof clearDueDate==='function') clearDueDate();" title="Clear date">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <small class="form-hint">Set a deadline for this task (optional)</small>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="modern-form-actions">
+                        <button type="button" class="modern-btn-secondary"
+                            onclick="if(typeof closeTodoModal==='function') closeTodoModal();">
+                            <i class="fas fa-times"></i>
+                            Cancel
+                        </button>
+                        <button type="submit" class="modern-btn-primary">
+                            <i class="fas fa-save"></i>
+                            <span id="submitButtonText">Save Todo</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Announcement Modal -->
+    <div class="modal-overlay announcement-modal-overlay" id="createAnnouncementModal" style="display: none;">
+        <div class="announcement-modal" id="announcementModal">
+            <!-- Modal Header -->
+            <div class="announcement-modal-header">
+                <div class="announcement-modal-header-content">
+                    <div class="announcement-modal-icon">
+                        <i class="fas fa-bullhorn"></i>
+                    </div>
+                    <div class="announcement-modal-title-section">
+                        <h2 class="announcement-modal-title">Create New Announcement</h2>
+                        <p class="announcement-modal-subtitle">Share important information with students and
+                            teachers</p>
+                    </div>
+                </div>
+                <button class="announcement-modal-close" onclick="closeCreateAnnouncementModal()" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="announcement-modal-body">
+                <form id="announcementForm" class="announcement-form">
+                    <!-- Basic Information Section -->
+                    <div class="announcement-form-section">
+                        <div class="form-section-header">
+                            <i class="fas fa-info-circle"></i>
+                            <h3 class="form-section-title">Basic Information</h3>
+                        </div>
+
+                        <div class="announcement-form-grid">
+                            <div class="announcement-form-field full-width">
+                                <label for="announcementTitle" class="announcement-form-label">
+                                    <span>Announcement Title</span>
+                                    <span class="required-indicator">*</span>
+                                </label>
+                                <div class="announcement-input-wrapper">
+                                    <i class="fas fa-heading input-icon"></i>
+                                    <input type="text" id="announcementTitle" class="announcement-form-input"
+                                        placeholder="Enter a clear and descriptive title" required>
+                                </div>
+                            </div>
+
+                            <!-- Priority Selection with Visual Cards -->
+                            <div class="announcement-form-field full-width">
+                                <label class="announcement-form-label">
+                                    <span>Priority Level</span>
+                                </label>
+                                <div class="priority-selection-cards">
+                                    <input type="radio" name="announcementPriority" id="priorityGeneral" value="general"
+                                        checked>
+                                    <label for="priorityGeneral" class="priority-card general-priority">
+                                        <div class="priority-card-icon">
+                                            <i class="fas fa-info-circle"></i>
+                                        </div>
+                                        <div class="priority-card-content">
+                                            <div class="priority-card-title">General</div>
+                                            <div class="priority-card-desc">Standard announcement</div>
+                                        </div>
+                                        <div class="priority-checkmark">
+                                            <i class="fas fa-check"></i>
+                                        </div>
+                                    </label>
+
+                                    <input type="radio" name="announcementPriority" id="priorityImportant"
+                                        value="important">
+                                    <label for="priorityImportant" class="priority-card important-priority">
+                                        <div class="priority-card-icon">
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                        <div class="priority-card-content">
+                                            <div class="priority-card-title">Important</div>
+                                            <div class="priority-card-desc">Requires attention</div>
+                                        </div>
+                                        <div class="priority-checkmark">
+                                            <i class="fas fa-check"></i>
+                                        </div>
+                                    </label>
+
+                                    <input type="radio" name="announcementPriority" id="priorityUrgent" value="urgent">
+                                    <label for="priorityUrgent" class="priority-card urgent-priority">
+                                        <div class="priority-card-icon">
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                        </div>
+                                        <div class="priority-card-content">
+                                            <div class="priority-card-title">Urgent</div>
+                                            <div class="priority-card-desc">Immediate action needed</div>
+                                        </div>
+                                        <div class="priority-checkmark">
+                                            <i class="fas fa-check"></i>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Content Section -->
+                    <div class="announcement-form-section">
+                        <div class="form-section-header">
+                            <i class="fas fa-align-left"></i>
+                            <h3 class="form-section-title">Announcement Content</h3>
+                        </div>
+
+                        <div class="announcement-form-field full-width">
+                            <label for="announcementContent" class="announcement-form-label">
+                                <span>Message</span>
+                                <span class="required-indicator">*</span>
+                            </label>
+                            <div class="announcement-textarea-wrapper">
+                                <textarea id="announcementContent" class="announcement-form-textarea" rows="6"
+                                    placeholder="Write your announcement message here. Be clear and concise..."
+                                    required></textarea>
+                                <div class="character-count">
+                                    <span id="contentCharacterCount">0</span> / 2000 characters
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tags Section -->
+                    <div class="announcement-form-section">
+                        <div class="form-section-header">
+                            <i class="fas fa-tags"></i>
+                            <h3 class="form-section-title">Tags</h3>
+                            <span class="form-section-subtitle">(Optional)</span>
+                        </div>
+
+                        <div class="announcement-form-field full-width">
+                            <label for="announcementTags" class="announcement-form-label">
+                                <span>Add Tags</span>
+                            </label>
+                            <div class="tags-input-container">
+                                <div class="tags-input-wrapper">
+                                    <i class="fas fa-tag input-icon"></i>
+                                    <input type="text" id="announcementTags" class="announcement-form-input tags-input"
+                                        placeholder="Type and press Enter to add tags">
+                                </div>
+                                <div class="tags-preview" id="tagsPreview">
+                                    <!-- Tags will be added here dynamically -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recipients Section -->
+                    <div class="announcement-form-section">
+                        <div class="form-section-header">
+                            <i class="fas fa-users"></i>
+                            <h3 class="form-section-title">Select Recipients</h3>
+                            <span class="required-indicator">*</span>
+                        </div>
+
+                        <div class="recipient-selection-modern">
+                            <!-- Quick Selection Cards -->
+                            <div class="recipient-quick-select">
+                                <div class="quick-select-card" data-type="all-students">
+                                    <input type="checkbox" id="selectAllStudents" class="recipient-checkbox-modern">
+                                    <label for="selectAllStudents" class="quick-select-label">
+                                        <div class="quick-select-icon students-icon">
+                                            <i class="fas fa-user-graduate"></i>
+                                        </div>
+                                        <div class="quick-select-content">
+                                            <div class="quick-select-title">All Students</div>
+                                            <div class="quick-select-count"><span id="allStudentsCount">0</span>
+                                                students</div>
+                                        </div>
+                                    </label>
+                                </div>
+
+                                <div class="quick-select-card" data-type="all-teachers">
+                                    <input type="checkbox" id="selectAllTeachers" class="recipient-checkbox-modern">
+                                    <label for="selectAllTeachers" class="quick-select-label">
+                                        <div class="quick-select-icon teachers-icon">
+                                            <i class="fas fa-chalkboard-teacher"></i>
+                                        </div>
+                                        <div class="quick-select-content">
+                                            <div class="quick-select-title">All Teachers</div>
+                                            <div class="quick-select-count"><span id="allTeachersCount">0</span>
+                                                teachers</div>
+                                        </div>
+                                    </label>
+                                </div>
+
+                                <div class="quick-select-card" data-type="all-csreps">
+                                    <input type="checkbox" id="selectAllCSReps" class="recipient-checkbox-modern">
+                                    <label for="selectAllCSReps" class="quick-select-label">
+                                        <div class="quick-select-icon csreps-icon"
+                                            style="background-color: rgba(139, 92, 246, 0.1); color: #8b5cf6;">
+                                            <i class="fas fa-headset"></i>
+                                        </div>
+                                        <div class="quick-select-content">
+                                            <div class="quick-select-title">All CS Reps</div>
+                                            <div class="quick-select-count"><span id="allCSRepsCount">0</span> reps
+                                            </div>
+                                        </div>
+                                    </label>
+                                </div>
+
+                                <div class="quick-select-card" data-type="specific">
+                                    <input type="checkbox" id="selectSpecific" class="recipient-checkbox-modern"
+                                        onchange="toggleSpecificRecipients()">
+                                    <label for="selectSpecific" class="quick-select-label">
+                                        <div class="quick-select-icon specific-icon">
+                                            <i class="fas fa-user-friends"></i>
+                                        </div>
+                                        <div class="quick-select-content">
+                                            <div class="quick-select-title">Select Specific</div>
+                                            <div class="quick-select-count">Choose individuals</div>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Specific Recipient Selection Panel -->
+                            <div id="specificRecipientsPanel" class="specific-recipients-panel" style="display: none;">
+                                <div class="recipient-panel-header">
+                                    <h4 class="recipient-panel-title">Select Specific Recipients</h4>
+                                    <div class="recipient-panel-summary" id="selectedRecipientsSummary">
+                                        <i class="fas fa-check-circle"></i>
+                                        <span id="selectedRecipientsCount">0</span> selected
+                                    </div>
+                                </div>
+
+                                <div class="recipient-tabs-modern">
+                                    <button type="button" class="recipient-tab-modern active" data-tab="students"
+                                        onclick="switchRecipientTab('students')">
+                                        <i class="fas fa-user-graduate"></i>
+                                        <span>Students</span>
+                                        <span class="tab-count" id="studentsCount">5</span>
+                                    </button>
+                                    <button type="button" class="recipient-tab-modern" data-tab="teachers"
+                                        onclick="switchRecipientTab('teachers')">
+                                        <i class="fas fa-chalkboard-teacher"></i>
+                                        <span>Teachers</span>
+                                        <span class="tab-count" id="teachersCount">3</span>
+                                    </button>
+                                    <button type="button" class="recipient-tab-modern" data-tab="csreps"
+                                        onclick="switchRecipientTab('csreps')">
+                                        <i class="fas fa-headset"></i>
+                                        <span>CS Reps</span>
+                                        <span class="tab-count" id="csrepsCount">0</span>
+                                    </button>
+                                </div>
+
+                                <div class="recipient-search-modern">
+                                    <div class="search-input-modern-wrapper">
+                                        <i class="fas fa-search search-icon-modern"></i>
+                                        <input type="text" id="recipientSearch" class="search-input-modern"
+                                            placeholder="Search by name or email..." oninput="filterRecipients()">
+                                        <button type="button" class="clear-search-btn" id="clearSearchBtn"
+                                            onclick="clearRecipientSearch()" style="display: none;">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="recipient-list-container-modern">
+                                    <!-- Students List -->
+                                    <div class="recipient-list-modern active" id="studentsList">
+                                        <div class="recipient-list-header">
+                                            <span class="list-title">Students</span>
+                                            <button type="button" class="select-all-btn"
+                                                onclick="selectAllInList('students')">
+                                                <i class="fas fa-check-double"></i>
+                                                Select All
+                                            </button>
+                                        </div>
+                                        <div class="recipient-items-wrapper">
+                                            <!-- Students list injected here -->
+                                        </div>
+                                    </div>
+
+                                    <!-- Teachers List -->
+                                    <div class="recipient-list-modern" id="teachersList">
+                                        <div class="recipient-list-header">
+                                            <span class="list-title">Teachers</span>
+                                            <button type="button" class="select-all-btn"
+                                                onclick="selectAllInList('teachers')">
+                                                <i class="fas fa-check-double"></i>
+                                                Select All
+                                            </button>
+                                        </div>
+                                        <div class="recipient-items-wrapper">
+                                            <!-- Teachers list injected here -->
+                                        </div>
+                                    </div>
+
+                                    <!-- CS Reps List -->
+                                    <div class="recipient-list-modern" id="csrepsList">
+                                        <div class="recipient-list-header">
+                                            <span class="list-title">CS Reps</span>
+                                            <button type="button" class="select-all-btn"
+                                                onclick="selectAllInList('csreps')">
+                                                <i class="fas fa-check-double"></i>
+                                                Select All
+                                            </button>
+                                        </div>
+                                        <div class="recipient-items-wrapper">
+                                            <!-- CS Reps list injected here -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Schedule & Options Section -->
+                    <div class="announcement-form-section">
+                        <div class="form-section-header">
+                            <i class="fas fa-calendar-alt"></i>
+                            <h3 class="form-section-title">Schedule & Options</h3>
+                        </div>
+
+                        <div class="announcement-form-grid">
+                            <div class="announcement-form-field">
+                                <label class="announcement-form-label">
+                                    <span>Schedule</span>
+                                </label>
+                                <div class="schedule-options">
+                                    <label class="schedule-option">
+                                        <input type="radio" name="scheduleOption" value="now" checked>
+                                        <span class="schedule-option-content">
+                                            <i class="fas fa-bolt"></i>
+                                            <span>Send Immediately</span>
+                                        </span>
+                                    </label>
+                                    <label class="schedule-option">
+                                        <input type="radio" name="scheduleOption" value="later">
+                                        <span class="schedule-option-content">
+                                            <i class="fas fa-clock"></i>
+                                            <span>Schedule for Later</span>
+                                        </span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="announcement-form-field">
+                                <label for="scheduledDateTime" class="announcement-form-label">
+                                    <span>Scheduled Date & Time</span>
+                                </label>
+                                <div class="announcement-input-wrapper">
+                                    <i class="fas fa-calendar-day input-icon"></i>
+                                    <input type="datetime-local" id="scheduledDateTime" class="announcement-form-input">
+                                </div>
+                                <small class="field-hint">Only required if "Schedule for Later" is selected.</small>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="announcement-modal-footer">
+                <button type="button" class="announcement-cancel-btn" onclick="closeCreateAnnouncementModal()">
+                    <i class="fas fa-times"></i>
+                    <span>Cancel</span>
+                </button>
+                <button type="button" class="announcement-submit-btn" onclick="submitAnnouncement()">
+                    <i class="fas fa-paper-plane"></i>
+                    <span>Create Announcement</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'java/toastNotifications.js' %}"></script>
+    <script src="{% static 'java/apiClient.js' %}"></script>
+    <script src="{% static 'java/realtimeDashboard.js' %}"></script>
+    <script>
+        window.currentUserId = "{{ request.user.id }}";
+        window.currentUserRole = "{{ request.user.role }}";
+    </script>
+    <script src="{% static 'java/messaging.js' %}"></script>
+    <script src="{% static 'java/threads.js' %}"></script>
+    <script src="{% static 'java/Teacher_Dash.js' %}"></script>
+</body>
+
+</html>

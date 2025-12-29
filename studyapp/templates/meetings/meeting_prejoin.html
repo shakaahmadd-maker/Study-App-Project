@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join Meeting - Study Session</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="/static/java/apiClient.js"></script>
+
+    <style>
+        :root {
+            /* Dark theme (default) - aligned with dashboard dark-mode palette */
+            --bg-primary: #0f172a; /* page-bg */
+            --bg-secondary: rgba(30, 30, 30, 0.85); /* surface */
+            --bg-tertiary: rgba(30, 30, 30, 0.6);
+            --bg-card: rgba(30, 30, 30, 0.85); /* surface */
+            --bg-card-alt: rgba(148, 163, 184, 0.12);
+            --bg-button: rgba(30, 30, 30, 0.85);
+            --bg-button-hover: rgba(17, 88, 229, 0.25);
+            --bg-input: rgba(17, 88, 229, 0.18);
+            --bg-gradient-start: rgba(30, 30, 30, 0.95);
+            --bg-gradient-end: rgba(15, 15, 15, 0.98);
+
+            --text-primary: #e5ecf8;
+            --text-secondary: #e5ecf8;
+            --text-tertiary: #94a3b8;
+            --text-muted: #94a3b8;
+
+            --border-color: rgba(255, 255, 255, 0.1);
+            --border-light: rgba(255, 255, 255, 0.08);
+
+            --accent-blue: #1158e5;
+            --accent-blue-light: rgba(17, 88, 229, 0.25);
+            --accent-green: #16a34a;
+            --accent-red: #ef4444;
+            --accent-red-light: rgba(248, 113, 113, 0.15);
+
+            --shadow: 0 25px 80px rgba(0, 0, 0, 0.55);
+            --shadow-sm: 0 10px 40px rgba(0, 0, 0, 0.45);
+        }
+
+        [data-theme="light"] {
+            /* Light theme */
+            --bg-primary: #f9fafb;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #f3f4f6;
+            --bg-card: rgba(255, 255, 255, 0.95);
+            --bg-card-alt: rgba(249, 250, 251, 0.8);
+            --bg-button: #ffffff;
+            --bg-button-hover: rgba(37, 99, 235, 0.1);
+            --bg-input: rgba(249, 250, 251, 0.9);
+            --bg-gradient-start: #f3f4f6;
+            --bg-gradient-end: #ffffff;
+
+            --text-primary: #111827;
+            --text-secondary: #1f2937;
+            --text-tertiary: #4b5563;
+            --text-muted: #6b7280;
+
+            --border-color: rgba(209, 213, 219, 0.8);
+            --border-light: rgba(209, 213, 219, 0.5);
+
+            --accent-blue: #2563eb;
+            --accent-blue-light: rgba(37, 99, 235, 0.15);
+            --accent-green: #16a34a;
+            --accent-red: #ef4444;
+            --accent-red-light: rgba(248, 113, 113, 0.15);
+
+            --shadow: 0 25px 80px rgba(0, 0, 0, 0.1);
+            --shadow-sm: 0 10px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: radial-gradient(circle at top, var(--bg-gradient-start), var(--bg-gradient-end));
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .pre-meeting-container {
+            width: 100%;
+            max-width: 1200px;
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        @media (max-width: 968px) {
+            .pre-meeting-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Video Preview Section */
+        .video-preview-section {
+            background: var(--bg-secondary);
+            border-radius: 1rem;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .video-preview-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .video-preview-header h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .theme-toggle {
+            background: var(--bg-button);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            width: 40px;
+            height: 40px;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1rem;
+        }
+
+        .theme-toggle:hover {
+            background: var(--bg-button-hover);
+            border-color: var(--accent-blue);
+        }
+
+        .video-preview-area {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background: radial-gradient(circle at top, var(--bg-gradient-start) 0, var(--bg-gradient-end) 55%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .video-preview-area video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+
+        .video-preview-area video.active {
+            display: block;
+        }
+
+        .video-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            color: var(--text-tertiary);
+        }
+
+        .video-placeholder.hidden {
+            display: none;
+        }
+
+        .video-placeholder-icon {
+            width: 120px;
+            height: 120px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #4ade80, #22c55e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: 600;
+            color: #022c22;
+            box-shadow: 0 15px 40px rgba(22, 163, 74, 0.6);
+        }
+
+        .video-placeholder-text {
+            font-size: 1rem;
+            text-align: center;
+        }
+
+        .video-controls {
+            padding: 1.5rem;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .control-toggle {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 1.5rem;
+            background: var(--bg-button);
+            border: 2px solid var(--border-color);
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-width: 120px;
+        }
+
+        .control-toggle:hover {
+            border-color: var(--accent-blue);
+            background: var(--bg-button-hover);
+        }
+
+        .control-toggle.active {
+            border-color: var(--accent-red);
+            background: var(--accent-red-light);
+        }
+
+        .control-toggle-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+
+        .control-toggle.active .control-toggle-icon {
+            background: var(--accent-red);
+            color: white;
+        }
+
+        .control-toggle-label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .control-toggle.active .control-toggle-label {
+            color: var(--accent-red);
+        }
+
+        /* Meeting Info Section */
+        .meeting-info-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .meeting-info-card {
+            background: var(--bg-card);
+            border-radius: 1rem;
+            border: 1px solid var(--border-color);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .meeting-info-header {
+            margin-bottom: 1rem;
+        }
+
+        .meeting-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .meeting-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-tertiary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .meeting-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .meeting-detail-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .meeting-detail-item i {
+            width: 20px;
+            color: var(--accent-blue);
+        }
+
+        .join-button {
+            width: 100%;
+            padding: 1rem 2rem;
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+        }
+
+        .join-button:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.5);
+        }
+
+        .join-button:disabled {
+            background: var(--border-color);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-card-alt);
+            border-radius: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 1rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: var(--accent-green);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .error-message {
+            padding: 1rem;
+            background: var(--accent-red-light);
+            border: 1px solid var(--accent-red);
+            border-radius: 0.5rem;
+            color: var(--accent-red);
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="pre-meeting-container">
+        <!-- Video Preview Section -->
+        <div class="video-preview-section">
+            <div class="video-preview-header">
+                <h2>Preview</h2>
+                <button class="theme-toggle" id="themeToggle" title="Toggle theme">
+                    <i class="fas fa-moon" id="themeIcon"></i>
+                </button>
+            </div>
+            <div class="video-preview-area">
+                <video id="previewVideo" autoplay playsinline muted></video>
+                <div class="video-placeholder" id="videoPlaceholder">
+                    <div class="video-placeholder-icon">Y</div>
+                    <div class="video-placeholder-text">Camera is off</div>
+                </div>
+            </div>
+            <div class="video-controls">
+                <button class="control-toggle" id="cameraToggle">
+                    <div class="control-toggle-icon">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <span class="control-toggle-label">Camera</span>
+                </button>
+                <button class="control-toggle" id="microphoneToggle">
+                    <div class="control-toggle-icon">
+                        <i class="fas fa-microphone"></i>
+                    </div>
+                    <span class="control-toggle-label">Microphone</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Meeting Info Section -->
+        <div class="meeting-info-section">
+            <div class="meeting-info-card">
+                <div class="meeting-info-header">
+                    <h1 class="meeting-title">Study Session</h1>
+                    <div class="meeting-subtitle">
+                        <i class="fas fa-calendar"></i>
+                        <span>Jan 15, 2025 · 2:30 PM</span>
+                    </div>
+                </div>
+
+                <div class="meeting-details">
+                    <div class="meeting-detail-item">
+                        <i class="fas fa-users"></i>
+                        <span>Study Companion Meeting</span>
+                    </div>
+                    <div class="meeting-detail-item">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>End-to-end encrypted</span>
+                    </div>
+                    <div class="meeting-detail-item">
+                        <i class="fas fa-clock"></i>
+                        <span>Scheduled meeting</span>
+                    </div>
+                </div>
+
+                <div class="status-indicator">
+                    <span class="status-dot"></span>
+                    <span>Ready to join</span>
+                </div>
+
+                <div class="error-message" id="errorMessage"></div>
+
+                <button class="join-button" id="joinButton">
+                    <i class="fas fa-video"></i>
+                    <span>Join Meeting</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Meeting details management
+        const urlParams = new URLSearchParams(window.location.search);
+        const meetingId = urlParams.get('meeting_id');
+        let meetingData = null;
+
+        async function loadMeetingDetails() {
+            if (!meetingId) {
+                showError('Meeting ID is missing.');
+                joinButton.disabled = true;
+                return;
+            }
+
+            try {
+                meetingData = await apiClient.getMeetingDetails(meetingId);
+                if (meetingData) {
+                    document.querySelector('.meeting-title').textContent = meetingData.title;
+                    const date = new Date(meetingData.scheduled_at);
+                    document.querySelector('.meeting-subtitle span').textContent = 
+                        date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) + 
+                        ' · ' + 
+                        date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+                    
+                    // Show "With: <other participant>"
+                    const otherName =
+                        (String(meetingData.student) === String(localStorage.getItem('user_id')))
+                            ? (meetingData.teacher_details?.full_name || 'Teacher')
+                            : (meetingData.student_details?.full_name || 'Student');
+                    document.querySelector('.meeting-detail-item:nth-child(1) span').textContent = `With: ${otherName}`;
+                }
+            } catch (error) {
+                console.error('Failed to load meeting details:', error);
+                showError('Failed to load meeting details. Please try again.');
+                joinButton.disabled = true;
+            }
+        }
+
+        // Theme toggle functionality
+        (function () {
+            const themeToggle = document.getElementById('themeToggle');
+            const themeIcon = document.getElementById('themeIcon');
+            const html = document.documentElement;
+            
+            // Load saved theme preference or default to dark
+            const savedTheme = localStorage.getItem('meetingTheme') || 'dark';
+            html.setAttribute('data-theme', savedTheme);
+            updateThemeIcon(savedTheme);
+            
+            themeToggle.addEventListener('click', () => {
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('meetingTheme', newTheme);
+                updateThemeIcon(newTheme);
+            });
+            
+            function updateThemeIcon(theme) {
+                if (theme === 'light') {
+                    themeIcon.className = 'fas fa-sun';
+                } else {
+                    themeIcon.className = 'fas fa-moon';
+                }
+            }
+        })();
+
+        // Media stream management
+        let localStream = null;
+        let cameraEnabled = true;
+        let microphoneEnabled = true;
+
+        const previewVideo = document.getElementById('previewVideo');
+        const videoPlaceholder = document.getElementById('videoPlaceholder');
+        const cameraToggle = document.getElementById('cameraToggle');
+        const microphoneToggle = document.getElementById('microphoneToggle');
+        const joinButton = document.getElementById('joinButton');
+        const errorMessage = document.getElementById('errorMessage');
+
+        // Initialize camera and microphone
+        async function startMediaStream() {
+            try {
+                localStream = await navigator.mediaDevices.getUserMedia({
+                    video: cameraEnabled,
+                    audio: microphoneEnabled
+                });
+                
+                if (cameraEnabled) {
+                    previewVideo.srcObject = localStream;
+                    previewVideo.classList.add('active');
+                    videoPlaceholder.classList.add('hidden');
+                } else {
+                    previewVideo.classList.remove('active');
+                    videoPlaceholder.classList.remove('hidden');
+                }
+                
+                updateToggleStates();
+                
+            } catch (error) {
+                console.error('Error accessing media devices:', error);
+                showError('Unable to access camera/microphone. Please check permissions and try again.');
+                // Don't disable join button, they might join without cam/mic
+            }
+        }
+
+        function stopMediaStream() {
+            if (localStream) {
+                localStream.getTracks().forEach(track => track.stop());
+                localStream = null;
+            }
+            previewVideo.srcObject = null;
+            previewVideo.classList.remove('active');
+            videoPlaceholder.classList.remove('hidden');
+        }
+
+        function updateToggleStates() {
+            cameraToggle.classList.toggle('active', !cameraEnabled);
+            microphoneToggle.classList.toggle('active', !microphoneEnabled);
+            
+            if (cameraEnabled) {
+                previewVideo.classList.add('active');
+                videoPlaceholder.classList.add('hidden');
+            } else {
+                previewVideo.classList.remove('active');
+                videoPlaceholder.classList.remove('hidden');
+            }
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.add('show');
+            setTimeout(() => {
+                errorMessage.classList.remove('show');
+            }, 5000);
+        }
+
+        // Camera toggle
+        cameraToggle.addEventListener('click', async () => {
+            cameraEnabled = !cameraEnabled;
+            if (localStream) {
+                const videoTrack = localStream.getVideoTracks()[0];
+                if (videoTrack) {
+                    videoTrack.enabled = cameraEnabled;
+                } else if (cameraEnabled) {
+                    // Need to restart stream if video was never requested
+                    stopMediaStream();
+                    await startMediaStream();
+                }
+            } else if (cameraEnabled) {
+                await startMediaStream();
+            }
+            updateToggleStates();
+        });
+
+        // Microphone toggle
+        microphoneToggle.addEventListener('click', async () => {
+            microphoneEnabled = !microphoneEnabled;
+            if (localStream) {
+                const audioTrack = localStream.getAudioTracks()[0];
+                if (audioTrack) {
+                    audioTrack.enabled = microphoneEnabled;
+                } else if (microphoneEnabled) {
+                    // Need to restart stream if audio was never requested
+                    stopMediaStream();
+                    await startMediaStream();
+                }
+            } else if (microphoneEnabled) {
+                await startMediaStream();
+            }
+            updateToggleStates();
+        });
+
+        // Join meeting button
+        joinButton.addEventListener('click', () => {
+            if (!meetingData) return;
+            
+            // Store media preferences
+            const mediaState = {
+                cameraEnabled: cameraEnabled,
+                microphoneEnabled: microphoneEnabled
+            };
+            sessionStorage.setItem('mediaState', JSON.stringify(mediaState));
+            
+            // Redirect to Django meeting room page
+            window.location.href = `/meeting/room/?meeting_id=${encodeURIComponent(meetingData.id)}`;
+        });
+
+        // Initialize on page load
+        window.addEventListener('load', () => {
+            loadMeetingDetails();
+            startMediaStream();
+        });
+
+        // Clean up on page unload
+        window.addEventListener('beforeunload', () => {
+            stopMediaStream();
+        });
+    </script>
+</body>
+
+</html>

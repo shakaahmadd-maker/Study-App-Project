@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Q&A Exam - {{ exam.title }}</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #fafbfc;
+            --bg-secondary: #ffffff;
+            --text-primary: #1a1a1a;
+            --text-secondary: #6b7280;
+            --border-color: rgba(0, 0, 0, 0.08);
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --accent-yellow: #f59e0b;
+            --accent-red: #ef4444;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .timer-bar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 14px 24px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .timer-display {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .timer-progress {
+            flex: 1;
+            height: 4px;
+            background: var(--border-color);
+            margin: 0 20px;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .timer-progress-fill {
+            height: 100%;
+            background: var(--accent-blue);
+            transition: width 1s linear;
+        }
+
+        .exam-wrapper {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+
+        .exam-header {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 28px 32px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border-color);
+        }
+
+        .exam-title {
+            font-size: 26px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .exam-meta {
+            display: flex;
+            gap: 20px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .progress-summary {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 20px 32px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .question-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 28px 32px;
+            margin-bottom: 24px;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .question-number {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        .editor-textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 15px;
+            resize: vertical;
+            outline: none;
+        }
+
+        .editor-textarea:focus {
+            border-color: var(--accent-blue);
+        }
+
+        .submit-section {
+            position: sticky;
+            bottom: 0;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            padding: 20px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .submit-btn {
+            padding: 12px 28px;
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .review-view {
+            display: none;
+        }
+
+        .review-view.active {
+            display: block;
+        }
+
+        .review-message {
+            background: linear-gradient(135deg, var(--accent-yellow) 0%, #f59e0b 100%);
+            color: white;
+            padding: 48px;
+            border-radius: 16px;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .submitted-answers {
+            background: var(--bg-secondary);
+            padding: 32px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 32px;
+            border-radius: 16px;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        /* Print Styles */
+        @media print {
+            .timer-bar, .submit-section, .modal-overlay, #printResultsBtn, .submit-btn {
+                display: none !important;
+            }
+            body { background: white; }
+            .exam-wrapper { padding: 0; max-width: 100%; }
+            .review-message { 
+                background: #f59e0b !important; 
+                color: white !important; 
+                -webkit-print-color-adjust: exact; 
+                padding: 30px !important;
+                border-radius: 0 !important;
+            }
+            .submitted-answers {
+                border: none !important;
+                padding: 0 !important;
+            }
+            .submitted-answers > div {
+                break-inside: avoid;
+                border: 1px solid #eee !important;
+                margin-bottom: 20px !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="timer-bar" id="timerBar" {% if show_results %}style="display:none;" {% endif %}>
+        <div class="timer-display" id="timerDisplay">60:00</div>
+        <div class="timer-progress">
+            <div class="timer-progress-fill" id="timerProgress"></div>
+        </div>
+    </div>
+
+    <div class="exam-wrapper" id="examView" {% if show_results %}style="display:none;" {% endif %}>
+        <div class="exam-header">
+            <h1 class="exam-title">{{ exam.title }}</h1>
+            <div class="exam-meta">
+                <span><i class="fas fa-user"></i> {{ exam.teacher.user.get_full_name }}</span>
+                <span><i class="fas fa-book"></i> {{ exam.assignment.title }}</span>
+                <span><i class="fas fa-question-circle"></i> {{ total_questions }} Questions</span>
+            </div>
+        </div>
+
+        <div class="progress-summary">
+            <div>Answered: <strong id="answeredCount">0</strong> / {{ total_questions }}</div>
+            <div>Total Words: <strong id="totalWords">0</strong></div>
+        </div>
+
+        <div class="questions-list">
+            {% for q in questions %}
+            <div class="question-card">
+                <div class="question-header">
+                    <span class="question-number">Question {{ forloop.counter }}</span>
+                    <span class="question-status" id="status-{{ q.id }}">Not Answered</span>
+                </div>
+                <div class="question-text">{{ q.text }}</div>
+                <div class="answer-editor">
+                    <textarea class="editor-textarea" id="answer-{{ q.id }}" placeholder="Type your answer here..."
+                        oninput="updateAnswer('{{ q.id }}', this.value)"></textarea>
+                    <div class="word-count" style="margin-top: 10px; font-size: 13px; color: var(--text-secondary);">
+                        Words: <span id="wordCount-{{ q.id }}">0</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="submit-section">
+            <span id="submitInfo">You have answered <strong id="submitCount">0</strong> / {{ total_questions }}</span>
+            <button class="submit-btn" onclick="showSubmitModal()">Submit Exam</button>
+        </div>
+    </div>
+
+    <div class="exam-wrapper review-view {% if show_results %}active{% endif %}" id="reviewView">
+        <div class="review-message" id="statusMessage">
+            <h2 class="review-title">Exam Submitted!</h2>
+            <p
+                style="font-size: 1.2rem; font-weight: 600; margin-top: 10px; background: rgba(255,255,255,0.2); padding: 10px; border-radius: 8px; display: inline-block;">
+                <i class="fas fa-clock"></i> Status: Waiting for teacher review
+            </p>
+            <p style="margin-top: 15px;">Your answers have been sent to your teacher. You will be notified once they are
+                graded.</p>
+        </div>
+        <div class="submitted-answers">
+            <h2 style="margin-bottom: 20px;">Your Answers</h2>
+            <div id="submittedAnswersList"></div>
+        </div>
+        <div class="submit-section" style="position: static; margin-top: 24px;">
+            <button class="submit-btn" onclick="window.location.href='/account/student/dashboard/'">Back to
+                Dashboard</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="submitModal">
+        <div class="modal-content">
+            <h3>Submit Exam?</h3>
+            <p style="margin: 15px 0;">Are you sure? You cannot make changes after submitting.</p>
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button onclick="document.getElementById('submitModal').classList.remove('active')"
+                    style="padding: 8px 16px; border: 1px solid #ccc; border-radius: 4px; cursor: pointer;">Cancel</button>
+                <button onclick="submitExam()" class="submit-btn">Submit</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const attemptId = "{{ attempt.id }}";
+        const totalQuestions = {{ total_questions|default:"0" }};
+        const answers = {};
+        let timeRemaining = 60 * 60;
+        let timerInterval;
+
+        window.updateAnswer = function (qId, val) {
+            answers[qId] = val;
+            const words = val.trim() ? val.trim().split(/\s+/).length : 0;
+            const wordCountEl = document.getElementById(`wordCount-${qId}`);
+            if (wordCountEl) wordCountEl.textContent = words;
+
+            const statusEl = document.getElementById(`status-${qId}`);
+            if (statusEl) {
+                if (val.trim()) {
+                    statusEl.textContent = 'Answered';
+                    statusEl.style.color = 'var(--accent-green)';
+                } else {
+                    statusEl.textContent = 'Not Answered';
+                    statusEl.style.color = '';
+                }
+            }
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const answered = Object.values(answers).filter(v => v.trim()).length;
+            const answeredCountEl = document.getElementById('answeredCount');
+            const submitCountEl = document.getElementById('submitCount');
+            const totalWordsEl = document.getElementById('totalWords');
+
+            if (answeredCountEl) answeredCountEl.textContent = answered;
+            if (submitCountEl) submitCountEl.textContent = answered;
+
+            let totalWords = 0;
+            Object.values(answers).forEach(v => {
+                if (v.trim()) totalWords += v.trim().split(/\s+/).length;
+            });
+            if (totalWordsEl) totalWordsEl.textContent = totalWords;
+        }
+
+        window.initTimer = function () {
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    submitExam(true);
+                    return;
+                }
+                const mins = Math.floor(timeRemaining / 60);
+                const secs = timeRemaining % 60;
+                const timerDisplayEl = document.getElementById('timerDisplay');
+                const timerProgressEl = document.getElementById('timerProgress');
+
+                if (timerDisplayEl) timerDisplayEl.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+                if (timerProgressEl) timerProgressEl.style.width = (timeRemaining / 3600) * 100 + '%';
+            }, 1000);
+        }
+
+        window.showSubmitModal = function () {
+            const modal = document.getElementById('submitModal');
+            if (modal) modal.classList.add('active');
+        }
+
+        window.submitExam = async function (auto = false) {
+            if (auto) alert("Time up!");
+            const modal = document.getElementById('submitModal');
+            if (modal) modal.classList.remove('active');
+
+            try {
+                const response = await fetch(`/exam/student/submit/${attemptId}/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+                    body: JSON.stringify({ answers: answers })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    loadResults();
+                } else {
+                    alert(data.error || "Submission failed");
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        async function loadResults() {
+            try {
+                const response = await fetch(`/exam/student/results/${attemptId}/`);
+                const data = await response.json();
+                if (data.success) displayResults(data.results);
+            } catch (e) { console.error(e); }
+        }
+
+        function displayResults(res) {
+            const examView = document.getElementById('examView');
+            const timerBar = document.getElementById('timerBar');
+            const reviewView = document.getElementById('reviewView');
+            const statusMessageEl = document.getElementById('statusMessage');
+
+            if (examView) examView.style.display = 'none';
+            if (timerBar) timerBar.style.display = 'none';
+            if (reviewView) reviewView.classList.add('active');
+
+            if (res.status === 'graded' && statusMessageEl) {
+                statusMessageEl.innerHTML = `
+                    <div style="text-align: center; margin-bottom: 25px;">
+                        <i class="fas fa-trophy" style="font-size: 3.5rem; color: white; margin-bottom: 15px; text-shadow: 0 4px 10px rgba(0,0,0,0.1);"></i>
+                        <h2 class="review-title" style="font-size: 2.2rem; font-weight: 800; margin-bottom: 5px;">Exam Graded!</h2>
+                        <div style="font-size: 4rem; font-weight: 900; color: white; margin: 15px 0;">${res.totalGrade}%</div>
+                        <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 12px; max-width: 500px; margin: 0 auto; line-height: 1.6;">
+                            <strong style="display: block; text-transform: uppercase; font-size: 12px; margin-bottom: 5px; opacity: 0.9;">Teacher's Overall Feedback:</strong>
+                            ${res.overallFeedback || 'Your performance was evaluated. Check individual answers below.'}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Add Print/Download Button
+            if (statusMessageEl && !document.getElementById('printResultsBtn')) {
+                const printBtn = document.createElement('button');
+                printBtn.id = 'printResultsBtn';
+                printBtn.className = 'submit-btn';
+                printBtn.style.margin = '20px auto 0 auto';
+                printBtn.style.background = 'rgba(255,255,255,0.2)';
+                printBtn.style.border = '1px solid rgba(255,255,255,0.4)';
+                printBtn.innerHTML = '<i class="fas fa-file-pdf"></i> Download Result PDF';
+                printBtn.onclick = () => window.print();
+                statusMessageEl.appendChild(printBtn);
+            }
+
+            const answersListEl = document.getElementById('submittedAnswersList');
+            if (answersListEl && res.answers) {
+                answersListEl.innerHTML = res.answers.map((ans, i) => `
+                    <div style="margin-bottom: 24px; padding: 24px; background: #fff; border: 1px solid var(--border-color); border-radius: 16px; shadow: var(--shadow-sm);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <h4 style="margin: 0; font-size: 1.1rem; font-weight: 700; color: var(--accent-blue);">Question ${i + 1}</h4>
+                            ${res.status === 'graded' ? `<span style="padding: 5px 15px; border-radius: 20px; background: rgba(59, 130, 246, 0.1); color: var(--accent-blue); font-weight: 700; font-size: 13px;">Grade: ${ans.grade || 0}/100</span>` : ''}
+                        </div>
+                        <p style="font-weight: 600; margin-bottom: 12px; color: var(--text-primary); font-size: 15px;">${ans.questionText}</p>
+                        <div style="padding: 18px; background: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0; white-space: pre-wrap; margin-bottom: 15px; color: var(--text-secondary); line-height: 1.7; font-size: 14px;">${ans.answerText || 'No answer provided'}</div>
+                        
+                        ${res.status === 'graded' && ans.feedback ? `
+                            <div style="padding: 15px; border-left: 4px solid var(--accent-blue); background: #f0f7ff; border-radius: 0 8px 8px 0;">
+                                <strong style="font-size: 12px; color: var(--accent-blue); text-transform: uppercase; letter-spacing: 0.5px;">Teacher's Feedback:</strong>
+                                <p style="margin-top: 5px; color: var(--text-primary); font-size: 14px;">${ans.feedback}</p>
+                            </div>
+                        ` : ''}
+                    </div>
+                `).join('');
+            }
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            {% if show_results %} loadResults(); {% else %} initTimer(); {% endif %}
+        });
+    </script>
+</body>
+
+</html>

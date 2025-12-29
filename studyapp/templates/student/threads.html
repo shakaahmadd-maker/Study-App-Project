@@ -1,0 +1,149 @@
+{% extends "student/student_base.html" %}
+
+{% block content %}
+<section class="content-section" id="threadsSection" aria-labelledby="threadsHeading">
+    <div class="threads-header">
+        <h1 class="section-title" id="threadsHeading">Communication Threads</h1>
+    </div>
+    <p class="section-subtitle">Manage your communication threads with teachers and CS representatives.</p>
+
+    <!-- Thread Filters -->
+    <div class="thread-filters">
+        <button class="filter-pill active" data-filter="all">All Threads</button>
+        <button class="filter-pill" data-filter="assignment">Assignment Related</button>
+        <button class="filter-pill" data-filter="invoice">Invoice Related</button>
+        <button class="filter-pill" data-filter="general">General</button>
+        <button class="filter-pill" data-filter="support">Support</button>
+        <button class="filter-pill" data-filter="active">Active</button>
+        <button class="filter-pill" data-filter="resolved">Resolved</button>
+    </div>
+
+    <!-- Threads List -->
+    <div class="threads-list" id="threadsList">
+        <!-- Threads will be populated by JS -->
+    </div>
+
+    <!-- Thread Detail View (full page) -->
+    <div class="thread-detail-view" id="threadDetailView" style="display:none;">
+        <div class="thread-detail-header">
+            <div>
+                <button class="ghost-button" id="threadBackButton" onclick="showThreadList()">
+                    <i class="fas fa-arrow-left"></i> Back to Threads
+                </button>
+                <h2 class="thread-detail-subject" id="threadViewSubject">Thread Subject</h2>
+                <div class="thread-view-meta">
+                    <span class="thread-type-badge" id="threadViewType">General</span>
+                    <span class="thread-link" id="threadViewAssignment" style="display:none;"><i
+                            class="fas fa-link"></i> Assignment: <span></span></span>
+                    <span class="thread-link" id="threadViewInvoice" style="display:none;"><i class="fas fa-link"></i>
+                        Invoice: <span></span></span>
+                </div>
+                <div id="threadViewParticipants" class="thread-participants-list"></div>
+            </div>
+        </div>
+        <div class="thread-view-body">
+            <div id="threadViewMessages" class="thread-messages-container">
+                <!-- Messages populated by JS -->
+            </div>
+            <div class="thread-composer" id="threadComposer">
+                <div id="threadComposerDisabled" style="display: none; padding: 16px; background: rgba(0,0,0,0.05); border-radius: 8px; text-align: center; color: var(--muted-text); margin-bottom: 12px;">
+                    <i class="fas fa-lock" style="margin-right: 8px;"></i>
+                    <span>This thread is resolved/closed. No further messages can be sent.</span>
+                </div>
+                <div class="composer-input-wrapper">
+                    <textarea id="threadReplyInput" placeholder="Type your reply..." rows="3"></textarea>
+                    <div class="composer-floating-actions">
+                        <button class="icon-btn voice-record-btn" title="Record voice"><i class="fas fa-microphone"></i></button>
+                        <button class="icon-btn" title="Attach file" id="studentThreadAttachBtn"><i class="fas fa-paperclip"></i></button>
+                        <input type="file" id="studentThreadFileInput" style="display:none;" multiple
+                            accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt,.zip,.rar">
+                        <button class="primary-button" id="studentThreadReplySendBtn">
+                            <i class="fas fa-paper-plane"></i> Send
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    <div id="noThreadsMessage" style="display: none; text-align: center; padding: 3rem; color: var(--muted-text);">
+        <i class="fas fa-comments-dots" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+        <p>No threads found</p>
+        <p style="font-size: 0.9rem; margin-top: 0.5rem;">Create a new thread to start a conversation</p>
+    </div>
+</section>
+
+<!-- Create Thread Modal -->
+<div class="modal-overlay" id="createThreadModal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title">Create New Thread</h2>
+            <button class="modal-close" aria-label="Close" onclick="StudyThreads.hideCreateModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="createThreadForm">
+                <div class="form-grid">
+                    <div class="input-field full-width">
+                        <span>Thread Subject *</span>
+                        <input type="text" id="threadSubject" name="threadSubject"
+                            placeholder="e.g., Question about my invoice" required>
+                    </div>
+                </div>
+                <div class="form-grid">
+                    <div class="input-field">
+                        <span>Thread Type *</span>
+                        <select id="threadType" name="threadType" required>
+                            <option value="">Select type...</option>
+                            <option value="assignment">Assignment Related</option>
+                            <option value="invoice">Invoice Related</option>
+                            <option value="general" selected>General</option>
+                            <option value="support">Support</option>
+                        </select>
+                    </div>
+                    <div class="input-field" id="relatedAssignmentField" style="display: none;">
+                        <span>Related Assignment</span>
+                        <select id="relatedAssignment" name="relatedAssignment">
+                            <option value="">Select assignment...</option>
+                        </select>
+                    </div>
+                    <div class="input-field" id="relatedInvoiceField" style="display: none;">
+                        <span>Related Invoice</span>
+                        <select id="relatedInvoice" name="relatedInvoice">
+                            <option value="">Select invoice...</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-grid">
+                    <div class="input-field full-width">
+                        <span>Initial Message *</span>
+                        <textarea id="threadMessage" name="threadMessage" rows="4"
+                            placeholder="Start your conversation..." required></textarea>
+                    </div>
+                </div>
+                <div class="form-grid">
+                    <div class="input-field full-width">
+                        <span>Recipients</span>
+                        <div id="recipientSelectionList" class="recipient-selection-list">
+                            <!-- Recipients cards will be populated here -->
+                        </div>
+                        <select id="threadRecipient" name="threadRecipient" multiple style="display: none;">
+                            <!-- Hidden select to store selected values -->
+                        </select>
+                        <small style="color: var(--muted); margin-top: 4px; display: block;">Select multiple recipients. The creator is always included.</small>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="ghost-button" onclick="StudyThreads.hideCreateModal()">Cancel</button>
+            <button type="button" class="primary-button" id="createThreadSubmitBtn">
+                <i class="fas fa-paper-plane"></i> Create Thread
+            </button>
+        </div>
+    </div>
+</div>
+</section>
+{% endblock %}

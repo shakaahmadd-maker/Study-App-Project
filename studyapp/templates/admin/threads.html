@@ -1,0 +1,93 @@
+{% extends "admin/admin_base.html" %}
+
+{% block content %}
+            <section class="content-section" id="threadsSection" aria-labelledby="threadsHeading">
+                <h1 class="section-title" id="threadsHeading">Communication Threads</h1>
+                <p class="section-subtitle">Monitor and manage all communication threads between students, teachers, and
+                    CS representatives.</p>
+
+                <!-- Thread Actions Bar -->
+                <div class="thread-actions-bar">
+                    <!-- Thread Filters -->
+                    <div class="thread-filters">
+                        <button class="filter-pill active" data-filter="all">All Threads</button>
+                        <button class="filter-pill" data-filter="assignment">Assignment Related</button>
+                        <button class="filter-pill" data-filter="invoice">Invoice Related</button>
+                        <button class="filter-pill" data-filter="general">General</button>
+                        <button class="filter-pill" data-filter="support">Support</button>
+                        <button class="filter-pill" data-filter="active">Active</button>
+                        <button class="filter-pill" data-filter="resolved">Resolved</button>
+                        <button class="filter-pill" data-filter="closed">Closed</button>
+                    </div>
+                    <button class="primary-button" onclick="showCreateThreadModal()">
+                        <i class="fas fa-plus"></i> Create New Thread
+                    </button>
+                </div>
+
+                <!-- Threads List -->
+                <div class="threads-list" id="adminThreadsList">
+                    <!-- Threads will be populated by JS -->
+                </div>
+
+                <!-- Thread Detail View (full page) -->
+                <div class="thread-detail-view" id="adminThreadDetailView" style="display:none;">
+                    <div class="thread-detail-header">
+                        <div>
+                            <button class="ghost-button" onclick="showAdminThreadList()">
+                                <i class="fas fa-arrow-left"></i> Back to Threads
+                            </button>
+                            <h2 class="thread-detail-subject" id="adminThreadViewSubject">Thread Subject</h2>
+                            <div class="thread-view-meta">
+                                <span class="thread-type-badge" id="adminThreadViewType">General</span>
+                                <span class="thread-link" id="adminThreadViewAssignment" style="display:none;"><i
+                                        class="fas fa-link"></i> Assignment: <span></span></span>
+                                <span class="thread-link" id="adminThreadViewInvoice" style="display:none;"><i
+                                        class="fas fa-link"></i> Invoice: <span></span></span>
+                            </div>
+                            <div id="adminThreadViewParticipants" class="thread-participants-list"></div>
+                        </div>
+                        <div class="thread-status-actions" id="adminThreadStatusActions" style="display:none;">
+                            <button type="button" class="ghost-button" id="adminResolveThreadBtn">
+                                <i class="fas fa-check"></i> Resolve
+                            </button>
+                            <button type="button" class="danger-button" id="adminCloseThreadBtn">
+                                <i class="fas fa-lock"></i> Close
+                            </button>
+                            <button type="button" class="danger-button" id="adminDeleteThreadBtn" style="background: #ef4444;">
+                                <i class="fas fa-trash-alt"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+                    <div class="thread-view-body">
+                        <div id="adminThreadViewMessages" class="thread-messages-container">
+                            <!-- Messages populated by JS -->
+                        </div>
+                        <div class="thread-composer">
+                            <div class="composer-input-wrapper">
+                                <textarea id="adminThreadReplyInput" placeholder="Type your reply..." rows="3"></textarea>
+                                <div class="composer-floating-actions">
+                                    <button class="icon-btn voice-record-btn" title="Record voice">
+                                        <i class="fas fa-microphone"></i>
+                                    </button>
+                                    <button class="icon-btn" title="Attach file" id="adminThreadAttachBtn">
+                                        <i class="fas fa-paperclip"></i>
+                                    </button>
+                                    <input type="file" id="adminThreadFileInput" style="display:none;" multiple
+                                        accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt,.zip,.rar">
+                                    <button class="primary-button" id="adminThreadReplySendBtn">
+                                        <i class="fas fa-paper-plane"></i> Send
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div id="noAdminThreadsMessage"
+                    style="display: none; text-align: center; padding: 3rem; color: var(--muted-text);">
+                    <i class="fas fa-comments-dots" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+                    <p>No threads found</p>
+                </div>
+            </section>
+{% endblock %}

@@ -1,0 +1,257 @@
+{% extends "student/student_base.html" %}
+
+{% block content %}
+<section class="content-section active" id="dashboardSection" aria-labelledby="dashboardHeading">
+    <h1 class="section-title" id="dashboardHeading">Dashboard</h1>
+    <p class="section-subtitle">Quick view of your assigned teachers, scheduled meetings, and recent assignment activity.</p>
+    <div class="grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+        <!-- Assigned Teachers Box -->
+        <div class="card" style="width: 100%;">
+            <h2 class="section-title" style="font-size:1.1rem;margin:0 0 16px 0;">Assigned Teachers</h2>
+            <div class="tutors-grid" id="dashboardTeachersGrid" style="display: flex; flex-direction: column; gap: 16px;">
+                {% if assigned_teachers %}
+                    {% for teacher_data in assigned_teachers %}
+                        {% with teacher=teacher_data.teacher assignments=teacher_data.assignments %}
+                        <div class="tutor-card" data-teacher-id="{{ teacher.user.id }}" data-name="{{ teacher.user.get_full_name }}" 
+                             style="display: flex; align-items: center; gap: 16px; padding: 16px; border: 1px solid var(--divider); border-radius: 12px; background: var(--surface); transition: all 0.3s ease;">
+                            <div class="tutor-avatar" style="flex-shrink: 0; position: relative;">
+                                {% if teacher.user.profile_picture %}
+                                    <img src="{{ teacher.user.profile_picture.url }}" alt="{{ teacher.user.get_full_name }}"
+                                        style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(17, 88, 229, 0.1);"
+                                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                                {% endif %}
+                                <div class="avatar-fallback" style="{% if teacher.user.profile_picture %}display: none;{% else %}display: flex;{% endif %} width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, rgba(17, 88, 229, 0.12) 0%, rgba(17, 88, 229, 0.06) 100%); align-items: center; justify-content: center; border: 2px solid rgba(17, 88, 229, 0.15);">
+                                    <i class="fas fa-user" style="font-size: 1.5rem; color: var(--primary);"></i>
+                                </div>
+                            </div>
+                            <div class="tutor-info" style="flex: 1; min-width: 0;">
+                                <h3 class="tutor-name" style="margin: 0 0 6px 0; font-size: 1rem; font-weight: 600; color: var(--text);">{{ teacher.user.get_full_name }}</h3>
+                                {% if teacher.primary_subject %}
+                                    <p class="tutor-subject" style="margin: 0 0 8px 0; font-size: 0.875rem; color: var(--muted-text); text-transform: capitalize;">
+                                        <i class="fas fa-book" style="margin-right: 6px; color: var(--primary);"></i>{{ teacher.primary_subject }}
+                                    </p>
+                                {% endif %}
+                                {% if assignments %}
+                                    <p class="tutor-assignment" style="margin: 0 0 8px 0; font-size: 0.8rem; color: var(--muted-text); line-height: 1.4;">
+                                        <i class="fas fa-tasks" style="margin-right: 6px; color: var(--primary);"></i>{{ assignments.0.title|truncatewords:10 }}
+                                    </p>
+                                {% endif %}
+                                {% if teacher.rating %}
+                                    <div class="tutor-rating" style="display: inline-flex; align-items: center; gap: 4px; font-size: 0.875rem; color: var(--text);">
+                                        <i class="fas fa-star" style="color: #ffa500;"></i>
+                                        <span style="font-weight: 600;">{{ teacher.rating|floatformat:1 }}</span>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div style="flex-shrink: 0;">
+                                <button class="chat-btn" onclick="startChatWithTeacher('{{ teacher.user.id }}', '{{ teacher.user.get_full_name }}')" 
+                                        style="padding: 10px 20px; background: var(--primary); color: white; border: none; border-radius: 8px; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; white-space: nowrap;">
+                                    <i class="fas fa-comment" style="margin-right: 6px;"></i>Chat
+                                </button>
+                            </div>
+                        </div>
+                        {% endwith %}
+                    {% endfor %}
+                {% else %}
+                    <div id="noTeachersMessage" style="text-align: center; padding: 2rem; color: var(--muted-text);">
+                        <i class="fas fa-user-tie" style="font-size: 2rem; margin-bottom: 12px; opacity: 0.5; display: block;"></i>
+                        <p style="margin: 0;">No assigned teachers yet.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Scheduled Meetings Box -->
+        <div class="card" style="width: 100%;">
+            <h2 class="section-title" style="font-size:1.1rem;margin:0 0 10px 0;">Scheduled Meetings</h2>
+            <div id="scheduledMeetingsList">
+                {% if scheduled_meetings %}
+                    {% for meeting in scheduled_meetings %}
+                        <div class="meeting-item" style="padding: 10px; border-bottom: 1px solid var(--border-color); margin-bottom: 10px;">
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <div style="flex: 1;">
+                                    <h4 style="margin: 0 0 5px 0; font-size: 0.95rem; font-weight: 600;">{{ meeting.title }}</h4>
+                                    {% if meeting.teacher %}
+                                        <p style="margin: 0 0 5px 0; color: var(--muted-text); font-size: 0.85rem;">
+                                            <i class="fas fa-user-tie"></i> {{ meeting.teacher.get_full_name }}
+                                        </p>
+                                    {% endif %}
+                                    <p style="margin: 0; color: var(--muted-text); font-size: 0.85rem;">
+                                        <i class="fas fa-calendar-alt"></i> {{ meeting.scheduled_at|date:"M d, Y" }} 
+                                        <i class="fas fa-clock" style="margin-left: 10px;"></i> {{ meeting.scheduled_at|time:"g:i A" }}
+                                    </p>
+                                    {% if meeting.agenda %}
+                                        <p style="margin: 5px 0 0 0; color: var(--text-color); font-size: 0.85rem;">{{ meeting.agenda|truncatewords:15 }}</p>
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <span class="status-badge {% if meeting.status == 'scheduled' %}in-process{% elif meeting.status == 'in_progress' %}in-process{% else %}completed{% endif %}">
+                                        {{ meeting.get_status_display }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div style="text-align: center; padding: 2rem; color: var(--muted-text);">
+                        <p>No scheduled meetings.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Recent Assignment Actions Box -->
+        <div class="card" style="grid-column: 1/-1;">
+            <h2 class="section-title" style="font-size:1.1rem;margin:0 0 10px 0;">Recent Assignment Actions</h2>
+            <div id="recentActionsList">
+                {% if recent_actions %}
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Assignment</th>
+                                    <th>Action</th>
+                                    <th>Performed By</th>
+                                    <th>Time</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for action in recent_actions %}
+                                    <tr>
+                                        <td>
+                                            <code>{{ action.assignment.assignment_code }}</code><br>
+                                            <small style="color: var(--muted-text);">{{ action.assignment.title|truncatewords:6 }}</small>
+                                        </td>
+                                        <td>
+                                            {% if action.type == 'file_upload' %}
+                                                <i class="fas fa-file-upload" style="color: var(--primary-color);"></i>
+                                            {% else %}
+                                                <i class="fas fa-sync-alt" style="color: var(--warning-color);"></i>
+                                            {% endif %}
+                                            {{ action.action }}
+                                        </td>
+                                        <td>
+                                            {% if action.user %}
+                                                {{ action.user.get_full_name }}
+                                            {% else %}
+                                                <span style="color: var(--muted-text);">System</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <small>{{ action.timestamp|timesince }} ago</small>
+                                        </td>
+                                        <td>
+                                            <button class="action-btn view-btn" onclick="viewAssignment('{{ action.assignment.id }}')" title="View Assignment">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div style="text-align: center; padding: 2rem; color: var(--muted-text);">
+                        <p>No recent assignment actions.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .tutor-card:hover {
+        box-shadow: 0 4px 12px rgba(17, 88, 229, 0.15);
+        border-color: rgba(17, 88, 229, 0.3);
+        transform: translateY(-2px);
+    }
+    
+    .chat-btn:hover {
+        background: var(--primary-hover, #0d6efd) !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(17, 88, 229, 0.3);
+    }
+    
+    .chat-btn:active {
+        transform: translateY(0);
+    }
+    
+    @media (max-width: 768px) {
+        .grid {
+            grid-template-columns: 1fr !important;
+        }
+        
+        .tutor-card {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .tutor-info {
+            text-align: center;
+        }
+        
+        .chat-btn {
+            width: 100%;
+            margin-top: 12px;
+        }
+    }
+</style>
+
+<script>
+    // Function to start chat with teacher
+    function startChatWithTeacher(teacherId, teacherName) {
+        if (typeof window.switchSection === 'function') {
+            // Navigate to messages section
+            window.switchSection('messages');
+            
+            // Try to create/open thread with teacher
+            if (typeof fetch !== 'undefined') {
+                fetch('/messages/api/create-direct-thread/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: `target_user_id=${encodeURIComponent(teacherId)}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.thread) {
+                        // Thread created/opened successfully
+                        // The messages section should handle displaying the thread
+                        console.log('Chat thread opened with', teacherName);
+                    } else {
+                        console.error('Failed to open chat:', data.error || 'Unknown error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error opening chat:', error);
+                });
+            }
+        } else {
+            alert('Chat feature is currently unavailable.');
+        }
+    }
+
+    // Helper function to get CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Make function globally available
+    window.startChatWithTeacher = startChatWithTeacher;
+</script>
+{% endblock %}

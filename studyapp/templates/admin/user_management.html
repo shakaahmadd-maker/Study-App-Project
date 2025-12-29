@@ -1,0 +1,311 @@
+{% extends "admin/admin_base.html" %}
+
+{% block content %}
+            <section class="content-section" id="user-managementSection" aria-labelledby="userManagementHeading">
+                <h1 class="section-title" id="userManagementHeading">User Management</h1>
+                <p class="section-subtitle">Manage all users: Students, Teachers, and CS Reps.</p>
+
+                <!-- User Type Filter Tabs -->
+                <div class="user-type-tabs">
+                    <button class="user-type-tab active" data-user-type="students"
+                        onclick="filterUsersByType('students')">
+                        <i class="fas fa-user-graduate"></i>
+                        <span>Students</span>
+                    </button>
+                    <button class="user-type-tab" data-user-type="teachers" onclick="filterUsersByType('teachers')">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                        <span>Teachers</span>
+                    </button>
+                    <button class="user-type-tab" data-user-type="cs-reps" onclick="filterUsersByType('cs-reps')">
+                        <i class="fas fa-headset"></i>
+                        <span>CS Reps</span>
+                    </button>
+                </div>
+
+                <!-- Search and Filter Container -->
+                <div class="search-filter-container">
+                    <div class="search-container-improved">
+                        <div class="search-input-wrapper">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" class="search-input" placeholder="Search users..." id="userSearchInput">
+                        </div>
+                    </div>
+                    <div class="filter-container">
+                        <select class="filter-select" id="userStatusFilter">
+                            <option value="all">All Status</option>
+                            <option value="online">Online</option>
+                            <option value="offline">Offline</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                        <select class="filter-select" id="userDateFilter">
+                            <option value="all">All Dates</option>
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month">This Month</option>
+                            <option value="quarter">This Quarter</option>
+                            <option value="year">This Year</option>
+                            <option value="custom">Custom Range</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Students Table -->
+                <div class="users-table-container" id="studentsTableContainer">
+                    <table class="users-table">
+                        <thead>
+                            <tr>
+                                <th>USER</th>
+                                <th>EMAIL</th>
+                                <th>STATUS</th>
+                                <th>JOINED</th>
+                                <th>ACTIONS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for student in students %}
+                            <tr class="user-row" data-user-type="student" data-user-id="{{ student.user.id }}">
+                                <td class="user-info-cell">
+                                    <div class="user-info-list">
+                                        <div class="user-avatar-list">
+                                            {% if student.user.profile_picture %}
+                                            <img src="{{ student.user.profile_picture.url }}" alt="{{ student.user.get_full_name }}"
+                                                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                            {% else %}
+                                            <div class="avatar-fallback" style="display: flex;">👤</div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="user-details-list">
+                                            <div class="user-name">{{ student.user.get_full_name }}</div>
+                                            <div class="user-role-badge student">Student (ID: {{ student.student_id|stringformat:"04d" }})</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="user-email">{{ student.user.email }}</td>
+                                <td class="user-status">
+                                    {% if student.user.is_active %}
+                                    <span class="status-badge online">
+                                        <i class="fas fa-circle"></i>
+                                        Active
+                                    </span>
+                                    {% else %}
+                                    <span class="status-badge offline">
+                                        <i class="fas fa-circle"></i>
+                                        Blocked
+                                    </span>
+                                    {% endif %}
+                                </td>
+                                <td class="user-joined">{{ student.user.created_at|date:"M d, Y" }}</td>
+                                <td class="user-actions-cell">
+                                    <button class="action-btn-small primary" onclick="chatWithUser('{{ student.user.id }}', 'student')"
+                                        title="Chat">
+                                        <i class="fas fa-comments"></i>
+                                        Chat
+                                    </button>
+                                    {% if student.user.is_active %}
+                                    <button class="action-btn-small danger" onclick="toggleUserStatus('{{ student.user.id }}', 'block')"
+                                        title="Block User">
+                                        <i class="fas fa-ban"></i>
+                                        Block
+                                    </button>
+                                    {% else %}
+                                    <button class="action-btn-small success" onclick="toggleUserStatus('{{ student.user.id }}', 'unblock')"
+                                        title="Unblock User">
+                                        <i class="fas fa-check-circle"></i>
+                                        Unblock
+                                    </button>
+                                    {% endif %}
+                                    <button class="action-btn-small secondary" onclick="resetUserPassword('{{ student.user.id }}')"
+                                        title="Reset Password">
+                                        <i class="fas fa-key"></i>
+                                        Reset Password
+                                    </button>
+                                    <button class="action-btn-small danger" onclick="deleteUserAccount('{{ student.user.id }}', 'student')"
+                                        title="Delete Account">
+                                        <i class="fas fa-trash-alt"></i>
+                                        Delete
+                                    </button>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" style="text-align: center; padding: 2rem;">No students found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Teachers Table -->
+                <div class="users-table-container" id="teachersTableContainer" style="display: none;">
+                    <table class="users-table">
+                        <thead>
+                            <tr>
+                                <th>USER</th>
+                                <th>EMAIL</th>
+                                <th>STATUS</th>
+                                <th>JOINED</th>
+                                <th>ACTIONS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for teacher in teachers %}
+                            <tr class="user-row" data-user-type="teacher" data-user-id="{{ teacher.user.id }}">
+                                <td class="user-info-cell">
+                                    <div class="user-info-list">
+                                        <div class="user-avatar-list">
+                                            {% if teacher.user.profile_picture %}
+                                            <img src="{{ teacher.user.profile_picture.url }}" alt="{{ teacher.user.get_full_name }}"
+                                                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                            {% else %}
+                                            <div class="avatar-fallback" style="display: flex;">👨‍🏫</div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="user-details-list">
+                                            <div class="user-name">{{ teacher.user.get_full_name }}</div>
+                                            <div class="user-role-badge teacher">Teacher {% if teacher.teacher_id %}(ID: {{ teacher.teacher_id|stringformat:"04d" }}){% endif %}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="user-email">{{ teacher.user.email }}</td>
+                                <td class="user-status">
+                                    {% if teacher.user.is_active %}
+                                    <span class="status-badge online">
+                                        <i class="fas fa-circle"></i>
+                                        Active
+                                    </span>
+                                    {% else %}
+                                    <span class="status-badge offline">
+                                        <i class="fas fa-circle"></i>
+                                        Blocked
+                                    </span>
+                                    {% endif %}
+                                </td>
+                                <td class="user-joined">{{ teacher.user.created_at|date:"M d, Y" }}</td>
+                                <td class="user-actions-cell">
+                                    <button class="action-btn-small primary" onclick="chatWithUser('{{ teacher.user.id }}', 'teacher')"
+                                        title="Chat">
+                                        <i class="fas fa-comments"></i>
+                                        Chat
+                                    </button>
+                                    {% if teacher.user.is_active %}
+                                    <button class="action-btn-small danger" onclick="toggleUserStatus('{{ teacher.user.id }}', 'block')"
+                                        title="Block User">
+                                        <i class="fas fa-ban"></i>
+                                        Block
+                                    </button>
+                                    {% else %}
+                                    <button class="action-btn-small success" onclick="toggleUserStatus('{{ teacher.user.id }}', 'unblock')"
+                                        title="Unblock User">
+                                        <i class="fas fa-check-circle"></i>
+                                        Unblock
+                                    </button>
+                                    {% endif %}
+                                    <button class="action-btn-small secondary" onclick="resetUserPassword('{{ teacher.user.id }}')"
+                                        title="Reset Password">
+                                        <i class="fas fa-key"></i>
+                                        Reset Password
+                                    </button>
+                                    <button class="action-btn-small danger" onclick="deleteUserAccount('{{ teacher.user.id }}', 'teacher')"
+                                        title="Delete Account">
+                                        <i class="fas fa-trash-alt"></i>
+                                        Delete
+                                    </button>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" style="text-align: center; padding: 2rem;">No teachers found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- CS Reps Table -->
+                <div class="users-table-container" id="csRepsTableContainer" style="display: none;">
+                    <table class="users-table">
+                        <thead>
+                            <tr>
+                                <th>USER</th>
+                                <th>EMAIL</th>
+                                <th>STATUS</th>
+                                <th>JOINED</th>
+                                <th>ACTIONS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for csrep in csreps %}
+                            <tr class="user-row" data-user-type="cs-rep" data-user-id="{{ csrep.user.id }}">
+                                <td class="user-info-cell">
+                                    <div class="user-info-list">
+                                        <div class="user-avatar-list">
+                                            {% if csrep.user.profile_picture %}
+                                            <img src="{{ csrep.user.profile_picture.url }}" alt="{{ csrep.user.get_full_name }}"
+                                                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                            {% else %}
+                                            <div class="avatar-fallback" style="display: flex;">👤</div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="user-details-list">
+                                            <div class="user-name">{{ csrep.user.get_full_name }}</div>
+                                            <div class="user-role-badge cs-rep">CS Rep</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="user-email">{{ csrep.user.email }}</td>
+                                <td class="user-status">
+                                    {% if csrep.user.is_active %}
+                                    <span class="status-badge online">
+                                        <i class="fas fa-circle"></i>
+                                        Active
+                                    </span>
+                                    {% else %}
+                                    <span class="status-badge offline">
+                                        <i class="fas fa-circle"></i>
+                                        Blocked
+                                    </span>
+                                    {% endif %}
+                                </td>
+                                <td class="user-joined">{{ csrep.user.created_at|date:"M d, Y" }}</td>
+                                <td class="user-actions-cell">
+                                    <button class="action-btn-small primary" onclick="chatWithUser('{{ csrep.user.id }}', 'cs-rep')"
+                                        title="Chat">
+                                        <i class="fas fa-comments"></i>
+                                        Chat
+                                    </button>
+                                    {% if csrep.user.is_active %}
+                                    <button class="action-btn-small danger" onclick="toggleUserStatus('{{ csrep.user.id }}', 'block')"
+                                        title="Block User">
+                                        <i class="fas fa-ban"></i>
+                                        Block
+                                    </button>
+                                    {% else %}
+                                    <button class="action-btn-small success" onclick="toggleUserStatus('{{ csrep.user.id }}', 'unblock')"
+                                        title="Unblock User">
+                                        <i class="fas fa-check-circle"></i>
+                                        Unblock
+                                    </button>
+                                    {% endif %}
+                                    <button class="action-btn-small secondary" onclick="resetUserPassword('{{ csrep.user.id }}')"
+                                        title="Reset Password">
+                                        <i class="fas fa-key"></i>
+                                        Reset Password
+                                    </button>
+                                    <button class="action-btn-small danger" onclick="deleteUserAccount('{{ csrep.user.id }}', 'cs-rep')"
+                                        title="Delete Account">
+                                        <i class="fas fa-trash-alt"></i>
+                                        Delete
+                                    </button>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" style="text-align: center; padding: 2rem;">No CS Reps found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+{% endblock %}

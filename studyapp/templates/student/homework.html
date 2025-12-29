@@ -1,0 +1,562 @@
+{% extends "student/student_base.html" %}
+
+{% block content %}
+<section class="content-section" id="homeworkSection" aria-labelledby="homeworkHeading">
+    <div class="section-header"
+        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <div>
+            <h1 class="section-title" id="homeworkHeading">Homework</h1>
+            <p class="section-subtitle">All assigned homework with status and due dates.</p>
+        </div>
+        <div class="filter-controls" style="display: flex; gap: 12px;">
+            <select id="studentHwStatusFilter" class="form-select"
+                style="padding: 8px 12px; border-radius: 8px; border: 1px solid var(--divider);">
+                <option value="all">All Status</option>
+                <option value="pending">Pending Submission</option>
+                <option value="submitted">Awaiting Grading</option>
+                <option value="graded">Graded</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Teacher</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="homeworkTableBody">
+                <!-- Data will be loaded via API -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modals moved INSIDE section to prevent them being stripped by AJAX loader -->
+
+    <!-- Submit Homework Modal -->
+    <div class="modal-overlay" id="submitHomeworkModal" style="display: none;">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div>
+                    <h2 class="modal-title" id="submitModalTitle">Submit Homework</h2>
+                    <p class="section-subtitle" style="margin: 4px 0 0 0; font-size: 0.875rem;">Attach your homework
+                        files and add notes</p>
+                </div>
+                <button class="modal-close" onclick="window.closeSubmitHomeworkModal()" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="submitHomeworkForm">
+                    <div class="input-field">
+                        <label for="homeworkNotes">Notes <span
+                                style="color: var(--muted); font-weight: 400;">(Optional)</span></label>
+                        <textarea id="homeworkNotes" name="notes"
+                            placeholder="Add any notes or comments about your homework submission..."
+                            rows="5"></textarea>
+                    </div>
+                    <div class="input-field">
+                        <label for="homeworkFiles">Attachments</label>
+                        <div class="file-upload-area" id="fileUploadArea">
+                            <input type="file" id="homeworkFiles" name="files" multiple
+                                accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.gif,.zip,.rar">
+                            <div class="file-upload-content">
+                                <i class="fas fa-cloud-upload-alt"
+                                    style="font-size: 2.5rem; color: var(--primary); margin-bottom: 12px;"></i>
+                                <p style="font-weight: 600; margin: 0 0 4px 0;">Click to upload or drag and drop</p>
+                                <p style="font-size: 0.875rem; color: var(--muted); margin: 0;">PDF, DOC, DOCX, TXT,
+                                    Images, ZIP (Max 10MB per file)</p>
+                            </div>
+                        </div>
+                        <div id="fileList" class="file-list"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="action-btn cancel-btn" onclick="window.closeSubmitHomeworkModal()">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button type="button" class="primary-button" id="submitHomeworkBtn">
+                    <i class="fas fa-paper-plane"></i> Submit Homework
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Homework Details Modal -->
+    <div class="modal-overlay" id="viewHomeworkModal" style="display: none;">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div>
+                    <h2 class="modal-title" id="viewModalTitle">Homework Details</h2>
+                    <p class="section-subtitle" style="margin: 4px 0 0 0; font-size: 0.875rem;" id="viewModalSubtitle">
+                    </p>
+                </div>
+                <button class="modal-close" onclick="window.closeViewHomeworkModal()" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="homeworkDetailsContent">
+                    <!-- Content will be dynamically loaded -->
+                </div>
+            </div>
+            <div class="modal-footer" id="viewModalFooter">
+                <button type="button" class="primary-button" onclick="window.closeViewHomeworkModal()">
+                    <i class="fas fa-check"></i> Close
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    // 1. Define Global Functions First
+    window.openSubmitHomeworkModal = function (hwId, hwTitle) {
+        console.log('Opening submit modal for:', hwId);
+        const modal = document.getElementById('submitHomeworkModal');
+        if (!modal) {
+            console.error('Submit modal not found in DOM');
+            // Try one more time to find and move it if it's still in the container
+            if (typeof window.ensureModalsInBody === 'function') window.ensureModalsInBody();
+            const retryModal = document.getElementById('submitHomeworkModal');
+            if (!retryModal) return;
+        }
+
+        // Reset form
+        document.getElementById('submitModalTitle').textContent = `Submit: ${hwTitle}`;
+        const notesField = document.getElementById('homeworkNotes');
+        if (notesField) notesField.value = '';
+
+        const fileInput = document.getElementById('homeworkFiles');
+        if (fileInput) fileInput.value = '';
+
+        // Clear selected files
+        if (typeof selectedFiles !== 'undefined') {
+            selectedFiles.length = 0;
+        }
+
+        const fileList = document.getElementById('fileList');
+        if (fileList) fileList.innerHTML = '';
+
+        // Setup submit button - remove old listeners and add new one
+        const submitBtn = document.getElementById('submitHomeworkBtn');
+        if (submitBtn) {
+            // Clone button to remove old event listeners
+            const newBtn = submitBtn.cloneNode(true);
+            submitBtn.parentNode.replaceChild(newBtn, submitBtn);
+            const freshSubmitBtn = document.getElementById('submitHomeworkBtn');
+
+            // Add click event listener
+            freshSubmitBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                window.handleHomeworkSubmission(hwId);
+            });
+        }
+
+        // Re-setup file upload handlers
+        if (typeof setupFileUpload === 'function') {
+            setupFileUpload();
+        }
+
+        const modalToOpen = document.getElementById('submitHomeworkModal');
+        modalToOpen.style.display = 'flex';
+        modalToOpen.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    };
+
+    window.openViewHomeworkModal = async function (hwId, hwTitle) {
+        console.log('Opening view modal for:', hwId);
+        const modal = document.getElementById('viewHomeworkModal');
+        if (!modal) {
+            if (typeof window.ensureModalsInBody === 'function') window.ensureModalsInBody();
+            if (!document.getElementById('viewHomeworkModal')) return;
+        }
+
+        try {
+            const response = await apiClient.get(`/homework/details/${hwId}/`);
+            if (response.success) {
+                const hw = response.homework;
+                const content = document.getElementById('homeworkDetailsContent');
+                const title = document.getElementById('viewModalTitle');
+                const subtitle = document.getElementById('viewModalSubtitle');
+
+                if (title) title.textContent = hwTitle;
+                if (subtitle) subtitle.textContent = hw.status === 'graded' ? 'Review your submission and grade' : 'View homework details';
+
+                // Build HTML helper
+                const escapeHtml = (text) => {
+                    const div = document.createElement('div');
+                    div.innerText = text || '';
+                    return div.innerHTML;
+                };
+
+                let html = `
+                <div class="homework-detail-section" style="background: rgba(17, 88, 229, 0.03); padding: 20px; border-radius: 12px; border-left: 3px solid var(--primary); margin-bottom: 20px;">
+                    <h3 class="detail-section-title"><i class="fas fa-book"></i> Homework Assignment</h3>
+                    <div class="detail-row"><span class="detail-label">Title:</span> <span style="font-weight: 600;">${hw.title}</span></div>
+                    <div class="detail-row" style="margin-top: 12px;"><span class="detail-label">Teacher:</span> <span>${hw.teacher}</span></div>
+                    <div class="detail-row" style="margin-top: 12px;"><span class="detail-label">Due Date:</span> <span>${hw.due_display}</span></div>
+                    ${hw.description ? `<div class="detail-row" style="margin-top: 12px;"><span class="detail-label">Description:</span><div style="margin-top: 8px; padding: 12px; background: var(--surface); border-radius: 8px;">${hw.description}</div></div>` : ''}
+                </div>
+            `;
+
+                if (hw.submission) {
+                    html += `
+                    <div class="homework-detail-section" style="border-top: 2px solid var(--divider); padding-top: 24px; margin-bottom: 20px;">
+                        <h3 class="detail-section-title" style="color: var(--primary);"><i class="fas fa-user-graduate"></i> Your Submission</h3>
+                        <div class="detail-row" style="margin-top: 12px;"><span class="detail-label">Submitted:</span> <span>${hw.submission.submitted_at}</span></div>
+                        ${hw.submission.notes ? `<div style="margin-top: 16px;"><h4>Your Notes</h4><div style="padding: 12px; background: var(--surface); border-radius: 8px;">${escapeHtml(hw.submission.notes)}</div></div>` : ''}
+                        ${hw.submission.attachments && hw.submission.attachments.length > 0 ? `
+                            <div style="margin-top: 16px;"><h4>Attachments</h4><div class="attachments-list">
+                                ${hw.submission.attachments.map(f => `
+                                    <div class="attachment-item" style="display: flex; align-items: center; padding: 12px; background: var(--surface); border-radius: 8px; margin-bottom: 8px;">
+                                        <i class="fas fa-file" style="margin-right: 12px; color: var(--primary);"></i>
+                                        <div style="flex: 1;"><div style="font-weight: 600;">${escapeHtml(f.name)}</div><div style="font-size: 0.875rem; color: var(--muted);">${f.size}</div></div>
+                                        <a href="${f.url}" class="action-btn view-btn" target="_blank"><i class="fas fa-download"></i> Download</a>
+                                    </div>
+                                `).join('')}
+                            </div></div>
+                        ` : ''}
+                    </div>
+                `;
+                }
+
+                if (hw.status === 'graded') {
+                    html += `
+                    <div class="homework-detail-section grade-section" style="border-top: 2px solid var(--divider); padding-top: 24px;">
+                        <h3 class="detail-section-title"><i class="fas fa-star"></i> Grade & Feedback</h3>
+                        <div style="margin-top: 16px;">
+                            <div style="font-size: 2rem; font-weight: 700; color: var(--primary);">${hw.grade}${hw.grade_percentage ? ` (${hw.grade_percentage}%)` : ''}</div>
+                            ${hw.feedback ? `<div style="padding: 12px; background: var(--surface); border-radius: 8px; margin-top: 12px;">${escapeHtml(hw.feedback)}</div>` : ''}
+                        </div>
+                    </div>
+                `;
+                }
+
+                content.innerHTML = html;
+                const modalToOpen = document.getElementById('viewHomeworkModal');
+                modalToOpen.style.display = 'flex';
+                modalToOpen.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+        } catch (error) {
+            console.error('Error loading homework details:', error);
+            if (typeof window.showToast === 'function') window.showToast('Error loading homework details', 'error');
+        }
+    };
+
+    window.closeSubmitHomeworkModal = function () {
+        const modal = document.getElementById('submitHomeworkModal');
+        if (modal) {
+            modal.style.display = 'none';
+            modal.classList.remove('active');
+        }
+        document.body.style.overflow = 'auto';
+    };
+
+    window.closeViewHomeworkModal = function () {
+        const modal = document.getElementById('viewHomeworkModal');
+        if (modal) {
+            modal.style.display = 'none';
+            modal.classList.remove('active');
+        }
+        document.body.style.overflow = 'auto';
+    };
+
+    // 2. Functional Scope
+    (function () {
+        let homeworkList = [];
+        let selectedFiles = [];
+
+        // Helper for toast notifications with fallback
+        function safeToast(message, type = 'info') {
+            if (typeof window.showToast === 'function') {
+                window.showToast(message, type);
+            } else if (typeof window.showTemporaryMessage === 'function') {
+                window.showTemporaryMessage(message);
+            } else {
+                console.log(`[${type.toUpperCase()}] ${message}`);
+                if (type === 'error') alert(message);
+            }
+        }
+
+        async function initializeHomework() {
+            console.log('=== INITIALIZING STUDENT HOMEWORK SECTION ===');
+            ensureModalsInBody();
+            await fetchHomeworkList();
+
+            const filter = document.getElementById('studentHwStatusFilter');
+            if (filter) {
+                filter.removeEventListener('change', renderHomeworkTable);
+                filter.addEventListener('change', renderHomeworkTable);
+            }
+
+            setupModalHandlers();
+            setupFileUpload();
+        }
+
+        // Export to window
+        window.initializeHomework = initializeHomework;
+
+        async function fetchHomeworkList() {
+            try {
+                const response = await apiClient.get('/homework/student/list/');
+                if (response.success) {
+                    homeworkList = response.homeworks;
+                    renderHomeworkTable();
+                }
+            } catch (error) {
+                console.error('Error fetching homework:', error);
+            }
+        }
+
+        function renderHomeworkTable() {
+            const tbody = document.getElementById('homeworkTableBody');
+            if (!tbody) return;
+
+            const statusFilter = document.getElementById('studentHwStatusFilter').value;
+            const filtered = homeworkList.filter(hw => statusFilter === 'all' || hw.status === statusFilter);
+
+            tbody.innerHTML = '';
+            if (filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: var(--muted);">No homework found for the selected status.</td></tr>';
+                return;
+            }
+
+            filtered.forEach(hw => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                <td>${escapeHtml(hw.title)}</td>
+                <td>${escapeHtml(hw.teacher)}</td>
+                <td>${hw.due}</td>
+                <td><span class="hw-badge ${hw.status}">${getStatusBadgeContent(hw.status)}</span> ${hw.status === 'graded' ? `<span style="margin-left: 8px; font-weight: 700; color: var(--success);">${hw.grade}</span>` : ''}</td>
+                <td>
+                    ${hw.status === 'pending' ? `
+                        <button class="primary-button action-submit">
+                            <i class="fas fa-upload"></i> Submit
+                        </button>
+                    ` : ''}
+                    <button class="action-btn view-btn action-view">
+                        <i class="fas fa-eye"></i> View
+                    </button>
+                </td>
+            `;
+
+                // Add click listeners to buttons
+                const submitBtn = tr.querySelector('.action-submit');
+                const viewBtn = tr.querySelector('.action-view');
+
+                if (submitBtn) {
+                    submitBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        window.openSubmitHomeworkModal(hw.id, hw.title);
+                    });
+                }
+
+                if (viewBtn) {
+                    viewBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        window.openViewHomeworkModal(hw.id, hw.title);
+                    });
+                }
+
+                tbody.appendChild(tr);
+            });
+        }
+
+        function getStatusBadgeContent(status) {
+            if (status === 'pending') return '<i class="fas fa-clock"></i> Pending';
+            if (status === 'submitted') return '<i class="fas fa-paper-plane"></i> Submitted';
+            if (status === 'graded') return '<i class="fas fa-check"></i> Graded';
+            return status;
+        }
+
+        function setupFileUpload() {
+            const area = document.getElementById('fileUploadArea');
+            const input = document.getElementById('homeworkFiles');
+            if (!area || !input) return;
+
+            // Remove existing event listeners by cloning
+            const newInput = input.cloneNode(true);
+            input.parentNode.replaceChild(newInput, input);
+            const fileInput = document.getElementById('homeworkFiles');
+
+            const newArea = area.cloneNode(true);
+            area.parentNode.replaceChild(newArea, area);
+            const fileArea = document.getElementById('fileUploadArea');
+
+            fileArea.onclick = () => fileInput.click();
+
+            fileInput.onchange = (e) => {
+                const files = Array.from(e.target.files);
+                let addedCount = 0;
+                files.forEach(f => {
+                    // Check if file already exists (by name and size)
+                    const exists = selectedFiles.some(sf => sf.name === f.name && sf.size === f.size);
+                    if (!exists) {
+                        selectedFiles.push(f);
+                        addedCount++;
+                    }
+                });
+
+                if (addedCount > 0) {
+                    updateFileList();
+                }
+
+                // Reset input to allow selecting same file again if needed
+                // But don't clear it immediately - let the browser handle it
+                setTimeout(() => {
+                    fileInput.value = '';
+                }, 100);
+            };
+
+            fileArea.ondragover = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                fileArea.classList.add('drag-over');
+            };
+
+            fileArea.ondragleave = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                fileArea.classList.remove('drag-over');
+            };
+
+            fileArea.ondrop = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                fileArea.classList.remove('drag-over');
+                const files = Array.from(e.dataTransfer.files);
+                let addedCount = 0;
+                files.forEach(f => {
+                    const exists = selectedFiles.some(sf => sf.name === f.name && sf.size === f.size);
+                    if (!exists) {
+                        selectedFiles.push(f);
+                        addedCount++;
+                    }
+                });
+                if (addedCount > 0) {
+                    updateFileList();
+                }
+            };
+        }
+
+        function updateFileList() {
+            const list = document.getElementById('fileList');
+            if (!list) return;
+            list.innerHTML = '';
+            selectedFiles.forEach((f, i) => {
+                const item = document.createElement('div');
+                item.className = 'file-item';
+                item.innerHTML = `
+                <div class="file-info"><i class="fas fa-file"></i> <span>${escapeHtml(f.name)}</span></div>
+                <button type="button" class="file-remove" onclick="window.removeHwFile(${i})"><i class="fas fa-times"></i></button>
+            `;
+                list.appendChild(item);
+            });
+        }
+
+        window.removeHwFile = (i) => {
+            selectedFiles.splice(i, 1);
+            updateFileList();
+        };
+
+        window.handleHomeworkSubmission = async function (hwId) {
+            const submitBtn = document.getElementById('submitHomeworkBtn');
+            let originalText = '';
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+            }
+
+            try {
+                const notes = document.getElementById('homeworkNotes').value.trim();
+                if (selectedFiles.length === 0 && !notes) {
+                    safeToast('Please provide notes or attachments', 'error');
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalText;
+                    }
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('homework_id', hwId);
+                formData.append('notes', notes);
+                selectedFiles.forEach(f => formData.append('files', f));
+
+                const response = await apiClient.postFormData('/homework/student/submit/', formData);
+                if (response.success) {
+                    safeToast(response.message || 'Homework submitted successfully!', 'success');
+                    window.closeSubmitHomeworkModal();
+                    await fetchHomeworkList();
+                } else {
+                    safeToast(response.error || 'Failed to submit homework', 'error');
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalText;
+                    }
+                }
+            } catch (error) {
+                console.error('Submission error:', error);
+                safeToast('Error submitting homework: ' + (error.message || 'Unknown error'), 'error');
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                }
+            }
+        };
+
+        function ensureModalsInBody() {
+            const dynamicContainer = document.getElementById('dynamicContentContainer');
+            if (!dynamicContainer) return;
+
+            ['submitHomeworkModal', 'viewHomeworkModal'].forEach(id => {
+                const modalInContainer = dynamicContainer.querySelector(`#${id}`);
+                if (modalInContainer) {
+                    const existingInBody = document.querySelector(`body > #${id}`);
+                    if (existingInBody && existingInBody !== modalInContainer) existingInBody.remove();
+
+                    if (!document.body.contains(modalInContainer)) {
+                        document.body.appendChild(modalInContainer);
+                        console.log(`✅ Moved fresh ${id} to document body`);
+                    }
+                }
+            });
+        }
+        window.ensureModalsInBody = ensureModalsInBody;
+
+        function setupModalHandlers() {
+            ['submitHomeworkModal', 'viewHomeworkModal'].forEach(id => {
+                const modal = document.getElementById(id);
+                if (modal && !modal.dataset.handlerSetup) {
+                    modal.addEventListener('click', (e) => {
+                        if (e.target === modal) {
+                            modal.style.display = 'none';
+                            modal.classList.remove('active');
+                            document.body.style.overflow = 'auto';
+                        }
+                    });
+                    modal.dataset.handlerSetup = 'true';
+                }
+            });
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.innerText = text || '';
+            return div.innerHTML;
+        }
+
+        initializeHomework();
+    })();
+</script>
+{% endblock %}

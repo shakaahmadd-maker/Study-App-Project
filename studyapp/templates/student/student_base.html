@@ -1,0 +1,207 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="">
+    <title>Student Tabs</title>
+    <script>
+        // Function to extract and set CSRF token in meta tag
+        function setCsrfTokenInMeta() {
+            // Try to get from hidden input first (most reliable)
+            let token = null;
+            const csrfInputs = document.querySelectorAll('input[name="csrfmiddlewaretoken"]');
+            for (let input of csrfInputs) {
+                if (input.value) {
+                    token = input.value;
+                    break;
+                }
+            }
+            
+            // Set in meta tag if found
+            if (token) {
+                const metaTag = document.querySelector('meta[name="csrf-token"]');
+                if (metaTag) {
+                    metaTag.setAttribute('content', token);
+                }
+                // Also store globally for easy access
+                window.csrfToken = token;
+            }
+        }
+        
+        // Run multiple times to ensure we catch it
+        // Run immediately (in case DOM is already ready)
+        setCsrfTokenInMeta();
+        
+        // Run when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', setCsrfTokenInMeta);
+        }
+        
+        // Also try after delays to catch late-rendered elements
+        setTimeout(setCsrfTokenInMeta, 50);
+        setTimeout(setCsrfTokenInMeta, 200);
+        setTimeout(setCsrfTokenInMeta, 500);
+    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:,">
+    <link href="{% static 'css/Student_Dash.css' %}" rel="stylesheet">
+    <link href="{% static 'css/threads.css' %}" rel="stylesheet">
+</head>
+
+<body>
+    <!-- CSRF Token for JavaScript access -->
+    {% csrf_token %}
+    <header class="top-header">
+        <div class="header-logo"><span class="logo-text">Nano</span><span class="logo-accent"> Problem</span></div>
+        <div class="header-search">
+            <i class="fas fa-search"></i>
+            <input type="search" id="headerSearch" name="headerSearch" autocomplete="off" placeholder="Search..." />
+        </div>
+        <div class="header-actions">
+            <button class="icon-button" id="sidebarToggle" title="Toggle menu" aria-label="Toggle menu">
+                <i class="fas fa-bars"></i>
+            </button>
+            <button class="dark-mode-toggle" id="themeToggle" title="Toggle theme" aria-label="Toggle theme">
+                <i class="fas fa-moon"></i>
+            </button>
+            <button class="icon-button" id="notificationsNavButton" data-open-section="notifications" title="Notifications"
+                aria-label="Notifications">
+                <i class="fas fa-bell"></i>
+                <span class="header-notification-badge" id="notificationsUnreadBadge" aria-label="Unread notifications"
+                    style="display: inline-flex;">0</span>
+            </button>
+            <div class="user-profile-menu" role="button" tabindex="0">
+                <div class="user-profile-avatar"
+                    style="position: relative; width: 40px; height: 40px; border-radius: 50%; overflow: hidden; background-color: #f3f4f6; display: flex; align-items: center; justify-content: center;">
+                    {% if user.profile_picture %}
+                    <img id="headerProfilePicture" src="{{ user.profile_picture.url }}" alt="Student"
+                        style="width: 100%; height: 100%; object-fit: cover; display: block;" />
+                    <i class="fas fa-user" id="headerProfileIcon"
+                        style="font-size: 20px; color: #9ca3af; display: none;"></i>
+                    {% else %}
+                    <img id="headerProfilePicture" src="" alt="Student"
+                        style="width: 100%; height: 100%; object-fit: cover; display: none;" />
+                    <i class="fas fa-user" id="headerProfileIcon"
+                        style="font-size: 20px; color: #9ca3af; display: flex;"></i>
+                    {% endif %}
+                </div>
+                <div class="user-profile-info">
+                    <span class="user-profile-name" id="headerUserName">{% if user.first_name %}{{ user.first_name }}{% else %}Student{% endif %}</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="user-dropdown" role="menu">
+                    <a class="dropdown-item" href="#" data-open-section="profile">Profile Management</a>
+                    <a class="dropdown-item" href="#" data-open-section="settings">Settings</a>
+                    <form action="{% url 'account:logout' %}" method="POST" id="logoutForm" style="display: none;">
+                        {% csrf_token %}
+                    </form>
+                    <a class="dropdown-item logout-link" href="#" onclick="event.preventDefault(); if(confirm('Are you sure you want to logout?')) document.getElementById('logoutForm').submit();">
+                        <i class="fas fa-right-from-bracket"></i> Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="layout">
+        <aside class="sidebar">
+            <nav class="nav-menu" aria-label="Primary">
+                <ul class="nav-list">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#" data-section="dashboard">
+                            <i class="fas fa-home"></i><span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="messages">
+                            <i class="fas fa-envelope"></i>
+                            <span>Messages</span>
+                            <span class="notification-dot" data-badge-dot="messages" style="display:none;"></span>
+                            <span class="nav-badge" data-badge-key="messages" style="display:none;">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="threads">
+                            <i class="fas fa-layer-group"></i><span>Threads</span>
+                            <span class="notification-dot" data-badge-dot="threads" style="display:none;"></span>
+                            <span class="nav-badge" data-badge-key="threads" style="display:none;">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="meetings">
+                            <i class="fas fa-video"></i><span>Meetings</span>
+                            <span class="notification-dot" data-badge-dot="meetings" style="display:none;"></span>
+                            <span class="nav-badge" data-badge-key="meetings" style="display:none;">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="assignment">
+                            <i class="fas fa-plus-square"></i><span>Request Assignment</span>
+                            <span class="nav-action">+</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="tracker">
+                            <i class="fas fa-tasks"></i><span>Assignment Tracker</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="tutors">
+                            <i class="fas fa-user-friends"></i><span>Tutors</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="onlineExams">
+                            <i class="fas fa-clipboard-list"></i><span>Online Exams</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="invoices">
+                            <i class="fas fa-file-invoice-dollar"></i><span>Invoices</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="homework">
+                            <i class="fas fa-book"></i><span>Homework</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="announcements">
+                            <i class="fas fa-bullhorn"></i><span>Announcements</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main">
+            <!-- Dynamic Content Container -->
+            <div id="dynamicContentContainer" class="main-content">
+                {% block content %}
+                {% endblock %}
+                <!-- Toast Notification -->
+                <div class="toast-container" id="toastContainer"></div>
+            </div>
+        </main>
+    </div>
+
+    <script src="{% static 'java/toastNotifications.js' %}"></script>
+    <script src="{% static 'java/apiClient.js' %}"></script>
+    <script src="{% static 'java/realtimeDashboard.js' %}"></script>
+    <script>
+        window.currentUserId = "{{ request.user.id }}";
+        window.currentUserRole = "{{ request.user.role }}";
+    </script>
+    <script src="{% static 'java/messaging.js' %}"></script>
+    <script src="{% static 'java/threads.js' %}"></script>
+    <script src="{% static 'java/dashboard.js' %}"></script>
+    <script src="{% static 'java/invoice_management.js' %}"></script>
+</body>
+
+</html>
+</html>

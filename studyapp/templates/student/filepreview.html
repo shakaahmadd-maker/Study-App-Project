@@ -1,0 +1,11 @@
+{% extends "student/student_base.html" %}
+
+{% block content %}
+<div id="filePreviewSection" class="modern-file-list" style="display: none;">
+    <div class="file-list-header">
+        <span class="file-list-title"><i class="fas fa-paperclip"></i> Attached Files</span>
+        <button type="button" class="file-clear-btn" id="clearFilesBtn">Clear All</button>
+    </div>
+    <div id="filePreviewList" class="file-list-items"></div>
+</div>
+{% endblock %}

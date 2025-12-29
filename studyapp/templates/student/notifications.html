@@ -1,0 +1,226 @@
+{% extends "student/student_base.html" %}
+
+{% block content %}
+<section class="content-section" id="notificationsSection" aria-labelledby="notificationsHeading">
+    <div class="section-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+        <div>
+            <h1 class="section-title" id="notificationsHeading" style="margin-bottom: 4px;">Notifications</h1>
+            <p class="section-subtitle" style="margin: 0;">Stay updated with your latest academic activity.</p>
+        </div>
+        <div style="display:flex; gap:10px;">
+            <button class="ghost-button" id="studentMarkAllReadBtn" type="button" style="padding: 8px 16px; font-size: 0.85rem; border-radius: 10px;">
+                <i class="fas fa-check-double" style="margin-right: 6px;"></i>Mark all read
+            </button>
+            <button class="ghost-button" id="studentDeleteAllNotificationsBtn" type="button" style="padding: 8px 16px; font-size: 0.85rem; border-radius: 10px; color: #ef4444; border-color: rgba(239, 68, 68, 0.2);">
+                <i class="fas fa-trash-alt" style="margin-right: 6px;"></i>Clear all
+            </button>
+        </div>
+    </div>
+
+    <ul class="alert-list" id="notificationsList"></ul>
+    
+    <div id="noNotificationsMessage" style="display: none; text-align: center; padding: 4rem 2rem; background: var(--surface); border-radius: 20px; border: 1px dashed var(--divider);">
+        <div style="width: 64px; height: 64px; background: #f1f5f9; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+            <i class="fas fa-bell-slash" style="font-size: 1.5rem; color: #94a3b8;"></i>
+        </div>
+        <h3 style="margin: 0 0 8px 0; color: var(--text-main);">No notifications yet</h3>
+        <p style="margin: 0; color: var(--text-muted);">We'll let you know when something important happens.</p>
+    </div>
+</section>
+
+<script>
+(function () {
+    const typeIcons = {
+        assignment: 'fas fa-tasks',
+        homework: 'fas fa-book',
+        exam: 'fas fa-clipboard-list',
+        announcement: 'fas fa-bullhorn',
+        invoice: 'fas fa-file-invoice-dollar',
+        message: 'fas fa-envelope',
+        meeting: 'fas fa-video',
+        content: 'fas fa-file-alt',
+        system: 'fas fa-info-circle'
+    };
+
+    const typeToSection = {
+        assignment: 'tracker',
+        homework: 'homework',
+        exam: 'onlineExams',
+        announcement: 'announcements',
+        invoice: 'invoices',
+        message: 'messages',
+        meeting: 'meetings'
+    };
+
+    function formatTime(ts) {
+        if (!ts) return '';
+        const d = new Date(ts);
+        const now = new Date();
+        const diffMs = now - d;
+        const diffMins = Math.floor(diffMs / 60000);
+        const diffHours = Math.floor(diffMins / 60);
+        const diffDays = Math.floor(diffHours / 24);
+
+        if (diffMins < 1) return 'Just now';
+        if (diffMins < 60) return `${diffMins}m ago`;
+        if (diffHours < 24) return `${diffHours}h ago`;
+        if (diffDays < 7) return `${diffDays}d ago`;
+        
+        return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    }
+
+    async function loadStudentNotifications() {
+        const list = document.getElementById('notificationsList');
+        const empty = document.getElementById('noNotificationsMessage');
+        if (!list || !empty) return;
+
+        if (!window.apiClient || typeof window.apiClient.getNotifications !== 'function') {
+            list.innerHTML = '';
+            empty.style.display = 'block';
+            return;
+        }
+
+        try {
+            const resp = await window.apiClient.getNotifications({ role: 'student', limit: 50 });
+            const notifications = Array.isArray(resp) ? resp : (resp.results || []);
+
+            if (!notifications.length) {
+                list.innerHTML = '';
+                empty.style.display = 'block';
+                return;
+            }
+
+            empty.style.display = 'none';
+            list.innerHTML = notifications.map(n => {
+                const type = n.notification_type || 'system';
+                const icon = typeIcons[type] || typeIcons.system;
+                const unreadClass = n.is_read ? '' : 'unread';
+                const time = formatTime(n.created_at);
+                const title = (n.title || n.message || 'Notification').replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                
+                return `
+                    <li data-id="${n.notification_id}" 
+                        data-type="${type}" 
+                        class="${unreadClass} type-${type}">
+                        <div class="alert-icon-container">
+                            <i class="${icon}"></i>
+                        </div>
+                        <div class="alert-content">
+                            <p class="alert-text">${title}</p>
+                            <div class="alert-meta">
+                                <span>${type.charAt(0).toUpperCase() + type.slice(1)}</span>
+                                <span class="dot-separator"></span>
+                                <span>${time}</span>
+                            </div>
+                        </div>
+                        <div class="alert-actions">
+                            <button class="notification-action-btn delete-btn" type="button" data-action="delete" title="Delete notification">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        ${!n.is_read ? '<div class="unread-indicator"></div>' : ''}
+                    </li>
+                `;
+            }).join('');
+
+            async function openNotification(li) {
+                if (!li) return;
+                const id = li.getAttribute('data-id');
+                const type = li.getAttribute('data-type');
+                
+                try {
+                    if (id && !li.classList.contains('read')) {
+                        await window.apiClient.markNotificationRead(id);
+                    }
+                } catch (err) {
+                    console.warn('Failed to mark notification as read:', err);
+                }
+                
+                li.classList.remove('unread');
+                const indicator = li.querySelector('.unread-indicator');
+                if (indicator) indicator.remove();
+                
+                if (typeof window.updateStudentNotificationUnreadBadge === 'function') {
+                    window.updateStudentNotificationUnreadBadge();
+                }
+            }
+
+            list.querySelectorAll('button[data-action="delete"]').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const li = e.target.closest('li[data-id]');
+                    const id = li ? li.getAttribute('data-id') : null;
+                    if (!id || !window.apiClient || typeof window.apiClient.deleteNotification !== 'function') return;
+                    
+                    try {
+                        li.style.opacity = '0.5';
+                        li.style.pointerEvents = 'none';
+                        await window.apiClient.deleteNotification(id);
+                        li.remove();
+                        if (list.children.length === 0) {
+                            empty.style.display = 'block';
+                        }
+                    } catch (err) {
+                        li.style.opacity = '1';
+                        li.style.pointerEvents = 'auto';
+                        alert('Failed to delete notification.');
+                    }
+                });
+            });
+
+            if (!list.dataset.clickToOpenBound) {
+                list.dataset.clickToOpenBound = '1';
+                list.addEventListener('click', (e) => {
+                    if (e.target.closest('button')) return;
+                    const li = e.target.closest('li[data-id]');
+                    if (!li) return;
+                    openNotification(li);
+                });
+            }
+        } catch (e) {
+            console.error('Error loading notifications:', e);
+            list.innerHTML = '';
+            empty.style.display = 'block';
+        }
+    }
+
+    const markAllBtn = document.getElementById('studentMarkAllReadBtn');
+    if (markAllBtn) markAllBtn.addEventListener('click', async () => {
+        if (!window.apiClient || typeof window.apiClient.markAllNotificationsRead !== 'function') return;
+        try {
+            await window.apiClient.markAllNotificationsRead();
+            document.querySelectorAll('.alert-list li.unread').forEach(li => {
+                li.classList.remove('unread');
+                const indicator = li.querySelector('.unread-indicator');
+                if (indicator) indicator.remove();
+            });
+            if (typeof window.updateStudentNotificationUnreadBadge === 'function') {
+                window.updateStudentNotificationUnreadBadge();
+            }
+        } catch (e) {
+            alert('Failed to mark all as read.');
+        }
+    });
+
+    const deleteAllBtn = document.getElementById('studentDeleteAllNotificationsBtn');
+    if (deleteAllBtn) deleteAllBtn.addEventListener('click', async () => {
+        if (!confirm('Are you sure you want to delete all notifications?')) return;
+        if (!window.apiClient || typeof window.apiClient.deleteAllNotifications !== 'function') return;
+        try {
+            await window.apiClient.deleteAllNotifications();
+            document.getElementById('notificationsList').innerHTML = '';
+            document.getElementById('noNotificationsMessage').style.display = 'block';
+            if (typeof window.updateStudentNotificationUnreadBadge === 'function') {
+                window.updateStudentNotificationUnreadBadge();
+            }
+        } catch (e) {
+            alert('Failed to delete all notifications.');
+        }
+    });
+
+    // Initial load
+    loadStudentNotifications();
+})();
+</script>
+{% endblock %}

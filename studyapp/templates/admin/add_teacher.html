@@ -1,0 +1,77 @@
+{% extends "admin/admin_base.html" %}
+
+{% block content %}
+            <section class="content-section" id="add-teacherSection" aria-labelledby="addTeacherHeading">
+                <h1 class="section-title" id="addTeacherHeading">Add New Teacher</h1>
+                <p class="section-subtitle">Add a new teacher to the Nano Problem platform.</p>
+
+                <!-- Add Teacher Form -->
+                <form class="add-teacher-form" id="addTeacherForm">
+                    <div class="form-row">
+                        <div class="form-column">
+                            <div class="form-group">
+                                <label for="teacherFirstName" class="form-label">First Name <span class="required-indicator">*</span></label>
+                                <input type="text" id="teacherFirstName" name="teacherFirstName" class="form-input"
+                                    placeholder="e.g., John" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="teacherLastName" class="form-label">Last Name <span class="required-indicator">*</span></label>
+                                <input type="text" id="teacherLastName" name="teacherLastName" class="form-input"
+                                    placeholder="e.g., Smith" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-column">
+                            <div class="form-group">
+                                <label for="teacherEmail" class="form-label">Email Address <span class="required-indicator">*</span></label>
+                                <input type="email" id="teacherEmail" name="teacherEmail" class="form-input"
+                                    placeholder="teacher@nanoproblem.com" required>
+                                <small class="form-help" id="emailHelp"></small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Login Credentials Section -->
+                    <div class="credentials-section">
+                        <h3 class="section-title">Login Credentials</h3>
+                        <div class="form-row">
+                            <div class="form-column">
+                                <div class="form-group">
+                                    <label for="teacherUsername" class="form-label">Username <span class="required-indicator">*</span></label>
+                                    <input type="text" id="teacherUsername" name="teacherUsername" class="form-input"
+                                        placeholder="teacher.username" required>
+                                    <small class="form-help" id="usernameHelp">Username will be used for teacher login</small>
+                                </div>
+                            </div>
+                            <div class="form-column">
+                                <div class="form-group">
+                                    <label for="teacherPassword" class="form-label">Temporary Password <span class="required-indicator">*</span></label>
+                                    <div class="password-input-wrapper">
+                                        <input type="password" id="teacherPassword" name="teacherPassword"
+                                            class="form-input" placeholder="Temporary password" required>
+                                        <button type="button" class="password-toggle"
+                                            onclick="togglePassword('teacherPassword')">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button type="button" class="generate-password-btn"
+                                            onclick="generatePassword()">
+                                            <i class="fas fa-random"></i>
+                                            Generate
+                                        </button>
+                                    </div>
+                                    <small class="form-help" id="passwordHelp">Teacher will be asked to change on first login</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="reset" class="btn-secondary">Reset Form</button>
+                        <button type="submit" class="btn-primary">Add Teacher</button>
+                    </div>
+                </form>
+            </section>
+{% endblock %}
