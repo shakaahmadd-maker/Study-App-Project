@@ -210,7 +210,10 @@
                     const firstName = document.getElementById('firstname').value.trim();
                     const lastName = document.getElementById('lastname').value.trim();
                     const email = document.getElementById('email').value.trim();
-                    const phone = document.getElementById('phone').value.trim();
+                    
+                    const phoneEl = document.getElementById('phone');
+                    const phone = phoneEl ? phoneEl.value.trim() : null;
+                    
                     const password = document.getElementById('password').value;
                     const confirm = document.getElementById('confirm').value;
                     const agree = document.getElementById('agree').checked;
