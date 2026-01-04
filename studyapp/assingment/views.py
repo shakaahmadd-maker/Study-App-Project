@@ -269,6 +269,7 @@ def create_assignment(request):
 
 @login_required
 @teacher_required
+@csrf_exempt
 @require_POST
 def start_assignment_process(request, assignment_id):
     """
