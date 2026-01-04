@@ -515,18 +515,12 @@
                 // Create FormData from form
                 const formData = new FormData(form);
 
-                // Remove any existing supportFiles and add from attachmentFiles array
-                formData.delete('supportFiles');
                 
                 // Debug: Log attachment files
                 console.log('=== Form Submission Debug ===');
                 console.log('Total attachment files:', attachmentFiles.length);
                 
-                // Add each attachment file to FormData with the correct field name
-                attachmentFiles.forEach((file, index) => {
-                    formData.append('supportFiles', file);
-                    console.log(`  Added file ${index + 1}: ${file.name} (${(file.size / 1024).toFixed(2)} KB)`);
-                });
+
                 
                 // Verify files in FormData
                 const formDataFiles = formData.getAll('supportFiles');
@@ -552,7 +546,7 @@
                     });
 
                     const contentType = response.headers.get('content-type');
-                    let result;
+                    
 
                     if (!contentType || !contentType.includes('application/json')) {
                         const text = await response.text();
