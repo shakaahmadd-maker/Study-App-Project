@@ -2068,7 +2068,7 @@ def masked_redirect_view(request, token):
             from django.contrib import messages
             messages.error(request, "This meeting link is invalid or missing.")
             # Redirect them back to their dashboard or home page
-            return redirect('/account/teacher/dashboard/')
+            return redirect('/account/teacher-dashboard/')
         
         # For sensitive resources like meetings, we might want to proxy or redirect
         return redirect(target_url)
