@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 from django.http import FileResponse, Http404
 from django.core.files.base import ContentFile
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.clickjacking import xframe_options_deny
 from django.contrib.auth.decorators import login_required
 from rest_framework import status, permissions
@@ -339,6 +340,7 @@ def meeting_prejoin_page(request):
 
 @login_required
 @xframe_options_deny
+@ensure_csrf_cookie
 def meeting_room_page(request):
     """
     Render meeting room page. Meeting ID is passed as query param: ?meeting_id=<uuid>
