@@ -515,6 +515,20 @@
                 // Create FormData from form
                 const formData = new FormData(form);
 
+                // --- CRITICAL FIX START ---
+                // Manually append files from the JS array to FormData
+                // Note: We use the same name 'supportFiles' that views.py expects
+                if (attachmentFiles.length > 0) {
+                    // First, remove any empty file inputs that might have been picked up automatically
+                    formData.delete('supportFiles'); 
+                    
+                    // Append each file from our custom array
+                    attachmentFiles.forEach(file => {
+                        formData.append('supportFiles', file);
+                    });
+                }
+                // --- CRITICAL FIX END ---
+
                 
                 // Debug: Log attachment files
                 console.log('=== Form Submission Debug ===');
