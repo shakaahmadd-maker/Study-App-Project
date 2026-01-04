@@ -49,7 +49,7 @@ ALLOWED_HOSTS = ['*']
 # Session Security
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SECURE = not DEBUG  # True in production
+SESSION_COOKIE_SECURE = True  # True in production
 SESSION_COOKIE_SAMESITE = 'Lax'
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_SAVE_EVERY_REQUEST = True
@@ -59,9 +59,9 @@ SESSION_COOKIE_AGE = 3600  # 1 hour in seconds
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = 'DENY'
-SECURE_SSL_REDIRECT = not DEBUG  # True in production
-CSRF_COOKIE_SECURE = not DEBUG  # True in production
-CSRF_COOKIE_HTTPONLY = True
+SECURE_SSL_REDIRECT = True  # True in production
+CSRF_COOKIE_SECURE = True  # True in production
+CSRF_COOKIE_HTTPONLY = False
 
 # Logging Configuration
 LOGGING = {
