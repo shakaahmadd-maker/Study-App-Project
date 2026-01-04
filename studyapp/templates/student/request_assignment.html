@@ -551,6 +551,20 @@
                         }
                     });
 
+                    const contentType = response.headers.get('content-type');
+                    let result;
+
+                    if (!contentType || !contentType.includes('application/json')) {
+                        const text = await response.text();
+                        console.error('Non-JSON server response:', text.substring(0, 500));
+
+                        throw new Error(
+                            response.status === 413
+                                ? 'Upload too large. Server rejected the request.'
+                                : 'Server error occurred during upload.'
+                        );
+                    }
+
                     const result = await response.json();
 
                     // Debug: Log response
