@@ -351,12 +351,28 @@
   async function uploadRecording() {
     if (!recordingChunks.length) return;
     setStatus("Uploading recording...");
+    
     const blob = new Blob(recordingChunks, { type: recorder?.mimeType || "video/webm" });
     const file = new File([blob], `meeting-${meetingId}.webm`, { type: "video/webm" });
     const form = new FormData();
     form.append("recording", file);
+
     try {
-      await apiClient.postFormData(`/meeting/api/${meetingId}/upload-recording/`, form);
+      // FIX: Manually fetch token and use standard fetch API
+      const csrfToken = getCookie('csrftoken');
+      
+      const response = await fetch(`/meeting/api/${meetingId}/upload-recording/`, {
+          method: 'POST',
+          headers: {
+              'X-CSRFToken': csrfToken // Explicitly send the token
+          },
+          body: form // FormData handles Content-Type automatically
+      });
+
+      if (!response.ok) {
+          throw new Error(`Upload failed: ${response.status}`);
+      }
+
       setStatus("Recording uploaded successfully.");
     } catch (e) {
       console.error("Upload failed:", e);
