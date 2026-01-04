@@ -129,113 +129,50 @@ def create_assignment(request):
             logger.warning("  3. File input name mismatch (expected 'supportFiles')")
             logger.warning(f"  4. All available FILES keys: {list(request.FILES.keys())}")
         
+        
         for f in files:
+            file_name = getattr(f, 'name', 'unnamed_file')
+        
             try:
-                # Validate file before saving
-                file_name = getattr(f, 'name', None) or 'unnamed_file'
-                if not file_name or file_name.strip() == '':
-                    file_name = f'file_{uploaded_file_count + 1}'
-                
-                # Ensure file_name doesn't exceed max length
-                if len(file_name) > 255:
-                    # Truncate and preserve extension if possible
-                    name, ext = os.path.splitext(file_name)
-                    if ext:
-                        file_name = name[:255-len(ext)] + ext
-                    else:
-                        file_name = file_name[:255]
-                
-                # Validate file has content
-                if not hasattr(f, 'size') or f.size == 0:
-                    error_msg = f"File {file_name} is empty (0 bytes)"
+                # Basic validation
+                if not f or not hasattr(f, 'size') or f.size == 0:
+                    error_msg = f"{file_name} is empty or invalid"
                     logger.warning(error_msg)
                     file_errors.append(error_msg)
                     continue
-                
-                # Log file details before saving
-                logger.info(f"Attempting to save file: {file_name} (Size: {f.size} bytes)")
-                logger.info(f"Assignment ID: {assignment.id}, Assignment Code: {assignment.assignment_code}")
-                logger.info(f"User ID: {request.user.id}, Username: {request.user.username}")
-                logger.info(f"File object type: {type(f)}, File name attribute: {getattr(f, 'name', 'N/A')}")
-                
-                # Ensure assignment is saved (should already be, but double-check)
-                if assignment.pk is None:
-                    assignment.save()
-                    logger.info(f"Assignment saved with ID: {assignment.id}")
-                
-                # Ensure user exists and has a valid ID
-                if not request.user.pk:
-                    raise ValueError("User must be saved before creating file")
-                
-                # Validate file object
-                if not f:
-                    raise ValueError("File object is None")
-                
-                # Use database transaction to ensure atomicity
-                from django.db import transaction
-                from django.core.files.base import ContentFile
-                
+        
+                # Ensure filename length is safe
+                if len(file_name) > 255:
+                    name, ext = os.path.splitext(file_name)
+                    file_name = f"{name[:255 - len(ext)]}{ext}"
+        
+                logger.info(
+                    f"Saving file → Name: {file_name}, "
+                    f"Size: {f.size} bytes, "
+                    f"Content-Type: {getattr(f, 'content_type', 'unknown')}"
+                )
+        
                 with transaction.atomic():
-                    # Read file content to ensure it's accessible
-                    try:
-                        # Reset file pointer to beginning
-                        if hasattr(f, 'seek'):
-                            f.seek(0)
-                        
-                        # Create the file object using .create() which properly handles FileField
-                        # Django's FileField will handle the file storage automatically
-                        file_obj = AssignmentFile.objects.create(
-                            assignment=assignment,
-                            uploaded_by=request.user,
-                            file=f,
-                            file_name=file_name,
-                            file_type='support'
-                        )
-                    except Exception as save_error:
-                        # If save fails, log detailed info and re-raise to be caught by outer handler
-                        logger.error(f"Error during file save: {save_error}")
-                        logger.error(f"Assignment: {assignment.id} (type: {type(assignment.id)})")
-                        logger.error(f"User: {request.user.id} (type: {type(request.user.id)})")
-                        logger.error(f"File name: {file_name}")
-                        logger.error(f"File object: {f} (type: {type(f)})")
-                        raise
-                
+                    file_obj = AssignmentFile.objects.create(
+                        assignment=assignment,
+                        uploaded_by=request.user,
+                        file=f,          # streamed, not loaded into memory
+                        file_name=file_name,
+                        file_type='support'
+                    )
+        
                 uploaded_file_count += 1
                 saved_file_ids.append(file_obj.id)
-                logger.info(f"✓ File saved successfully: {file_name} (ID: {file_obj.id}, Size: {f.size} bytes)")
-            except Exception as file_error:
-                # Log file upload error but don't fail the entire request
-                file_name = getattr(f, 'name', 'unknown_file')
-                file_size = getattr(f, 'size', 0)
-                error_type = type(file_error).__name__
-                error_full_msg = str(file_error)
-                
-                # Try to extract more details from database errors
-                if 'null value' in error_full_msg.lower() or 'not null' in error_full_msg.lower():
-                    logger.error("="*60)
-                    logger.error("DATABASE CONSTRAINT ERROR DETECTED")
-                    logger.error("="*60)
-                    logger.error(f"Error type: {error_type}")
-                    logger.error(f"Full error message: {error_full_msg}")
-                    logger.error(f"Assignment ID: {assignment.id}")
-                    logger.error(f"Assignment PK: {assignment.pk}")
-                    logger.error(f"User ID: {request.user.id}")
-                    logger.error(f"User PK: {request.user.pk}")
-                    logger.error(f"File name: {file_name}")
-                    logger.error(f"File size: {file_size}")
-                    logger.error("="*60)
-                
-                error_msg = f"Failed to save file {file_name}: {error_type} - {error_full_msg}"
-                logger.error(error_msg)
-                logger.error(f"File details - Name: {file_name}, Size: {file_size}, Type: {getattr(f, 'content_type', 'unknown')}")
-                import traceback
-                logger.error("Full traceback:")
-                logger.error(traceback.format_exc())
-                
-                # Include more details in the error message sent to client (truncate if too long)
-                detailed_error = f"{file_name}: {error_full_msg[:300]}"  # Increased length to see more
-                file_errors.append(detailed_error)
         
+                logger.info(
+                    f"✓ File saved successfully "
+                    f"(ID={file_obj.id}, Size={f.size} bytes)"
+                )
+        
+            except Exception as e:
+                logger.exception(f"❌ Failed to save file: {file_name}")
+                file_errors.append(f"{file_name}: {str(e)[:300]}")
+                
         # Verify files were actually saved to database
         verified_files = AssignmentFile.objects.filter(assignment=assignment, file_type='support')
         logger.info(f"Database verification: Found {verified_files.count()} file(s) for assignment {assignment.assignment_code}")
