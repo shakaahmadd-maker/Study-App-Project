@@ -8,6 +8,23 @@
 // - Records (teacher/host) locally and uploads MP4 to backend after meeting end
 
 (function () {
+
+  // Helper to get CSRF token from cookies
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+  
   const qs = new URLSearchParams(window.location.search);
   const meetingId = qs.get("meeting_id");
   if (!meetingId) {
@@ -1499,30 +1516,51 @@
       
       setStatus("Ending meeting...");
 
+      // 1. Silence WebRTC errors immediately (Fixes InvalidAccessError)
+      if (pc) {
+          pc.onnegotiationneeded = null; 
+      }
+
       try {
-        // 1. Stop recorder
+        // 2. Stop recorder if active
         if (recorder && isRecording) {
           recorder.stop();
-          // wait a tiny bit for the stop event to populate chunks
           await new Promise(r => setTimeout(r, 500));
         }
         
-        // 2. Broadcast and End on server first (to pass STATUS_COMPLETED check for upload)
+        // 3. Broadcast "meeting_end" to student
         safeJsonSend({ type: "meeting_end" });
-        const ended = await apiClient.endMeeting(meetingId);
+
+        // 4. Manually fetch CSRF token and call API (Fixes 403 Forbidden)
+        const csrfToken = getCookie('csrftoken');
         
-        // 3. Upload recording if we have any
+        // Use direct fetch instead of apiClient to ensure token is attached
+        const response = await fetch(`/meeting/api/${meetingId}/end/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            }
+        });
+
+        if (!response.ok) {
+            console.error("End meeting failed:", response.status, await response.text());
+            // We continue anyway to force redirect
+        }
+        
+        // 5. Upload recording if available
         if (recordingChunks.length > 0) {
           setStatus("Uploading recording...");
           await uploadRecording();
         }
         
-        bc?.postMessage({ type: "meeting_ended", meetingId, data: ended || null });
+        bc?.postMessage({ type: "meeting_ended", meetingId });
       } catch (e) {
         console.error("Error during end meeting:", e);
       }
 
-      window.location.href = userRole === "TEACHER" ? "/account/teacher-dashboard/" : "/account/student/dashboard/";
+      // 6. Force Redirect
+      window.location.href = userRole === "TEACHER" ? "/account/teacher/dashboard/" : "/account/student/dashboard/";
     });
   }
 
