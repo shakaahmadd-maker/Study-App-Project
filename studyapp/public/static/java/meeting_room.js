@@ -1560,7 +1560,7 @@
       }
 
       // 6. Force Redirect
-      window.location.href = userRole === "TEACHER" ? "/account/teacher/dashboard/" : "/account/student/dashboard/";
+      window.location.href = userRole === "TEACHER" ? "/account/teacher-dashboard/" : "/account/student/dashboard/";
     });
   }
 
