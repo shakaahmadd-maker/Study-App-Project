@@ -148,30 +148,45 @@ def end_meeting(request, meeting_id):
     """Mark meeting as completed and calculate duration."""
     meeting = get_object_or_404(Meeting, id=meeting_id)
     
+    # Allow Teacher OR Host to end it
     if request.user != meeting.host and request.user.role != 'TEACHER':
         return Response({"error": "Unauthorized to end meeting"}, status=status.HTTP_403_FORBIDDEN)
         
-    if meeting.status == Meeting.STATUS_IN_PROGRESS:
+    # FIX: Allow ending the meeting if it is In Progress OR just Scheduled
+    # This prevents the bug where a meeting stays stuck if it never officially transitioned to 'in_progress'
+    if meeting.status in [Meeting.STATUS_IN_PROGRESS, Meeting.STATUS_SCHEDULED]:
         meeting.status = Meeting.STATUS_COMPLETED
         meeting.actual_end = timezone.now()
         
-        if meeting.actual_start:
-            diff = meeting.actual_end - meeting.actual_start
-            meeting.duration_minutes = int(diff.total_seconds() / 60)
+        # If it was in progress, calculate duration. 
+        # If it was just scheduled, we use 'now' as the start time to avoid negative duration.
+        start_time = meeting.actual_start or timezone.now()
+        
+        # Ensure we don't have a None actual_start if it was skipped
+        if not meeting.actual_start:
+            meeting.actual_start = start_time
+
+        diff = meeting.actual_end - start_time
+        meeting.duration_minutes = int(diff.total_seconds() / 60)
             
         meeting.save()
         
         # Notify both parties
         dur = meeting.duration_minutes or 0
+        
+        # Prepare notification message
+        msg_student = f"Meeting '{meeting.title}' completed. Duration: {dur} mins."
+        msg_teacher = f"Meeting '{meeting.title}' completed. Duration: {dur} mins."
+        
+        if getattr(request.user, "role", "") == "TEACHER":
+            msg_student = f"Teacher has ended the meeting '{meeting.title}'. Duration: {dur} mins."
+
         if meeting.student:
-            msg = f"Meeting '{meeting.title}' completed. Duration: {dur} mins."
-            if getattr(request.user, "role", "") == "TEACHER":
-                msg = f"Teacher has ended the meeting '{meeting.title}'. Duration: {dur} mins."
             create_notification(
                 recipient=meeting.student,
                 notification_type="meeting",
                 title="Meeting Completed",
-                message=msg,
+                message=msg_student,
                 actor=request.user,
                 related_entity_type="meeting",
                 related_entity_id=meeting.id,
@@ -181,7 +196,7 @@ def end_meeting(request, meeting_id):
                 recipient=meeting.teacher,
                 notification_type="meeting",
                 title="Meeting Completed",
-                message=f"Meeting '{meeting.title}' completed. Duration: {dur} mins.",
+                message=msg_teacher,
                 actor=request.user,
                 related_entity_type="meeting",
                 related_entity_id=meeting.id,
