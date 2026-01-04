@@ -45,11 +45,13 @@
                     </div>
                     <div style="margin-top: 0.5rem; display: flex; gap: 0.5rem;">
                         {% if meeting.status == 'scheduled' or meeting.status == 'in_progress' %}
-                        <a href="{% mask_link '/meeting/prejoin/?meeting_id='|add:meeting.id 'meeting' %}" class="schedule-btn meeting-join-link"
-                            target="_blank" rel="noopener"
-                            style="text-decoration: none; padding: 0.5rem 1rem; font-size: 0.875rem;">
-                            <i class="fas fa-video"></i> Join
-                        </a>
+                        {% with m_id=meeting.id|stringformat:"s" %}
+                            <a href="{% mask_link '/meeting/prejoin/?meeting_id='|add:m_id 'meeting' %}" class="schedule-btn meeting-join-link"
+                                target="_blank" rel="noopener"
+                                style="text-decoration: none; padding: 0.5rem 1rem; font-size: 0.875rem;">
+                                <i class="fas fa-video"></i> Join
+                            </a>
+                            {% endwith %}
                         {% elif meeting.status == 'completed' and meeting.recording %}
                         <button onclick="handleRecordingDownload('{{ meeting.id }}', '{% mask_link meeting.recording.url 'recording' %}')" class="btn-secondary"
                             style="padding: 0.5rem 1rem; font-size: 0.875rem; border: 1px solid #e2e8f0; background: white; border-radius: 6px; cursor: pointer;">
