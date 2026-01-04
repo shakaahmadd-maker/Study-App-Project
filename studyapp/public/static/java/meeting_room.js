@@ -7,24 +7,6 @@
 // - Syncs chat, whiteboard, reactions over WebSocket
 // - Records (teacher/host) locally and uploads MP4 to backend after meeting end
 
-// Helper to get CSRF token
-  function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-      const cookies = document.cookie.split(';');
-      for (let i = 0; i < cookies.length; i++) {
-        const cookie = cookies[i].trim();
-        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-          break;
-        }
-      }
-    }
-    return cookieValue;
-  }
-
-
-
 (function () {
   const qs = new URLSearchParams(window.location.search);
   const meetingId = qs.get("meeting_id");
@@ -1512,62 +1494,37 @@
       window.location.href = userRole === "TEACHER" ? "/account/teacher-dashboard/" : "/account/student/dashboard/";
     });
 
-// --- REPLACE YOUR EXISTING endMeetingBtn LISTENER WITH THIS ---
     endMeetingBtn?.addEventListener("click", async () => {
       if (!confirm("Are you sure you want to end the meeting for everyone?")) return;
       
       setStatus("Ending meeting...");
-      
-      // 1. Set flag to prevent "Unsaved changes" popup
-      window.isEnding = true;
-
-      // 2. Silence WebRTC errors during teardown
-      if (pc) {
-          pc.onnegotiationneeded = null; // Stop renegotiation attempts
-          pc.close(); // Close connection immediately
-          pc = null;
-      }
 
       try {
-        // 3. Stop recorder if active
+        // 1. Stop recorder
         if (recorder && isRecording) {
           recorder.stop();
-          // Wait briefly for the stop event to process chunks
+          // wait a tiny bit for the stop event to populate chunks
           await new Promise(r => setTimeout(r, 500));
         }
         
-        // 4. Broadcast "meeting_end" to others
+        // 2. Broadcast and End on server first (to pass STATUS_COMPLETED check for upload)
         safeJsonSend({ type: "meeting_end" });
-
-        // 5. Call API manually to ensure CSRF token is attached
-        const csrfToken = getCookie('csrftoken');
-        const response = await fetch(`/meeting/api/${meetingId}/end/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrfToken
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error(`Server returned ${response.status}`);
-        }
-
-        // 6. Upload recording if available
+        const ended = await apiClient.endMeeting(meetingId);
+        
+        // 3. Upload recording if we have any
         if (recordingChunks.length > 0) {
           setStatus("Uploading recording...");
           await uploadRecording();
         }
         
-        bc?.postMessage({ type: "meeting_ended", meetingId });
+        bc?.postMessage({ type: "meeting_ended", meetingId, data: ended || null });
       } catch (e) {
         console.error("Error during end meeting:", e);
-        // Even if error, we force redirect since the user wants to leave
       }
 
-      // 7. Redirect
-      window.location.href = userRole === "TEACHER" ? "/account/teacher/dashboard/" : "/account/student/dashboard/";
+      window.location.href = userRole === "TEACHER" ? "/account/teacher-dashboard/" : "/account/student/dashboard/";
     });
+  }
 
   async function init() {
     setStatus("Loading meeting...");
@@ -1615,23 +1572,21 @@
     setStatus("Failed to initialize meeting room.");
   }));
 
-    window.addEventListener("beforeunload", (e) => {
-    // FIX: Check if we are intentionally ending the meeting
-      if (window.isEnding) return; 
-  
-      if (isRecording || (userRole === "TEACHER" && meeting && meeting.status !== "completed")) {
-        e.preventDefault();
-        e.returnValue = "Meeting is still in progress...";
-        return e.returnValue;
-      }
-      
-      try {
-        localStream?.getTracks()?.forEach((t) => t.stop());
-        screenStream?.getTracks()?.forEach((t) => t.stop());
-        ws?.close();
-        bc?.close();
-      } catch (e) {
-        // ignore
+  window.addEventListener("beforeunload", (e) => {
+    if (isRecording || (userRole === "TEACHER" && meeting && meeting.status !== "completed")) {
+      e.preventDefault();
+      e.returnValue = "Meeting is still in progress. Are you sure you want to leave? Recording might be lost if not ended properly.";
+      return e.returnValue;
+    }
+    
+    try {
+      localStream?.getTracks()?.forEach((t) => t.stop());
+      screenStream?.getTracks()?.forEach((t) => t.stop());
+      ws?.close();
+      bc?.postMessage({ type: "meeting_left", meetingId });
+      bc?.close();
+    } catch (e) {
+      // ignore
     }
   });
 })();
