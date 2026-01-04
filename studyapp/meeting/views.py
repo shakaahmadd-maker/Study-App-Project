@@ -152,17 +152,13 @@ def end_meeting(request, meeting_id):
     if request.user != meeting.host and request.user.role != 'TEACHER':
         return Response({"error": "Unauthorized to end meeting"}, status=status.HTTP_403_FORBIDDEN)
         
-    # FIX: Allow ending the meeting if it is In Progress OR just Scheduled
-    # This prevents the bug where a meeting stays stuck if it never officially transitioned to 'in_progress'
+    # --- THE FIX: Accept 'Scheduled' status too ---
     if meeting.status in [Meeting.STATUS_IN_PROGRESS, Meeting.STATUS_SCHEDULED]:
         meeting.status = Meeting.STATUS_COMPLETED
         meeting.actual_end = timezone.now()
         
-        # If it was in progress, calculate duration. 
-        # If it was just scheduled, we use 'now' as the start time to avoid negative duration.
+        # If actual_start is missing (meeting never officially started), use now
         start_time = meeting.actual_start or timezone.now()
-        
-        # Ensure we don't have a None actual_start if it was skipped
         if not meeting.actual_start:
             meeting.actual_start = start_time
 
@@ -173,8 +169,6 @@ def end_meeting(request, meeting_id):
         
         # Notify both parties
         dur = meeting.duration_minutes or 0
-        
-        # Prepare notification message
         msg_student = f"Meeting '{meeting.title}' completed. Duration: {dur} mins."
         msg_teacher = f"Meeting '{meeting.title}' completed. Duration: {dur} mins."
         
@@ -202,13 +196,11 @@ def end_meeting(request, meeting_id):
                 related_entity_id=meeting.id,
             )
 
-        # Badge counts: meeting no longer active for relevant users
+        # Update Badge counts
         try:
             user_ids = {str(meeting.host_id)}
-            if meeting.student_id:
-                user_ids.add(str(meeting.student_id))
-            if meeting.teacher_id:
-                user_ids.add(str(meeting.teacher_id))
+            if meeting.student_id: user_ids.add(str(meeting.student_id))
+            if meeting.teacher_id: user_ids.add(str(meeting.teacher_id))
             for uid in user_ids:
                 publish_badges(user_id=uid)
         except Exception:
