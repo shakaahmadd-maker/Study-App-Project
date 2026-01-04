@@ -2064,6 +2064,12 @@ def masked_redirect_view(request, token):
         # Log access
         log_security_event(request, "MASKED_LINK_ACCESS", user=request.user, details=f"Accessing {masked_link.link_type}: {target_url}")
 
+        if not target_url:
+            from django.contrib import messages
+            messages.error(request, "This meeting link is invalid or missing.")
+            # Redirect them back to their dashboard or home page
+            return redirect('/account/teacher/dashboard/')
+        
         # For sensitive resources like meetings, we might want to proxy or redirect
         return redirect(target_url)
 
