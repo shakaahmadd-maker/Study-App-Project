@@ -2908,24 +2908,30 @@
                         console.log('Received WebSocket message:', data);
                         
                         if (data.type === 'chat_message') {
-                            // Display CS-rep messages and system messages
+                            // 1. ALWAYS Render the message first
                             if (data.message && (data.message.sender_role === 'csrep' || data.message.is_system)) {
                                 addMessage(data.message.content, data.message.sender_role || 'other', data.message.is_system);
                             }
                             
-                            // Handle closed session
+                            // 2. Handle Session Closure
                             if (data.message && data.message.is_closed) {
-                                console.log("Session closed by agent. Disconnecting WebSocket...");
+                                console.log("Session closed by agent. Cleaning up...");
                                 
-                                // 1. Clear Session ID so next message starts new session
+                                // CRITICAL: Clear session ID immediately so the onclose handler 
+                                // knows NOT to attempt a reconnect.
                                 sessionId = null;
                                 localStorage.removeItem('pre_signin_session_id');
                                 
-                                // 2. FORCE CLOSE THE WEBSOCKET
-                                // This stops the "WebSocket is still active" issue
+                                // 3. Add a visual system cue that chat is over (Optional but helpful)
+                                addMessage("Chat ended. Type 'Hi' to start a new session.", "other", true);
+                
+                                // 4. Close the socket (Server will likely do this too, but we do it here for UI speed)
                                 if (socket) {
-                                    socket.close(1000, "Session ended by agent");
-                                    socket = null; // Ensure variable is cleared
+                                    // Slight delay to ensure UI updates are processed
+                                    setTimeout(() => {
+                                        if (socket) socket.close(1000, "Session ended by agent");
+                                        socket = null;
+                                    }, 100);
                                 }
                             }
                         } else if (data.type === 'session_created') {
