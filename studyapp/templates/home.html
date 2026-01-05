@@ -2903,162 +2903,124 @@
                 };
 
                 socket.onmessage = function (e) {
-                    try {
-                        const data = JSON.parse(e.data);
-                        console.log('Received WebSocket message:', data);
-                        
-                        if (data.type === 'chat_message') {
-                            // 1. ALWAYS Render the message first
-                            if (data.message && (data.message.sender_role === 'csrep' || data.message.is_system)) {
-                                addMessage(data.message.content, data.message.sender_role || 'other', data.message.is_system);
-                            }
-                            
-                            // 2. Handle Session Closure
-                            if (data.message && data.message.is_closed) {
-                                console.log("Session closed by agent. Cleaning up...");
-                                
-                                // CRITICAL: Clear session ID immediately so the onclose handler 
-                                // knows NOT to attempt a reconnect.
-                                sessionId = null;
-                                localStorage.removeItem('pre_signin_session_id');
-                                
-                                // 3. Add a visual system cue that chat is over (Optional but helpful)
-                                addMessage("Chat ended. Type 'Hi' to start a new session.", "other", true);
-                
-                                // 4. Close the socket (Server will likely do this too, but we do it here for UI speed)
-                                if (socket) {
-                                    // Slight delay to ensure UI updates are processed
-                                    setTimeout(() => {
-                                        if (socket) socket.close(1000, "Session ended by agent");
-                                        socket = null;
-                                    }, 100);
-                                }
-                            }
-                        } else if (data.type === 'session_created') {
-                            sessionId = data.session_id;
-                            localStorage.setItem('pre_signin_session_id', sessionId);
-
-                            // Display system message if provided
-                            if (data.system_message) {
-                                addMessage(data.system_message.content, 'other', data.system_message.is_system);
-                            }
-
-                            if (localStorage.getItem('pre_signin_reinit') === 'true') {
-                                addMessage("Someone will contact you in a moment. Currently all agents are busy assisting others.", "other", true);
-                                localStorage.removeItem('pre_signin_reinit');
-                            }
-
-                            // Close initial connection and reconnect to session-specific endpoint
-                            // Use close code 1000 (normal closure) instead of letting it error
-                            if (socket.readyState === WebSocket.OPEN) {
-                                socket.close(1000, 'Reconnecting to session');
-                            }
-                            setTimeout(() => {
-                                initWebSocket(sessionId);
-                            }, 100);
-                        } else if (data.type === 'error') {
-                            // Handle server errors gracefully
-                            console.error('Server error:', data.message);
-                            addMessage(data.message || 'An error occurred. Please try again.', "other", true);
+                try {
+                    const data = JSON.parse(e.data);
+                    
+                    if (data.type === 'chat_message') {
+                        // 1. Render the message (so visitor sees the "Thank you")
+                        if (data.message) {
+                           addMessage(data.message.content, data.message.sender_role || 'other', data.message.is_system);
                         }
-                    } catch (error) {
-                        console.error('Error parsing WebSocket message:', error, e.data);
+                        
+                        // 2. CHECK FOR CLOSURE
+                        if (data.message && data.message.is_closed) {
+                            console.log("Session closed. Wiping memory...");
+                            
+                            // --- THE FIX: WIPE THE ID IMMEDIATELY ---
+                            sessionId = null; 
+                            localStorage.removeItem('pre_signin_session_id');
+                            // We DO NOT remove 'visitor_name' so they don't have to re-enter their name
+                            
+                            // 3. Add visual cue for new chat
+                            addMessage("Chat ended. Type 'Hi' to start a new ticket.", "other", true);
+                            
+                            // 4. Force Close Socket Client-Side
+                            if (socket) {
+                                socket.close();
+                                socket = null;
+                            }
+                        }
+                    } 
+                    else if (data.type === 'session_created') {
+                        // Logic for when a NEW session is created
+                        sessionId = data.session_id;
+                        localStorage.setItem('pre_signin_session_id', sessionId);
+                        
+                        if (data.system_message) {
+                            addMessage(data.system_message.content, 'other', true);
+                        }
+                        
+                        // Reconnect socket to new specific channel
+                        if (socket) socket.close(1000);
+                        setTimeout(() => initWebSocket(sessionId), 100);
                     }
-                };
-            }
+                    // ... handle other types (error, etc) ...
+                } catch (error) {
+                    console.error('Error parsing WebSocket message:', error);
+                }
+            };
 
             function handleSend() {
                 const content = chatInput.value.trim();
                 if (!content) return;
 
+                // SCENARIO 1: First time ever (No Name, No Session)
                 if (isWaitingForInfo) {
-                    // Initial info submission - use full content as visitor name
                     visitorName = content.trim() || "Visitor";
                     localStorage.setItem('pre_signin_visitor_name', visitorName);
                     addMessage(content, 'visitor');
                     chatInput.value = '';
                     isWaitingForInfo = false;
-                    if (!socket || socket.readyState !== WebSocket.OPEN) initWebSocket();
-                    const sendNewSession = () => {
-                        if (socket && socket.readyState === WebSocket.OPEN) {
-                            socket.send(JSON.stringify({
-                                'type': 'new_session',
-                                'visitor_name': visitorName,
-                                'visitor_concern': content
-                            }));
-                        } else if (socket && socket.readyState === WebSocket.CONNECTING) {
-                            setTimeout(sendNewSession, 100);
-                        } else {
-                            initWebSocket();
-                            setTimeout(sendNewSession, 500);
-                        }
-                    };
-                    sendNewSession();
-                } else if (sessionId) {
-                    // Active session
+                    
+                    // Start new session
+                    startNewSession(content);
+                } 
+                // SCENARIO 2: Active Session Exists
+                else if (sessionId) {
                     addMessage(content, 'visitor');
                     chatInput.value = '';
                     
-                    // Ensure websocket is connected
-                    if (!socket || socket.readyState === WebSocket.CLOSED || socket.readyState === WebSocket.CLOSING) {
+                    // Ensure socket is open
+                    if (!socket || socket.readyState !== WebSocket.OPEN) {
                         initWebSocket(sessionId);
-                        // Wait for connection before sending
-                        const sendMessage = () => {
-                            if (socket && socket.readyState === WebSocket.OPEN) {
-                                socket.send(JSON.stringify({
-                                    'type': 'chat_message',
-                                    'content': content,
-                                    'visitor_name': visitorName
-                                }));
-                            } else if (socket && socket.readyState === WebSocket.CONNECTING) {
-                                setTimeout(sendMessage, 100);
-                            } else {
-                                console.error('Failed to send message: WebSocket not connected');
-                            }
-                        };
-                        setTimeout(sendMessage, 100);
-                    } else if (socket.readyState === WebSocket.OPEN) {
-                        socket.send(JSON.stringify({
-                            'type': 'chat_message',
-                            'content': content,
-                            'visitor_name': visitorName
-                        }));
-                    } else if (socket.readyState === WebSocket.CONNECTING) {
-                        // Wait for connection
-                        const sendMessage = () => {
-                            if (socket && socket.readyState === WebSocket.OPEN) {
-                                socket.send(JSON.stringify({
-                                    'type': 'chat_message',
-                                    'content': content,
-                                    'visitor_name': visitorName
-                                }));
-                            } else if (socket && socket.readyState === WebSocket.CONNECTING) {
-                                setTimeout(sendMessage, 100);
-                            }
-                        };
-                        setTimeout(sendMessage, 100);
+                        setTimeout(() => sendChatMessage(content), 500);
+                    } else {
+                        sendChatMessage(content);
                     }
-                } else if (visitorName && content.toLowerCase() === 'hi') {
-                    // Closed session re-engagement
-                    localStorage.setItem('pre_signin_reinit', 'true');
+                } 
+                // SCENARIO 3: Chat was Closed, User types "Hi" (Session ID is null)
+                else {
+                    // Because we wiped sessionId in onmessage, we land here.
+                    // We treat this as a request for a NEW session.
                     addMessage(content, 'visitor');
                     chatInput.value = '';
-                    initWebSocket();
-                    const sendNewSession = () => {
-                        if (socket.readyState === WebSocket.OPEN) {
-                            socket.send(JSON.stringify({
-                                'type': 'new_session',
-                                'visitor_name': visitorName,
-                                'visitor_concern': "Visitor re-connected"
-                            }));
-                        } else setTimeout(sendNewSession, 100);
-                    };
-                    sendNewSession();
-                } else if (!sessionId && visitorName) {
-                    // Prompt to type 'Hi' if they send something else
-                    addMessage("If you need assistance again, please type 'Hi' to start a new conversation.", "other", true);
-                    chatInput.value = '';
+                    
+                    // Re-use the stored name, create NEW session
+                    startNewSession(content); 
                 }
+            }
+
+            // Helper function to send standard chat message
+            function sendChatMessage(content) {
+                if (socket && socket.readyState === WebSocket.OPEN) {
+                    socket.send(JSON.stringify({
+                        'type': 'chat_message',
+                        'content': content,
+                        'visitor_name': visitorName
+                    }));
+                }
+            }
+
+            // Helper function to start a fresh session
+            function startNewSession(initialConcern) {
+                // Connect to general channel first
+                if (!socket || socket.readyState !== WebSocket.OPEN) {
+                    initWebSocket(); 
+                }
+                
+                // Wait for connection then send 'new_session' request
+                const sendReq = () => {
+                    if (socket && socket.readyState === WebSocket.OPEN) {
+                        socket.send(JSON.stringify({
+                            'type': 'new_session',
+                            'visitor_name': visitorName || 'Visitor',
+                            'visitor_concern': initialConcern
+                        }));
+                    } else {
+                        setTimeout(sendReq, 100);
+                    }
+                };
+                sendReq();
             }
 
             function setState(shouldOpen) {
