@@ -171,12 +171,13 @@ class PreSignInConsumer(AsyncWebsocketConsumer):
             }))
 
     async def chat_message(self, event):
-        # 1. Send the message to the WebSocket
+        # 1. Send the message payload to the WebSocket client
         await self.send(text_data=json.dumps(event))
-        
-        # 2. Check if this is a closing message and force close the socket
-        # This ensures that even if the client-side JS fails, the connection stops.
+
+        # 2. Check if this payload has the "is_closed" flag
+        # If yes, force close the connection from the server side
         if event.get('message', {}).get('is_closed'):
+            # Close with normal code (1000)
             await self.close(code=1000)
 
     async def new_session_alert(self, event):
