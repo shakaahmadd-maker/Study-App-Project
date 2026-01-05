@@ -288,3 +288,8 @@ FILE_UPLOAD_HANDLERS = [
 
 # Optional but recommended
 FILE_UPLOAD_PERMISSIONS = 0o644
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://nanoproblem.com',
+    'https://www.nanoproblem.com',
+]
