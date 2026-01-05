@@ -118,27 +118,30 @@ def close_session(request, session_id):
         return JsonResponse({'error': 'POST required'}, status=405)
     try:
         session = PreSignInSession.objects.get(id=session_id)
+        
+        # 1. Mark session as inactive in DB
         session.is_active = False
         session.save()
         
-        # Send closing message to visitor via system message
-        msg_content = f"Thank you for contacting Nano Problem. Your chat has been closed. Please save your reference number for future record: {session.ref_number}"
+        # 2. Define the Thank You message
+        msg_content = f"Thank you for contacting Nano Problem. Your chat has been closed. Please save your reference number: {session.ref_number}"
         
-        # In views.py, we can include the is_closed flag in the broadcast
+        # 3. Broadcast specific 'session_closed' event to WebSocket
         from channels.layers import get_channel_layer
         from asgiref.sync import async_to_sync
+        
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(
             f'presignin_{session_id}',
             {
-                'type': 'chat_message',
+                'type': 'chat_message', # Keep type chat_message so client renders it
                 'message': {
                     'content': msg_content,
                     'sender_role': 'system',
                     'sender_name': 'System',
                     'created_at': timezone.now().strftime('%I:%M %p'),
                     'is_system': True,
-                    'is_closed': True
+                    'is_closed': True # <--- CRITICAL FLAG
                 }
             }
         )
